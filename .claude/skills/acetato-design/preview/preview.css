@@ -1,0 +1,46 @@
+/* Shared stage styling for Design System preview cards.
+   Each card links ../colors_and_type.css first, then this. */
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* The "stage" each card sits on. Mid neutral so dark glass reads honestly. */
+.stage {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  gap: var(--s-5);
+  padding: var(--s-5) var(--s-6);
+  background: #0E0F12;
+}
+
+/* A backdrop that proves legibility on ANY surface: half light, half dark,
+   used behind live glass demos. */
+.backdrop-split {
+  background:
+    linear-gradient(90deg,
+      #EDEDED 0%, #EDEDED 50%,
+      #1a1c20 50%, #1a1c20 100%);
+}
+.backdrop-photo {
+  background:
+    radial-gradient(120% 140% at 15% 10%, #d8e6ff 0%, #c3b6e8 38%, #5b4b8a 70%, #20203a 100%);
+}
+
+.col { display: flex; flex-direction: column; }
+.row { display: flex; flex-direction: row; }
+
+/* Lucide defaults inside cards */
+.stage [data-lucide] {
+  width: var(--icon);
+  height: var(--icon);
+  stroke-width: 2;
+}

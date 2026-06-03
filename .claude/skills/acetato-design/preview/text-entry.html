@@ -1,0 +1,33 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="preview.css">
+<style>
+  .stage { justify-content: center; }
+  .scene { position: relative; width: 80%; height: 60%; min-height: 120px; }
+  /* committed text + live draft */
+  .committed { position: absolute; left: 8%; top: 18%; font-weight: 600; font-size: 26px; color: var(--ink-red);
+               font-family: var(--font-ui); }
+  .draft { position: absolute; left: 8%; top: 52%; }
+  .draft input, .draft .fake {
+    font-family: var(--font-ui); font-weight: 600; font-size: 26px; color: var(--ink-blue);
+    background: transparent; border: none; border-bottom: 1.5px dashed rgba(255,255,255,0.55);
+    outline: none; padding: 0 2px; min-width: 40px;
+  }
+  .caret { display: inline-block; width: 2px; height: 26px; background: var(--ink-blue); margin-left: 1px;
+           vertical-align: -4px; animation: blink 1s step-end infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+</style>
+</head>
+<body>
+<div class="stage backdrop-split">
+  <div class="scene">
+    <div class="committed">Punto clave</div>
+    <div class="draft"><span class="fake">Escribe aquí<span class="caret"></span></span></div>
+  </div>
+</div>
+</body>
+</html>

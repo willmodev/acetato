@@ -1,0 +1,53 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="preview.css">
+<link rel="stylesheet" href="toolbar.css">
+<style>
+  .stage { justify-content: center; }
+  .popover {
+    background: var(--chrome-glass-strong);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
+    backdrop-filter: blur(24px) saturate(150%);
+    border: 1px solid var(--stroke-1);
+    border-radius: var(--r-popover);
+    box-shadow: var(--shadow-pop), var(--shadow-inset);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 168px;
+  }
+  .caption { font-size: var(--text-section); font-weight: 600; text-transform: uppercase;
+             letter-spacing: var(--tracking-caption); color: var(--fg-3); }
+  .dots { display: flex; align-items: center; justify-content: space-between; padding: 0 4px; }
+  .dot {
+    border-radius: 50%; background: var(--fg-2); cursor: pointer;
+    display: grid; place-items: center;
+  }
+  .dot--sel { background: var(--accent); box-shadow: 0 0 0 4px var(--accent-fill); }
+  .preview-line { display: flex; align-items: center; height: 8px; }
+  .preview-line span { width: 100%; border-radius: 4px; background: var(--ink-red); height: 6px; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="popover">
+    <div class="caption">Grosor</div>
+    <div class="dots">
+      <span class="dot" style="width:6px;height:6px"></span>
+      <span class="dot" style="width:10px;height:10px"></span>
+      <span class="dot dot--sel" style="width:14px;height:14px"></span>
+      <span class="dot" style="width:18px;height:18px"></span>
+      <span class="dot" style="width:24px;height:24px"></span>
+    </div>
+    <div class="preview-line"><span style="height:8px"></span></div>
+  </div>
+</div>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

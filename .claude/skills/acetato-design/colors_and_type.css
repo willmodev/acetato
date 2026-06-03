@@ -1,0 +1,151 @@
+/* ============================================================================
+   Acetato — Design Tokens
+   Floating-overlay annotation tool for Windows (C#/.NET, WinForms/WPF).
+   These CSS vars mirror the values to reimplement natively.
+   Two palettes:  CHROME (the UI itself)  +  TINTAS (the drawing inks).
+   ============================================================================ */
+
+:root {
+  /* ----------------------------------------------------------------------
+     CHROME — the tool's own UI. Dark neutrals + ONE accent.
+     Designed to read on ANY backdrop (light or dark apps underneath).
+     ---------------------------------------------------------------------- */
+
+  /* Glass surfaces (use WITH backdrop-blur). Alpha is intentional. */
+  --chrome-glass:        rgba(22, 24, 28, 0.72);   /* toolbar fill            */
+  --chrome-glass-strong: rgba(18, 20, 23, 0.88);   /* popovers / menus        */
+  --chrome-glass-thin:   rgba(30, 33, 38, 0.55);   /* nested wells            */
+
+  /* Solid fallbacks (when blur is unavailable, e.g. WinForms no-composition) */
+  --chrome-solid:        #16181C;
+  --chrome-solid-2:      #1E2126;
+
+  /* Neutral ink scale (foreground on the glass) */
+  --fg-1: rgba(255, 255, 255, 0.96);   /* primary icons, active labels        */
+  --fg-2: rgba(255, 255, 255, 0.62);   /* resting icons                       */
+  --fg-3: rgba(255, 255, 255, 0.38);   /* disabled / hint                     */
+
+  /* Hairlines & strokes */
+  --stroke-1:    rgba(255, 255, 255, 0.10);  /* outer border of glass         */
+  --stroke-2:    rgba(255, 255, 255, 0.07);  /* dividers                      */
+  --highlight:   rgba(255, 255, 255, 0.14);  /* top inner light edge          */
+
+  /* Interaction fills (overlaid on glass) */
+  --hover:       rgba(255, 255, 255, 0.08);
+  --press:       rgba(255, 255, 255, 0.04);
+
+  /* Accent — teal/"acetate". Marks the ACTIVE tool only. */
+  --accent:        #2FD9C4;
+  --accent-quiet:  #1FA899;                  /* pressed / borders             */
+  --accent-fill:   rgba(47, 217, 196, 0.16); /* active button background      */
+  --accent-ring:   rgba(47, 217, 196, 0.45); /* focus ring / active outline   */
+  --accent-glow:   rgba(47, 217, 196, 0.30); /* soft glow under active tool   */
+  --accent-ink:    #0C1413;                  /* text/icon ON solid accent     */
+
+  /* Status (rarely used — recording, error) */
+  --danger:  #FF453A;
+
+  /* ----------------------------------------------------------------------
+     TINTAS — drawing inks. Saturated, legible over ANY surface.
+     These are the strokes the user draws, NOT the UI.
+     ---------------------------------------------------------------------- */
+  --ink-red:    #FF3B30;
+  --ink-blue:   #0A84FF;
+  --ink-yellow: #FFD60A;
+  --ink-green:  #30D158;
+  --ink-white:  #FFFFFF;
+  --ink-black:  #0A0A0A;
+
+  /* Halo printed under a stroke so it survives same-color backdrops.
+     (e.g. a white stroke gets a faint dark halo; a black one a light halo) */
+  --ink-halo-dark:  rgba(0, 0, 0, 0.35);
+  --ink-halo-light: rgba(255, 255, 255, 0.45);
+
+  /* ----------------------------------------------------------------------
+     SHAPE — radii, elevation, spacing
+     ---------------------------------------------------------------------- */
+  --r-toolbar: 16px;   /* the floating bar           */
+  --r-button:  10px;   /* tool buttons               */
+  --r-popover: 14px;   /* palettes & menus           */
+  --r-swatch:  8px;    /* ink swatches               */
+  --r-pill:    999px;
+
+  /* Elevation — overlay floats well above everything */
+  --shadow-bar:    0 10px 34px rgba(0, 0, 0, 0.46), 0 2px 8px rgba(0, 0, 0, 0.32);
+  --shadow-pop:    0 14px 40px rgba(0, 0, 0, 0.52), 0 3px 10px rgba(0, 0, 0, 0.36);
+  --shadow-inset:  inset 0 1px 0 var(--highlight);
+  --shadow-active: 0 0 0 1px var(--accent-ring), 0 4px 14px var(--accent-glow);
+
+  /* Spacing scale (4px base) */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+
+  /* Control sizing */
+  --btn:        36px;   /* tool button hit area (desktop pointer)             */
+  --btn-touch:  44px;   /* min hit area for touch / pen builds                */
+  --icon:       20px;   /* line-icon glyph size                               */
+  --bar-pad:     6px;   /* inner padding of the toolbar                       */
+
+  /* ----------------------------------------------------------------------
+     TYPE — minimal. Only tooltips, labels, shortcut hints.
+     Canonical: "Segoe UI Variable" (Windows 11 native).
+     Web-preview substitute: "Public Sans" (redistributable near-match).
+     ---------------------------------------------------------------------- */
+  --font-ui: "Segoe UI Variable", "Segoe UI", "Public Sans", system-ui, -apple-system, sans-serif;
+  --font-mono: "Cascadia Code", "Cascadia Mono", ui-monospace, "SFMono-Regular", monospace;
+
+  /* Sizes — kept tiny; UI must not shout */
+  --text-tooltip: 12px;   /* tooltip body          */
+  --text-label:   11px;   /* chip / value labels   */
+  --text-kbd:     11px;   /* keyboard shortcut hint */
+  --text-section: 10px;   /* popover section caption (uppercased) */
+
+  --lh-tight: 1.2;
+  --lh-base:  1.35;
+
+  --fw-regular: 400;
+  --fw-medium:  500;
+  --fw-semi:    600;
+
+  --tracking-caption: 0.06em;  /* for uppercased section captions */
+}
+
+/* ----------------------------------------------------------------------------
+   SEMANTIC TYPE ROLES
+   ---------------------------------------------------------------------------- */
+.acetato-tooltip {
+  font-family: var(--font-ui);
+  font-size: var(--text-tooltip);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-tight);
+  color: var(--fg-1);
+  letter-spacing: 0;
+}
+
+.acetato-label {
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-tight);
+  color: var(--fg-2);
+}
+
+.acetato-caption {
+  font-family: var(--font-ui);
+  font-size: var(--text-section);
+  font-weight: var(--fw-semi);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caption);
+  color: var(--fg-3);
+}
+
+.acetato-kbd {
+  font-family: var(--font-mono);
+  font-size: var(--text-kbd);
+  font-weight: var(--fw-regular);
+  color: var(--fg-2);
+}

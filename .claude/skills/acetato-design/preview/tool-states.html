@@ -1,0 +1,40 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="preview.css">
+<link rel="stylesheet" href="toolbar.css">
+<style>
+  .stage { justify-content: center; gap: var(--s-6); }
+  .case { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .case .bar { padding: var(--bar-pad); }
+  .case-label { font-size: 11px; font-weight: 500; color: var(--fg-2); letter-spacing: .02em; }
+  /* force the hover visual statically for the specimen */
+  .is-hover { background: var(--hover); color: var(--fg-1); }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="case">
+    <div class="bar"><button class="tool"><i data-lucide="pencil"></i></button></div>
+    <span class="case-label">Reposo</span>
+  </div>
+  <div class="case">
+    <div class="bar"><button class="tool is-hover"><i data-lucide="pencil"></i></button></div>
+    <span class="case-label">Hover</span>
+  </div>
+  <div class="case">
+    <div class="bar"><button class="tool tool--active"><i data-lucide="pencil"></i></button></div>
+    <span class="case-label">Activo</span>
+  </div>
+  <div class="case">
+    <div class="bar"><button class="tool" disabled><i data-lucide="undo-2"></i></button></div>
+    <span class="case-label">Deshabilitado</span>
+  </div>
+</div>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

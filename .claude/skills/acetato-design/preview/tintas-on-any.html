@@ -1,0 +1,34 @@
+<!-- @dsCard group="Colors" -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="preview.css">
+<style>
+  .stage { padding: 0; }
+  .scene { position: relative; width: 100%; height: 100vh; }
+  .scene svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .tag { position: absolute; bottom: 12px; left: 16px; font-size: 11px; font-weight: 500;
+         color: rgba(255,255,255,0.9); background: rgba(0,0,0,0.45);
+         padding: 4px 9px; border-radius: 6px; backdrop-filter: blur(8px); }
+</style>
+</head>
+<body>
+<div class="stage backdrop-split">
+  <div class="scene">
+    <svg viewBox="0 0 700 200" preserveAspectRatio="none">
+      <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M40 60 q40 -34 90 0 t90 0" stroke="#FF3B30" stroke-width="5"/>
+        <path d="M40 110 q40 -34 90 0 t90 0" stroke="#0A84FF" stroke-width="5"/>
+        <path d="M40 160 q40 -34 90 0 t90 0" stroke="#30D158" stroke-width="5"/>
+        <path d="M400 60 q40 -34 90 0 t90 0" stroke="#FFD60A" stroke-width="5"/>
+        <path d="M400 110 q40 -34 90 0 t90 0" stroke="#FFFFFF" stroke-width="5"/>
+        <path d="M400 160 q40 -34 90 0 t90 0" stroke="#0A0A0A" stroke-width="5"/>
+      </g>
+    </svg>
+    <span class="tag">Las tintas mantienen contraste sobre fondos claros y oscuros</span>
+  </div>
+</div>
+</body>
+</html>

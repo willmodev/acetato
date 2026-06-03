@@ -1,0 +1,39 @@
+<!-- @dsCard group="Spacing" -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="preview.css">
+<link rel="stylesheet" href="toolbar.css">
+<style>
+  .stage { gap: 36px; justify-content: center; }
+  .sw { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .frame { position: relative; display: grid; place-items: center; outline: 1px dashed var(--accent-ring); }
+  .meta { text-align: center; }
+  .meta .n { font-size: 11px; font-weight: 600; color: var(--fg-1); }
+  .meta .v { font-size: 10px; color: var(--fg-3); font-family: var(--font-mono); }
+  .demo-btn { display: grid; place-items: center; border-radius: var(--r-button);
+              background: var(--accent-fill); color: var(--accent); }
+  .demo-btn svg { stroke-width: 2; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="sw">
+    <div class="frame" style="width:36px;height:36px"><div class="demo-btn" style="width:36px;height:36px"><i data-lucide="pencil" style="width:20px;height:20px"></i></div></div>
+    <div class="meta"><div class="n">--btn</div><div class="v">36px · puntero</div></div>
+  </div>
+  <div class="sw">
+    <div class="frame" style="width:44px;height:44px"><div class="demo-btn" style="width:44px;height:44px"><i data-lucide="pencil" style="width:22px;height:22px"></i></div></div>
+    <div class="meta"><div class="n">--btn-touch</div><div class="v">44px · táctil/pen</div></div>
+  </div>
+  <div class="sw">
+    <div class="frame" style="width:20px;height:20px"><i data-lucide="pencil" style="width:20px;height:20px;color:var(--fg-1)"></i></div>
+    <div class="meta"><div class="n">--icon</div><div class="v">20px · trazo 2px</div></div>
+  </div>
+</div>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

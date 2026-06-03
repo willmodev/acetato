@@ -1,0 +1,27 @@
+<!-- @dsCard group="Spacing" -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="preview.css">
+<style>
+  .stage { gap: 18px; justify-content: center; }
+  .sw { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .box { width: 88px; height: 64px; background: var(--chrome-solid-2); border: 1px solid var(--stroke-1);
+         border-top: 1px solid var(--highlight); }
+  .meta { text-align: center; }
+  .meta .n { font-size: 11px; font-weight: 600; color: var(--fg-1); }
+  .meta .v { font-size: 10px; color: var(--fg-3); font-family: var(--font-mono); }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="sw"><div class="box" style="border-radius:8px"></div><div class="meta"><div class="n">swatch</div><div class="v">8px</div></div></div>
+  <div class="sw"><div class="box" style="border-radius:10px"></div><div class="meta"><div class="n">button</div><div class="v">10px</div></div></div>
+  <div class="sw"><div class="box" style="border-radius:14px"></div><div class="meta"><div class="n">popover</div><div class="v">14px</div></div></div>
+  <div class="sw"><div class="box" style="border-radius:16px"></div><div class="meta"><div class="n">toolbar</div><div class="v">16px</div></div></div>
+  <div class="sw"><div class="box" style="border-radius:999px; width:64px"></div><div class="meta"><div class="n">pill</div><div class="v">999px</div></div></div>
+</div>
+</body>
+</html>

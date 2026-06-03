@@ -1,0 +1,48 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="preview.css">
+<link rel="stylesheet" href="toolbar.css">
+<style>
+  .stage { justify-content: center; align-items: flex-start; padding-top: 40px; }
+  .demo { display: flex; flex-direction: column; align-items: center; gap: 0; }
+  .tooltip {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--chrome-glass-strong);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    backdrop-filter: blur(20px) saturate(150%);
+    border: 1px solid var(--stroke-1);
+    border-radius: 8px;
+    box-shadow: var(--shadow-pop);
+    padding: 6px 9px;
+    font-size: var(--text-tooltip);
+    font-weight: 500;
+    color: var(--fg-1);
+    white-space: nowrap;
+  }
+  .tip-arrow {
+    width: 8px; height: 8px; margin-top: -5px;
+    background: var(--chrome-glass-strong);
+    border-right: 1px solid var(--stroke-1);
+    border-bottom: 1px solid var(--stroke-1);
+    transform: rotate(45deg);
+  }
+  .gap { height: 8px; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="demo">
+    <div class="tooltip">Lápiz <span class="kbd">P</span></div>
+    <div class="tip-arrow"></div>
+    <div class="gap"></div>
+    <div class="bar"><button class="tool tool--active"><i data-lucide="pencil"></i></button></div>
+  </div>
+</div>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

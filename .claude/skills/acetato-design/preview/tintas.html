@@ -1,0 +1,29 @@
+<!-- @dsCard group="Colors" -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="preview.css">
+<style>
+  .stage { gap: 14px; justify-content: center; }
+  .sw { width: 120px; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+  .chip { width: 100%; height: 80px; border-radius: 12px; }
+  .chip--white { box-shadow: inset 0 0 0 1px rgba(0,0,0,0.14); }
+  .chip--black { box-shadow: inset 0 0 0 1px rgba(255,255,255,0.18); }
+  .meta { text-align: center; }
+  .meta .n { font-size: 11px; font-weight: 600; color: var(--fg-1); }
+  .meta .v { font-size: 10px; color: var(--fg-3); font-family: var(--font-mono); }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="sw"><div class="chip" style="background:var(--ink-red)"></div><div class="meta"><div class="n">rojo</div><div class="v">#FF3B30</div></div></div>
+  <div class="sw"><div class="chip" style="background:var(--ink-blue)"></div><div class="meta"><div class="n">azul</div><div class="v">#0A84FF</div></div></div>
+  <div class="sw"><div class="chip" style="background:var(--ink-yellow)"></div><div class="meta"><div class="n">amarillo</div><div class="v">#FFD60A</div></div></div>
+  <div class="sw"><div class="chip" style="background:var(--ink-green)"></div><div class="meta"><div class="n">verde</div><div class="v">#30D158</div></div></div>
+  <div class="sw"><div class="chip chip--white" style="background:var(--ink-white)"></div><div class="meta"><div class="n">blanco</div><div class="v">#FFFFFF</div></div></div>
+  <div class="sw"><div class="chip chip--black" style="background:var(--ink-black)"></div><div class="meta"><div class="n">negro</div><div class="v">#0A0A0A</div></div></div>
+</div>
+</body>
+</html>

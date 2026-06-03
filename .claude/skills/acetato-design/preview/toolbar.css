@@ -1,0 +1,101 @@
+/* Acetato floating toolbar — shared component styles for preview cards.
+   Mirrors the values in colors_and_type.css. */
+
+.bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: var(--bar-pad);
+  background: var(--chrome-glass);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid var(--stroke-1);
+  border-radius: var(--r-toolbar);
+  box-shadow: var(--shadow-bar), var(--shadow-inset);
+}
+.bar--vertical { flex-direction: column; }
+
+/* drag affordance — a quiet grip at the bar's lead edge */
+.grip {
+  width: 14px;
+  height: var(--btn);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  color: var(--fg-3);
+  flex: none;
+}
+.grip svg { width: 14px; height: 14px; }
+
+.divider {
+  width: 1px;
+  align-self: stretch;
+  margin: 6px 4px;
+  background: var(--stroke-2);
+  flex: none;
+}
+.bar--vertical .divider {
+  width: auto;
+  height: 1px;
+  margin: 4px 6px;
+}
+
+/* Tool button */
+.tool {
+  width: var(--btn);
+  height: var(--btn);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--r-button);
+  background: transparent;
+  color: var(--fg-2);
+  cursor: pointer;
+  position: relative;
+  transition: background 120ms ease, color 120ms ease, box-shadow 120ms ease, transform 80ms ease;
+  flex: none;
+  padding: 0;
+}
+.tool svg { width: var(--icon); height: var(--icon); stroke-width: 2; }
+
+.tool:hover    { background: var(--hover); color: var(--fg-1); }
+.tool:active   { background: var(--press); transform: scale(0.94); }
+.tool:disabled { color: var(--fg-3); cursor: default; }
+.tool:disabled:hover { background: transparent; }
+
+/* Active tool — accent fill + accent glyph + soft glow */
+.tool--active {
+  background: var(--accent-fill);
+  color: var(--accent);
+  box-shadow: var(--shadow-active);
+}
+.tool--active:hover { background: var(--accent-fill); color: var(--accent); }
+
+/* current-ink swatch button (color selector) */
+.tool .swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1.5px rgba(255,255,255,0.85), 0 1px 3px rgba(0,0,0,0.4);
+}
+
+/* thickness glyph — three stacked lines of increasing weight */
+.thick-glyph { display: flex; flex-direction: column; gap: 3px; align-items: center; }
+.thick-glyph span { display: block; width: 16px; border-radius: 2px; background: currentColor; }
+.thick-glyph span:nth-child(1) { height: 1.5px; }
+.thick-glyph span:nth-child(2) { height: 2.5px; }
+.thick-glyph span:nth-child(3) { height: 4px; }
+
+/* keyboard hint badge inside tooltips */
+.kbd {
+  font-family: var(--font-mono);
+  font-size: var(--text-kbd);
+  color: var(--fg-2);
+  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--stroke-2);
+  border-radius: 5px;
+  padding: 1px 5px;
+  line-height: 1.4;
+}

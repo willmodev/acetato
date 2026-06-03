@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="48" viewBox="0 0 220 48" fill="none">
+  <g transform="translate(2,4)">
+    <rect x="12" y="1" width="26" height="26" rx="8" fill="rgba(255,255,255,0.04)" stroke="#8A929E" stroke-width="2"></rect>
+    <rect x="1" y="13" width="26" height="26" rx="8" fill="rgba(47,217,196,0.16)" stroke="#2FD9C4" stroke-width="2"></rect>
+  </g>
+  <text x="58" y="32" font-family="&#39;Segoe UI Variable&#39;,&#39;Public Sans&#39;,system-ui,sans-serif" font-size="30" font-weight="600" letter-spacing="-0.3" fill="#F5F6F7">acetato</text>
+</svg>

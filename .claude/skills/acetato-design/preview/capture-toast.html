@@ -1,0 +1,28 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="preview.css">
+<style>
+  .stage { justify-content: center; }
+  .toast {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--chrome-glass-strong);
+    -webkit-backdrop-filter: blur(20px) saturate(150%); backdrop-filter: blur(20px) saturate(150%);
+    border: 1px solid var(--stroke-1); border-radius: 10px; box-shadow: var(--shadow-pop), var(--shadow-inset);
+    padding: 10px 15px; font-size: 13px; font-weight: 500; color: var(--fg-1);
+  }
+  .toast i { color: var(--accent); }
+  .toast [data-lucide] { width: 16px; height: 16px; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="toast"><i data-lucide="camera"></i> Captura copiada al portapapeles</div>
+</div>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

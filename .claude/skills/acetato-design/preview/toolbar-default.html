@@ -1,0 +1,42 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="preview.css">
+<link rel="stylesheet" href="toolbar.css">
+<style>
+  .stage { justify-content: center; }
+</style>
+</head>
+<body>
+<div class="stage backdrop-split">
+  <div class="bar" role="toolbar" aria-label="Acetato">
+    <div class="grip"><i data-lucide="grip-vertical"></i></div>
+    <button class="tool" title="Seleccionar"><i data-lucide="mouse-pointer-2"></i></button>
+    <div class="divider"></div>
+    <button class="tool tool--active" title="Lápiz"><i data-lucide="pencil"></i></button>
+    <button class="tool" title="Línea recta"><i data-lucide="minus"></i></button>
+    <button class="tool" title="Flecha"><i data-lucide="arrow-up-right"></i></button>
+    <button class="tool" title="Rectángulo"><i data-lucide="square"></i></button>
+    <button class="tool" title="Texto"><i data-lucide="type"></i></button>
+    <button class="tool" title="Borrador"><i data-lucide="eraser"></i></button>
+    <div class="divider"></div>
+    <button class="tool" title="Color"><span class="swatch" style="background:var(--ink-red)"></span></button>
+    <button class="tool" title="Grosor"><span class="thick-glyph"><span></span><span></span><span></span></span></button>
+    <div class="divider"></div>
+    <button class="tool" title="Deshacer"><i data-lucide="undo-2"></i></button>
+    <button class="tool" title="Rehacer"><i data-lucide="redo-2"></i></button>
+    <button class="tool" title="Limpiar todo"><i data-lucide="trash-2"></i></button>
+    <div class="divider"></div>
+    <button class="tool" title="Captura"><i data-lucide="camera"></i></button>
+    <button class="tool" title="Ajustes"><i data-lucide="settings-2"></i></button>
+    <div class="divider"></div>
+    <button class="tool" title="Cerrar"><i data-lucide="x"></i></button>
+  </div>
+</div>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

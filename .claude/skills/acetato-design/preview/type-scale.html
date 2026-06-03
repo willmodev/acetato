@@ -1,0 +1,39 @@
+<!-- @dsCard group="Type" -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="preview.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  .stage { align-items: stretch; }
+  .wrap { width: 100%; }
+  .fam { display: flex; flex-direction: column; gap: 4px; margin-bottom: 18px; }
+  .fam .label { font-size: 10px; font-family: var(--font-mono); color: var(--fg-3); }
+  .fam .name { font-size: 22px; font-weight: 600; color: var(--fg-1); }
+  .fam .sub { font-size: 11px; color: var(--fg-2); }
+  .scale { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+  .item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .item .px { font-size: 10px; font-family: var(--font-mono); color: var(--fg-3); }
+  .item .g { color: var(--fg-1); font-weight: 500; line-height: 1; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="wrap">
+    <div class="fam">
+      <span class="label">--font-ui</span>
+      <span class="name">Segoe UI Variable</span>
+      <span class="sub">Nativa de Windows 11 · sustituto web: Public Sans</span>
+    </div>
+    <div class="scale">
+      <div class="item"><span class="g" style="font-size:10px">Aa</span><span class="px">10 caption</span></div>
+      <div class="item"><span class="g" style="font-size:11px">Aa</span><span class="px">11 label</span></div>
+      <div class="item"><span class="g" style="font-size:12px">Aa</span><span class="px">12 tooltip</span></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
