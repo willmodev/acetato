@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Parámetros de las reglas SonarAnalyzer.CSharp (umbrales del proyecto).
+  La SEVERIDAD (error) se fija en .editorconfig; aquí van los UMBRALES.
+  Referenciado como AdditionalFiles desde Directory.Build.props.
+-->
+<AnalysisInput>
+  <Rules>
+    <!-- S138: líneas máximas por método -->
+    <Rule>
+      <Key>S138</Key>
+      <Parameters>
+        <Parameter><Key>max</Key><Value>40</Value></Parameter>
+      </Parameters>
+    </Rule>
+    <!-- S104: líneas máximas por archivo -->
+    <Rule>
+      <Key>S104</Key>
+      <Parameters>
+        <Parameter><Key>maximumFileLocThreshold</Key><Value>400</Value></Parameter>
+      </Parameters>
+    </Rule>
+    <!-- S107: número máximo de parámetros -->
+    <Rule>
+      <Key>S107</Key>
+      <Parameters>
+        <Parameter><Key>max</Key><Value>5</Value></Parameter>
+      </Parameters>
+    </Rule>
+    <!-- S134: profundidad máxima de anidamiento de control de flujo -->
+    <Rule>
+      <Key>S134</Key>
+      <Parameters>
+        <Parameter><Key>maximumNestingLevel</Key><Value>3</Value></Parameter>
+      </Parameters>
+    </Rule>
+    <!-- S1541: complejidad ciclomática máxima por método -->
+    <Rule>
+      <Key>S1541</Key>
+      <Parameters>
+        <Parameter><Key>maximumFunctionComplexityThreshold</Key><Value>10</Value></Parameter>
+      </Parameters>
+    </Rule>
+  </Rules>
+</AnalysisInput>

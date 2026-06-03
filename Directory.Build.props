@@ -1,0 +1,45 @@
+<!--
+  Propiedades comunes a TODOS los proyectos de la solución.
+  El TargetFramework se fija por proyecto (net9.0 para capas no-UI,
+  net9.0-windows para Infrastructure y Presentation).
+-->
+<Project>
+
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <!-- Rigor: las advertencias rompen el build -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <AnalysisLevel>latest-all</AnalysisLevel>
+    <AnalysisMode>All</AnalysisMode>
+    <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
+
+    <!-- Higiene general -->
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <ImplicitUsingsExclude>System.Net.Http</ImplicitUsingsExclude>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <Deterministic>true</Deterministic>
+    <NeutralLanguage>es-ES</NeutralLanguage>
+  </PropertyGroup>
+
+  <!-- Umbrales de las reglas Sonar (longitud, complejidad, parámetros, anidamiento) -->
+  <ItemGroup>
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)SonarLint.xml" Visible="false" />
+  </ItemGroup>
+
+  <!-- Analizadores aplicados a toda la solución -->
+  <ItemGroup>
+    <PackageReference Include="SonarAnalyzer.CSharp">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Meziantou.Analyzer">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>
