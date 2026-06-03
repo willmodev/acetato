@@ -1,0 +1,19 @@
+<Window x:Class="Acetato.Presentation.Views.OverlayWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Acetato"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ShowInTaskbar="False"
+        Topmost="True"
+        WindowState="Maximized">
+
+    <!--
+      Andamiaje: ventana transparente a pantalla completa, sin chrome de Windows.
+      El click-through (WS_EX_TRANSPARENT) y el toolbar flotante se añaden en
+      HU-02 y HU-10. Por ahora solo demuestra la superficie transparente.
+    -->
+    <Grid />
+</Window>
