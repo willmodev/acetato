@@ -84,14 +84,8 @@ public sealed class Win32GlobalHotkeyService : IGlobalHotkeyService, IDisposable
     private void RunPump(ManualResetEventSlim ready)
     {
         _pumpThreadId = NativeMethods.GetCurrentThreadId();
-        var registered = RegisterHotkeys();
+        RegisterHotkeys();
         ready.Set();
-
-        if (!registered)
-        {
-            UnregisterHotkeys();
-            return;
-        }
 
         try
         {
@@ -103,11 +97,12 @@ public sealed class Win32GlobalHotkeyService : IGlobalHotkeyService, IDisposable
         }
     }
 
-    private static bool RegisterHotkeys()
+    private static void RegisterHotkeys()
     {
-        var toggle = NativeMethods.RegisterHotKey(nint.Zero, ToggleHotkeyId, Modifiers, VkD);
-        var mode = NativeMethods.RegisterHotKey(nint.Zero, DrawingModeHotkeyId, Modifiers, VkE);
-        return toggle && mode;
+        // Registro independiente y best-effort: si un atajo falla (p. ej. ya lo
+        // tomó otra app), el otro debe seguir funcionando.
+        _ = NativeMethods.RegisterHotKey(nint.Zero, ToggleHotkeyId, Modifiers, VkD);
+        _ = NativeMethods.RegisterHotKey(nint.Zero, DrawingModeHotkeyId, Modifiers, VkE);
     }
 
     private static void UnregisterHotkeys()

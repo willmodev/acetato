@@ -7,6 +7,12 @@
     <UseWPF>true</UseWPF>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AssemblyName>Acetato</AssemblyName>
+    <!--
+      WPF necesita globalización real: el InkCanvas (y otros bindings) resuelven
+      la cultura en-US. El modo invariante heredado de Directory.Build.props la
+      rompe ("Cannot find non-neutral culture"), así que se desactiva en el exe.
+    -->
+    <InvariantGlobalization>false</InvariantGlobalization>
   </PropertyGroup>
 
   <ItemGroup>
