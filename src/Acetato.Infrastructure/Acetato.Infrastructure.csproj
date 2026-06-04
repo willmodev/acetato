@@ -4,6 +4,8 @@
     <!-- net9.0-windows: el interop Win32 (P/Invoke) vive aquí -->
     <TargetFramework>net9.0-windows</TargetFramework>
     <RootNamespace>Acetato.Infrastructure</RootNamespace>
+    <!-- Requerido por el código generado de [LibraryImport] (P/Invoke source-gen) -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
