@@ -99,8 +99,17 @@ dotnet_diagnostic.S1541.severity = error   # complejidad ciclomática alta (> 10
 dotnet_diagnostic.S1067.severity = error   # expresión demasiado compleja
 
 # ============================================================================
+#  Presentation (WPF) — la codegen de XAML exige tipos 'public partial';
+#  CA1515 (hacer internos los tipos de la app) es insatisfacible aquí.
+# ============================================================================
+[src/Acetato.Presentation/**.cs]
+dotnet_diagnostic.CA1515.severity = none
+
+# ============================================================================
 #  Tests — se relajan límites de naming y nombres con guion bajo
 # ============================================================================
 [tests/**/*.cs]
 dotnet_diagnostic.S138.severity = warning
 dotnet_naming_rule.members_pascal.severity = none
+# Nombres de test estilo Given_When_Then: se permite el guion bajo
+dotnet_diagnostic.CA1707.severity = none

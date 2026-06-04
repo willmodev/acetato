@@ -7,14 +7,14 @@ namespace Acetato.Application.Abstractions;
 public interface IOverlayController
 {
     /// <summary>Indica si la capa está visible.</summary>
-    bool IsVisible { get; }
+    public bool IsVisible { get; }
 
     /// <summary>Muestra u oculta la capa de dibujo.</summary>
-    void Toggle();
+    public void Toggle();
 
     /// <summary>
     /// Activa el modo dibujo (la capa captura los clics) o el modo normal
     /// (los clics atraviesan hacia la app de abajo).
     /// </summary>
-    void SetDrawingMode(bool enabled);
+    public void SetDrawingMode(bool enabled);
 }

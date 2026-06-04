@@ -7,11 +7,11 @@ namespace Acetato.Application.Abstractions;
 public interface IGlobalHotkeyService
 {
     /// <summary>Se dispara cuando el usuario pulsa el atajo de activación.</summary>
-    event EventHandler ToggleRequested;
+    public event EventHandler ToggleRequested;
 
     /// <summary>Registra los atajos globales. Idempotente.</summary>
-    void Register();
+    public void Register();
 
     /// <summary>Libera los atajos registrados.</summary>
-    void Unregister();
+    public void Unregister();
 }
