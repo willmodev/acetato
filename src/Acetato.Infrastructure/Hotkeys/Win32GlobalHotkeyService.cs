@@ -14,9 +14,11 @@ public sealed class Win32GlobalHotkeyService : IGlobalHotkeyService, IDisposable
 {
     private const int ToggleHotkeyId = 1;
     private const int DrawingModeHotkeyId = 2;
+    private const int ClearHotkeyId = 3;
     private const uint Modifiers = NativeMethods.ModControl | NativeMethods.ModAlt | NativeMethods.ModNoRepeat;
     private const uint VkD = 0x44; // tecla 'D'
     private const uint VkE = 0x45; // tecla 'E'
+    private const uint VkBack = 0x08; // tecla 'Retroceso'
 
     private readonly Lock _gate = new();
     private Thread? _pump;
@@ -26,6 +28,8 @@ public sealed class Win32GlobalHotkeyService : IGlobalHotkeyService, IDisposable
     public event EventHandler? ToggleRequested;
 
     public event EventHandler? DrawingModeToggleRequested;
+
+    public event EventHandler? ClearRequested;
 
     public void Register()
     {
@@ -103,12 +107,14 @@ public sealed class Win32GlobalHotkeyService : IGlobalHotkeyService, IDisposable
         // tomó otra app), el otro debe seguir funcionando.
         _ = NativeMethods.RegisterHotKey(nint.Zero, ToggleHotkeyId, Modifiers, VkD);
         _ = NativeMethods.RegisterHotKey(nint.Zero, DrawingModeHotkeyId, Modifiers, VkE);
+        _ = NativeMethods.RegisterHotKey(nint.Zero, ClearHotkeyId, Modifiers, VkBack);
     }
 
     private static void UnregisterHotkeys()
     {
         NativeMethods.UnregisterHotKey(nint.Zero, ToggleHotkeyId);
         NativeMethods.UnregisterHotKey(nint.Zero, DrawingModeHotkeyId);
+        NativeMethods.UnregisterHotKey(nint.Zero, ClearHotkeyId);
     }
 
     private void PumpMessages()
@@ -128,6 +134,10 @@ public sealed class Win32GlobalHotkeyService : IGlobalHotkeyService, IDisposable
         else if (hotkeyId == DrawingModeHotkeyId)
         {
             DrawingModeToggleRequested?.Invoke(this, EventArgs.Empty);
+        }
+        else if (hotkeyId == ClearHotkeyId)
+        {
+            ClearRequested?.Invoke(this, EventArgs.Empty);
         }
     }
 }

@@ -12,6 +12,9 @@ public interface IGlobalHotkeyService
     /// <summary>Se dispara al pulsar el atajo de cambio de modo (dibujo/normal).</summary>
     public event EventHandler DrawingModeToggleRequested;
 
+    /// <summary>Se dispara al pulsar el atajo de limpiar todos los trazos.</summary>
+    public event EventHandler ClearRequested;
+
     /// <summary>Registra los atajos globales. Idempotente.</summary>
     public void Register();
 

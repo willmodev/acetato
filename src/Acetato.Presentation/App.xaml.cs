@@ -4,6 +4,7 @@ using Acetato.Application.Overlay;
 using Acetato.Infrastructure.Hotkeys;
 using Acetato.Infrastructure.Overlay;
 using Acetato.Presentation.Overlay;
+using Acetato.Presentation.ViewModels;
 using Acetato.Presentation.Views;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -25,12 +26,15 @@ public partial class App : System.Windows.Application
 
         _services = BuildServiceProvider();
         var controller = _services.GetRequiredService<IOverlayController>();
+        var overlayViewModel = _services.GetRequiredService<OverlayViewModel>();
 
         _hotkeys = _services.GetRequiredService<IGlobalHotkeyService>();
         // Los eventos llegan en el hilo del bombeo; marshalamos al hilo de UI.
         _hotkeys.ToggleRequested += (_, _) => _ = Dispatcher.BeginInvoke(controller.Toggle);
         _hotkeys.DrawingModeToggleRequested += (_, _) =>
             _ = Dispatcher.BeginInvoke(() => controller.SetDrawingMode(!controller.IsDrawingMode));
+        _hotkeys.ClearRequested += (_, _) =>
+            _ = Dispatcher.BeginInvoke(() => overlayViewModel.ClearCommand.Execute(null));
         _hotkeys.Register();
     }
 
@@ -45,8 +49,12 @@ public partial class App : System.Windows.Application
     {
         var services = new ServiceCollection();
 
-        // Vistas y su adaptador de superficie.
-        services.AddSingleton<OverlayWindow>();
+        // Vistas, su ViewModel y el adaptador de superficie.
+        services.AddSingleton<OverlayViewModel>();
+        services.AddSingleton<OverlayWindow>(sp => new OverlayWindow
+        {
+            DataContext = sp.GetRequiredService<OverlayViewModel>(),
+        });
         services.AddSingleton<IOverlaySurface, OverlayWindowSurface>();
 
         // Adaptadores de Infrastructure (interop Win32) — solo en el root.
