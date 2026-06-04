@@ -9,6 +9,9 @@ public interface IGlobalHotkeyService
     /// <summary>Se dispara cuando el usuario pulsa el atajo de activación.</summary>
     public event EventHandler ToggleRequested;
 
+    /// <summary>Se dispara al pulsar el atajo de cambio de modo (dibujo/normal).</summary>
+    public event EventHandler DrawingModeToggleRequested;
+
     /// <summary>Registra los atajos globales. Idempotente.</summary>
     public void Register();
 

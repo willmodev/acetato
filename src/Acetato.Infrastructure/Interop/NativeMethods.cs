@@ -20,6 +20,7 @@ internal static partial class NativeMethods
 
     // Estilos extendidos de ventana del overlay.
     internal const int GwlExStyle = -20;
+    internal const long WsExTransparent = 0x00000020;
     internal const long WsExToolWindow = 0x00000080;
     internal const long WsExLayered = 0x00080000;
 

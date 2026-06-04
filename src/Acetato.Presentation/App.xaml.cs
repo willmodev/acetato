@@ -27,8 +27,10 @@ public partial class App : System.Windows.Application
         var controller = _services.GetRequiredService<IOverlayController>();
 
         _hotkeys = _services.GetRequiredService<IGlobalHotkeyService>();
-        // El evento llega en el hilo del bombeo; marshalamos al hilo de UI.
+        // Los eventos llegan en el hilo del bombeo; marshalamos al hilo de UI.
         _hotkeys.ToggleRequested += (_, _) => _ = Dispatcher.BeginInvoke(controller.Toggle);
+        _hotkeys.DrawingModeToggleRequested += (_, _) =>
+            _ = Dispatcher.BeginInvoke(() => controller.SetDrawingMode(!controller.IsDrawingMode));
         _hotkeys.Register();
     }
 

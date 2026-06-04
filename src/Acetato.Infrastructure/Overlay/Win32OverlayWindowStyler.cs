@@ -21,4 +21,18 @@ public sealed class Win32OverlayWindowStyler : IOverlayWindowStyler
         long updated = current | NativeMethods.WsExLayered | NativeMethods.WsExToolWindow;
         NativeMethods.SetWindowLongPtr(windowHandle, NativeMethods.GwlExStyle, (nint)updated);
     }
+
+    public void SetClickThrough(nint windowHandle, bool enabled)
+    {
+        if (windowHandle == nint.Zero)
+        {
+            throw new ArgumentException("El manejador de ventana no es válido.", nameof(windowHandle));
+        }
+
+        long current = NativeMethods.GetWindowLongPtr(windowHandle, NativeMethods.GwlExStyle);
+        long updated = enabled
+            ? current | NativeMethods.WsExTransparent
+            : current & ~NativeMethods.WsExTransparent;
+        NativeMethods.SetWindowLongPtr(windowHandle, NativeMethods.GwlExStyle, (nint)updated);
+    }
 }
