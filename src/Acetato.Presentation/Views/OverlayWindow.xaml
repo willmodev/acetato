@@ -11,9 +11,21 @@
         WindowState="Maximized">
 
     <!--
-      Andamiaje: ventana transparente a pantalla completa, sin chrome de Windows.
-      El click-through (WS_EX_TRANSPARENT) y el toolbar flotante se añaden en
-      HU-02 y HU-10. Por ahora solo demuestra la superficie transparente.
+      Capa de dibujo a pantalla completa (HU-03). El InkCanvas captura y renderiza
+      los trazos a mano alzada cuando la ventana NO es click-through (modo dibujo,
+      HU-02). Fondo transparente para superponerse a cualquier app. La tinta usa
+      el token Ink.Red (paleta de Tintas); el toolbar flotante llega en HU-10.
     -->
-    <Grid />
+    <!--
+      Fondo con alfa MÍNIMO no cero (#01 ≈ 0.4 %, imperceptible). En una ventana
+      layered (AllowsTransparency), Windows deja pasar los clics por los píxeles
+      con alfa 0; un alfa > 0 hace que el InkCanvas reciba el mouse y pueda
+      dibujar. El click-through del modo normal lo gobierna WS_EX_TRANSPARENT.
+    -->
+    <InkCanvas Background="#01000000">
+        <InkCanvas.DefaultDrawingAttributes>
+            <DrawingAttributes Color="{StaticResource Ink.Red.Color}"
+                               Width="3" Height="3" FitToCurve="True" />
+        </InkCanvas.DefaultDrawingAttributes>
+    </InkCanvas>
 </Window>
