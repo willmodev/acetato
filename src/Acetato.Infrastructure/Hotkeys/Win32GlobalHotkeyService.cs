@@ -4,32 +4,20 @@ using Acetato.Infrastructure.Interop;
 namespace Acetato.Infrastructure.Hotkeys;
 
 /// <summary>
-/// Atajos globales (HU-01/HU-02) con RegisterHotKey: Ctrl+Alt+D activa/oculta el
-/// overlay y Ctrl+Alt+E alterna el modo dibujo/normal. Se registran con hWnd = 0,
-/// por lo que WM_HOTKEY llega como mensaje de hilo; un bucle GetMessage en un
-/// hilo dedicado lo recoge. Así funciona sin importar la app en primer plano.
-/// El interop vive en Infrastructure.
+/// Atajos globales (HU-01/02/04…) con RegisterHotKey. Se registran con
+/// hWnd = 0, por lo que WM_HOTKEY llega como mensaje de hilo; un bucle
+/// GetMessage en un hilo dedicado lo recoge. Así funciona sin importar la app
+/// en primer plano. Las combinaciones viven en <see cref="HotkeyBindingTable"/>;
+/// aquí solo el ciclo de vida y el bombeo. El interop vive en Infrastructure.
 /// </summary>
 public sealed class Win32GlobalHotkeyService : IGlobalHotkeyService, IDisposable
 {
-    private const int ToggleHotkeyId = 1;
-    private const int DrawingModeHotkeyId = 2;
-    private const int ClearHotkeyId = 3;
-    private const uint Modifiers = NativeMethods.ModControl | NativeMethods.ModAlt | NativeMethods.ModNoRepeat;
-    private const uint VkD = 0x44; // tecla 'D'
-    private const uint VkE = 0x45; // tecla 'E'
-    private const uint VkBack = 0x08; // tecla 'Retroceso'
-
     private readonly Lock _gate = new();
     private Thread? _pump;
     private uint _pumpThreadId;
     private bool _disposed;
 
-    public event EventHandler? ToggleRequested;
-
-    public event EventHandler? DrawingModeToggleRequested;
-
-    public event EventHandler? ClearRequested;
+    public event EventHandler<HotkeyActionEventArgs>? ActionRequested;
 
     public void Register()
     {
@@ -104,17 +92,19 @@ public sealed class Win32GlobalHotkeyService : IGlobalHotkeyService, IDisposable
     private static void RegisterHotkeys()
     {
         // Registro independiente y best-effort: si un atajo falla (p. ej. ya lo
-        // tomó otra app), el otro debe seguir funcionando.
-        _ = NativeMethods.RegisterHotKey(nint.Zero, ToggleHotkeyId, Modifiers, VkD);
-        _ = NativeMethods.RegisterHotKey(nint.Zero, DrawingModeHotkeyId, Modifiers, VkE);
-        _ = NativeMethods.RegisterHotKey(nint.Zero, ClearHotkeyId, Modifiers, VkBack);
+        // tomó otra app), los demás deben seguir funcionando.
+        foreach (var binding in HotkeyBindingTable.All)
+        {
+            _ = NativeMethods.RegisterHotKey(nint.Zero, binding.Id, binding.Modifiers, binding.VirtualKey);
+        }
     }
 
     private static void UnregisterHotkeys()
     {
-        NativeMethods.UnregisterHotKey(nint.Zero, ToggleHotkeyId);
-        NativeMethods.UnregisterHotKey(nint.Zero, DrawingModeHotkeyId);
-        NativeMethods.UnregisterHotKey(nint.Zero, ClearHotkeyId);
+        foreach (var binding in HotkeyBindingTable.All)
+        {
+            NativeMethods.UnregisterHotKey(nint.Zero, binding.Id);
+        }
     }
 
     private void PumpMessages()
@@ -127,17 +117,10 @@ public sealed class Win32GlobalHotkeyService : IGlobalHotkeyService, IDisposable
 
     private void RaiseForHotkey(nint hotkeyId)
     {
-        if (hotkeyId == ToggleHotkeyId)
+        var binding = HotkeyBindingTable.FindById((int)hotkeyId);
+        if (binding is not null)
         {
-            ToggleRequested?.Invoke(this, EventArgs.Empty);
-        }
-        else if (hotkeyId == DrawingModeHotkeyId)
-        {
-            DrawingModeToggleRequested?.Invoke(this, EventArgs.Empty);
-        }
-        else if (hotkeyId == ClearHotkeyId)
-        {
-            ClearRequested?.Invoke(this, EventArgs.Empty);
+            ActionRequested?.Invoke(this, new HotkeyActionEventArgs(binding.Action));
         }
     }
 }

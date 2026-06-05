@@ -16,6 +16,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Icono de bandeja (HU-08), derivado del isotipo de marca. -->
+    <Resource Include="Resources\acetato.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Acetato.Application\Acetato.Application.csproj" />
     <ProjectReference Include="..\Acetato.Domain\Acetato.Domain.csproj" />
     <ProjectReference Include="..\Acetato.Infrastructure\Acetato.Infrastructure.csproj" />

@@ -18,6 +18,18 @@ internal static partial class NativeMethods
     internal const uint ModControl = 0x0002;
     internal const uint ModNoRepeat = 0x4000;
 
+    // Virtual-key codes de los atajos (fila superior, no numpad).
+    internal const uint VkBack = 0x08; // Retroceso
+    internal const uint Vk1 = 0x31;
+    internal const uint Vk2 = 0x32;
+    internal const uint Vk3 = 0x33;
+    internal const uint Vk4 = 0x34;
+    internal const uint Vk5 = 0x35;
+    internal const uint Vk6 = 0x36;
+    internal const uint VkD = 0x44;
+    internal const uint VkE = 0x45;
+    internal const uint VkZ = 0x5A;
+
     // Estilos extendidos de ventana del overlay.
     internal const int GwlExStyle = -20;
     internal const long WsExTransparent = 0x00000020;

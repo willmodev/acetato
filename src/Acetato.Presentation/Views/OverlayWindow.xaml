@@ -1,6 +1,7 @@
 <Window x:Class="Acetato.Presentation.Views.OverlayWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:behaviors="clr-namespace:Acetato.Presentation.Behaviors"
         Title="Acetato"
         WindowStyle="None"
         ResizeMode="NoResize"
@@ -22,10 +23,13 @@
       con alfa 0; un alfa > 0 hace que el InkCanvas reciba el mouse y pueda
       dibujar. El click-through del modo normal lo gobierna WS_EX_TRANSPARENT.
     -->
-    <InkCanvas Background="#01000000" Strokes="{Binding Strokes}">
-        <InkCanvas.DefaultDrawingAttributes>
-            <DrawingAttributes Color="{StaticResource Ink.Red.Color}"
-                               Width="3" Height="3" FitToCurve="True" />
-        </InkCanvas.DefaultDrawingAttributes>
-    </InkCanvas>
+    <!--
+      Color y grosor del próximo trazo vienen del ViewModel (HU-05/06). La rueda
+      del mouse ajusta el grosor vía un comportamiento adjunto (sin code-behind).
+    -->
+    <InkCanvas Background="#01000000"
+               Strokes="{Binding Strokes}"
+               DefaultDrawingAttributes="{Binding ActiveAttributes}"
+               behaviors:ThicknessWheelBehavior.IncreaseCommand="{Binding IncreaseThicknessCommand}"
+               behaviors:ThicknessWheelBehavior.DecreaseCommand="{Binding DecreaseThicknessCommand}" />
 </Window>

@@ -1,0 +1,27 @@
+<!--
+  Icono de bandeja (HU-08). El DataContext (TrayViewModel) se asigna en
+  App.OnStartup. El menú es es-ES, sentence case, sin emoji. El icono deriva del
+  isotipo de marca (Resources/acetato.ico).
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:tb="clr-namespace:H.NotifyIcon;assembly=H.NotifyIcon.Wpf">
+
+    <tb:TaskbarIcon x:Key="TrayIcon"
+                    ToolTipText="Acetato"
+                    IconSource="pack://application:,,,/Resources/acetato.ico">
+        <tb:TaskbarIcon.ContextMenu>
+            <!--
+              El DataContext del menú es inestable con H.NotifyIcon (en el
+              arranque apunta al propio TaskbarIcon, lo que ensucia el binding).
+              Por eso los comandos NO se enlazan aquí: se asignan en código por
+              Tag en App.InitializeTrayIcon. Aquí solo el texto (es-ES, sin emoji).
+            -->
+            <ContextMenu>
+                <MenuItem Header="Activar dibujo" Tag="activate" />
+                <Separator />
+                <MenuItem Header="Salir" Tag="exit" />
+            </ContextMenu>
+        </tb:TaskbarIcon.ContextMenu>
+    </tb:TaskbarIcon>
+</ResourceDictionary>
