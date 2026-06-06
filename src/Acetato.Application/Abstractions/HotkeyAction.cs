@@ -37,4 +37,7 @@ public enum HotkeyAction
 
     /// <summary>Deshacer el último trazo (HU-07).</summary>
     Undo,
+
+    /// <summary>Cambiar a la siguiente herramienta del anillo (HU-11).</summary>
+    CycleTool,
 }

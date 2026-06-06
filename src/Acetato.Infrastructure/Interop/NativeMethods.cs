@@ -24,6 +24,7 @@ internal static partial class NativeMethods
 
     // Virtual-key codes de los atajos (fila superior, no numpad).
     internal const uint VkBack = 0x08; // Retroceso
+    internal const uint VkSpace = 0x20; // Espacio
     internal const uint Vk1 = 0x31;
     internal const uint Vk2 = 0x32;
     internal const uint Vk3 = 0x33;

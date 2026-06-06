@@ -131,4 +131,56 @@ public sealed class DrawingSettingsTests
 
         raised.Should().Be(0);
     }
+
+    [Fact]
+    public void Default_tool_is_pencil()
+    {
+        CreateSettings().SelectedTool.Should().Be(ToolKind.Pencil);
+    }
+
+    [Fact]
+    public void Select_tool_updates_and_raises_changed()
+    {
+        var settings = CreateSettings();
+        var raised = 0;
+        settings.Changed += (_, _) => raised++;
+
+        settings.SelectTool(ToolKind.Rectangle);
+
+        settings.SelectedTool.Should().Be(ToolKind.Rectangle);
+        raised.Should().Be(1);
+    }
+
+    [Fact]
+    public void Select_same_tool_does_not_raise_changed()
+    {
+        var settings = CreateSettings();
+        var raised = 0;
+        settings.Changed += (_, _) => raised++;
+
+        settings.SelectTool(ToolKind.Pencil); // ya es Pencil por defecto
+
+        raised.Should().Be(0);
+    }
+
+    [Fact]
+    public void Cycle_tool_advances_through_the_ring()
+    {
+        var settings = CreateSettings(); // Pencil
+
+        settings.CycleTool();
+
+        settings.SelectedTool.Should().Be(ToolKind.Line);
+    }
+
+    [Fact]
+    public void Cycle_tool_wraps_around()
+    {
+        var settings = CreateSettings();
+        settings.SelectTool(ToolKind.Eraser); // última del anillo
+
+        settings.CycleTool();
+
+        settings.SelectedTool.Should().Be(ToolKind.Pencil);
+    }
 }

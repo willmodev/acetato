@@ -35,28 +35,31 @@
 
             <Rectangle Style="{StaticResource ToolDivider}" />
 
-            <!-- Herramientas (placeholders: formas=HU-11, texto, etc.) -->
-            <Button Style="{StaticResource ToolButton}" IsEnabled="False" ToolTip="Seleccionar">
-                <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Select}" />
-            </Button>
-            <Button Style="{StaticResource ToolButton}" IsEnabled="False" ToolTip="Lápiz">
-                <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Pencil}" />
-            </Button>
-            <Button Style="{StaticResource ToolButton}" IsEnabled="False" ToolTip="Borrador">
-                <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Eraser}" />
-            </Button>
-            <Button Style="{StaticResource ToolButton}" IsEnabled="False" ToolTip="Línea">
-                <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Line}" />
-            </Button>
-            <Button Style="{StaticResource ToolButton}" IsEnabled="False" ToolTip="Flecha">
-                <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Arrow}" />
-            </Button>
-            <Button Style="{StaticResource ToolButton}" IsEnabled="False" ToolTip="Rectángulo">
-                <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Rectangle}" />
-            </Button>
-            <Button Style="{StaticResource ToolButton}" IsEnabled="False" ToolTip="Texto">
-                <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Text}" />
-            </Button>
+            <!-- Herramientas (HU-11): lápiz/borrador/formas funcionales; el activo
+                 se resalta con el acento. Seleccionar y texto siguen placeholder. -->
+            <ItemsControl ItemsSource="{Binding Tools}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type vm:ToolItem}">
+                        <Button x:Name="ToolBtn" Style="{StaticResource ToolButton}"
+                                IsEnabled="{Binding IsEnabled}" ToolTip="{Binding Label}"
+                                Command="{Binding DataContext.PickToolCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                CommandParameter="{Binding Kind}">
+                            <Path x:Name="ToolIcon" Style="{StaticResource ToolGlyph}" Data="{Binding Icon}" />
+                        </Button>
+                        <DataTemplate.Triggers>
+                            <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                <Setter TargetName="ToolBtn" Property="Background" Value="{StaticResource Accent.Fill}" />
+                                <Setter TargetName="ToolIcon" Property="Stroke" Value="{StaticResource Accent}" />
+                            </DataTrigger>
+                        </DataTemplate.Triggers>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
 
             <Rectangle Style="{StaticResource ToolDivider}" />
 

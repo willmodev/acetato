@@ -43,6 +43,7 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
         DragHandler = dragHandler;
         Swatches = BuildSwatches();
         Thicknesses = BuildThicknesses();
+        Tools = BuildTools();
         _settings.Changed += OnSettingsChanged;
         SyncActiveState();
     }
@@ -58,6 +59,9 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
 
     /// <summary>Los pasos de grosor del popover.</summary>
     public IReadOnlyList<ThicknessItem> Thicknesses { get; }
+
+    /// <summary>Las herramientas de la barra (HU-11).</summary>
+    public IReadOnlyList<ToolItem> Tools { get; }
 
     /// <summary>Abre o cierra el popover de tintas (cierra el de grosor).</summary>
     [RelayCommand]
@@ -91,6 +95,10 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
         IsThicknessPopoverOpen = false;
     }
 
+    /// <summary>Selecciona la herramienta activa (HU-11).</summary>
+    [RelayCommand]
+    private void PickTool(ToolKind tool) => _settings.SelectTool(tool);
+
     /// <summary>Oculta el overlay y la barra (botón Cerrar).</summary>
     [RelayCommand]
     private void Close() => _controller.Toggle();
@@ -122,6 +130,22 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
         return items;
     }
 
+    // Herramientas de la barra; las no implementadas van deshabilitadas (placeholder).
+    private static List<ToolItem> BuildTools() =>
+    [
+        new(ToolKind.Select, "Seleccionar", Glyph("Icon.Select"), false),
+        new(ToolKind.Pencil, "Lápiz", Glyph("Icon.Pencil"), true),
+        new(ToolKind.Eraser, "Borrador", Glyph("Icon.Eraser"), true),
+        new(ToolKind.Line, "Línea", Glyph("Icon.Line"), true),
+        new(ToolKind.Arrow, "Flecha", Glyph("Icon.Arrow"), true),
+        new(ToolKind.Rectangle, "Rectángulo", Glyph("Icon.Rectangle"), true),
+        new(ToolKind.Text, "Texto", Glyph("Icon.Text"), false),
+    ];
+
+    // Resuelve la geometría del icono desde los recursos (igual que las tintas).
+    private static Geometry Glyph(string key) =>
+        (Geometry)System.Windows.Application.Current.Resources[key];
+
     private void OnSettingsChanged(object? sender, EventArgs e) => SyncActiveState();
 
     private void SyncActiveState()
@@ -135,6 +159,11 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
         foreach (var step in Thicknesses)
         {
             step.IsSelected = step.Index == _settings.ThicknessIndex;
+        }
+
+        foreach (var tool in Tools)
+        {
+            tool.IsSelected = tool.Kind == _settings.SelectedTool;
         }
     }
 

@@ -27,9 +27,16 @@
       Color y grosor del próximo trazo vienen del ViewModel (HU-05/06). La rueda
       del mouse ajusta el grosor vía un comportamiento adjunto (sin code-behind).
     -->
+    <!--
+      EditingMode según la herramienta (HU-11): lápiz = tinta libre, borrador =
+      borrar trazos, formas = ninguno (las dibuja ShapeDrawingBehavior creando un
+      Stroke por forma, así reutilizan undo/limpiar/color/grosor).
+    -->
     <InkCanvas Background="#01000000"
+               EditingMode="{Binding EditingMode}"
                Strokes="{Binding Strokes}"
                DefaultDrawingAttributes="{Binding ActiveAttributes}"
                behaviors:ThicknessWheelBehavior.IncreaseCommand="{Binding IncreaseThicknessCommand}"
-               behaviors:ThicknessWheelBehavior.DecreaseCommand="{Binding DecreaseThicknessCommand}" />
+               behaviors:ThicknessWheelBehavior.DecreaseCommand="{Binding DecreaseThicknessCommand}"
+               behaviors:ShapeDrawingBehavior.Tool="{Binding ActiveTool}" />
 </Window>

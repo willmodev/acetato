@@ -26,6 +26,7 @@ internal static class HotkeyBindingTable
         new(8, HotkeyAction.ColorWhite, Modifiers, NativeMethods.Vk5),
         new(9, HotkeyAction.ColorBlack, Modifiers, NativeMethods.Vk6),
         new(10, HotkeyAction.Undo, Modifiers, NativeMethods.VkZ),
+        new(11, HotkeyAction.CycleTool, Modifiers, NativeMethods.VkSpace),
     ];
 
     private static readonly Dictionary<int, HotkeyBinding> ById = All.ToDictionary(binding => binding.Id);

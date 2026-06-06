@@ -11,12 +11,15 @@ namespace Acetato.Application.Drawing;
 public sealed class DrawingSettings : IDrawingSettings
 {
     private int _thicknessIndex = ThicknessScale.DefaultIndex;
+    private ToolKind _selectedTool = ToolKind.Pencil;
 
     public TintaColor Color { get; private set; } = TintaColor.Red;
 
     public double Thickness => ThicknessScale.At(_thicknessIndex);
 
     public int ThicknessIndex => _thicknessIndex;
+
+    public ToolKind SelectedTool => _selectedTool;
 
     public event EventHandler? Changed;
 
@@ -37,6 +40,19 @@ public sealed class DrawingSettings : IDrawingSettings
 
     public void SelectThickness(int index) =>
         MoveThicknessTo(Math.Clamp(index, ThicknessScale.MinIndex, ThicknessScale.MaxIndex));
+
+    public void SelectTool(ToolKind tool)
+    {
+        if (_selectedTool == tool)
+        {
+            return;
+        }
+
+        _selectedTool = tool;
+        RaiseChanged();
+    }
+
+    public void CycleTool() => SelectTool(ToolRing.Next(_selectedTool));
 
     private void MoveThicknessTo(int newIndex)
     {

@@ -18,6 +18,9 @@ public interface IDrawingSettings
     /// <summary>Índice del grosor activo en la escala (0 = más fino).</summary>
     public int ThicknessIndex { get; }
 
+    /// <summary>Herramienta activa (HU-11).</summary>
+    public ToolKind SelectedTool { get; }
+
     /// <summary>Cambia el color activo (HU-05).</summary>
     public void SelectColor(TintaColor color);
 
@@ -30,6 +33,12 @@ public interface IDrawingSettings
     /// <summary>Fija el grosor por índice de la escala; hace clamp al rango (HU-10).</summary>
     public void SelectThickness(int index);
 
-    /// <summary>Se dispara cuando color o grosor cambian de verdad.</summary>
+    /// <summary>Selecciona la herramienta activa (HU-11).</summary>
+    public void SelectTool(ToolKind tool);
+
+    /// <summary>Avanza a la siguiente herramienta del anillo (HU-11).</summary>
+    public void CycleTool();
+
+    /// <summary>Se dispara cuando color, grosor o herramienta cambian de verdad.</summary>
     public event EventHandler? Changed;
 }

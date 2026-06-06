@@ -1,3 +1,4 @@
+using System.Windows.Controls;
 using System.Windows.Ink;
 using Acetato.Application.Drawing;
 using Acetato.Domain;
@@ -29,12 +30,24 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
     /// </summary>
     public DrawingAttributes ActiveAttributes { get; } = new() { FitToCurve = true };
 
+    /// <summary>Herramienta activa; el behavior de formas la lee para dibujar (HU-11).</summary>
+    [ObservableProperty]
+    private ToolKind _activeTool = ToolKind.Pencil;
+
+    /// <summary>
+    /// Modo de edición del InkCanvas según la herramienta: lápiz = tinta libre,
+    /// borrador = borrar trazos, formas = ninguno (las dibuja el behavior).
+    /// </summary>
+    [ObservableProperty]
+    private InkCanvasEditingMode _editingMode = InkCanvasEditingMode.Ink;
+
     public OverlayViewModel(IDrawingSettings settings)
     {
         _settings = settings;
         _settings.Changed += OnSettingsChanged;
         _undo = new UndoStack(Strokes);
         SyncAttributes();
+        SyncTool();
     }
 
     /// <summary>Borra todos los trazos. No falla si la capa ya está vacía.</summary>
@@ -57,7 +70,15 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void Undo() => _undo.UndoLast();
 
-    private void OnSettingsChanged(object? sender, EventArgs e) => SyncAttributes();
+    /// <summary>Cambia a la siguiente herramienta del anillo (HU-11).</summary>
+    [RelayCommand]
+    private void CycleTool() => _settings.CycleTool();
+
+    private void OnSettingsChanged(object? sender, EventArgs e)
+    {
+        SyncAttributes();
+        SyncTool();
+    }
 
     private void SyncAttributes()
     {
@@ -65,6 +86,19 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
         ActiveAttributes.Width = _settings.Thickness;
         ActiveAttributes.Height = _settings.Thickness;
     }
+
+    private void SyncTool()
+    {
+        ActiveTool = _settings.SelectedTool;
+        EditingMode = ToEditingMode(_settings.SelectedTool);
+    }
+
+    private static InkCanvasEditingMode ToEditingMode(ToolKind tool) => tool switch
+    {
+        ToolKind.Eraser => InkCanvasEditingMode.EraseByStroke,
+        ToolKind.Pencil => InkCanvasEditingMode.Ink,
+        _ => InkCanvasEditingMode.None, // formas: las dibuja el behavior
+    };
 
     public void Dispose() => _settings.Changed -= OnSettingsChanged;
 }
