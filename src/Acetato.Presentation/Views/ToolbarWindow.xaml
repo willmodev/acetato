@@ -1,0 +1,192 @@
+<Window x:Class="Acetato.Presentation.Views.ToolbarWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:b="clr-namespace:Acetato.Presentation.Behaviors"
+        xmlns:vm="clr-namespace:Acetato.Presentation.ViewModels"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ShowInTaskbar="False"
+        ShowActivated="False"
+        Topmost="True"
+        SizeToContent="WidthAndHeight"
+        WindowStartupLocation="CenterScreen"
+        FontFamily="{StaticResource Font.Ui}">
+
+    <!-- Barra glass: único elemento visible (principio #1, CERO distracción). -->
+    <Border Background="{StaticResource Chrome.Glass}"
+            CornerRadius="{StaticResource Radius.Toolbar}"
+            BorderBrush="{StaticResource Stroke.Outer}"
+            BorderThickness="1"
+            Padding="6">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="34" ShadowDepth="10" Direction="270" Opacity="0.46" Color="#FF000000" />
+        </Border.Effect>
+
+        <StackPanel Orientation="Horizontal">
+
+            <!-- Grip de arrastre -->
+            <Border Style="{StaticResource GripHandle}"
+                    b:WindowDragBehavior.DragHandler="{Binding DragHandler}"
+                    ToolTip="Mover">
+                <Path Style="{StaticResource GripGlyph}" />
+            </Border>
+
+            <Rectangle Style="{StaticResource ToolDivider}" />
+
+            <!-- Herramientas (placeholders: formas=HU-11, texto, etc.) -->
+            <Button Style="{StaticResource ToolButton}" IsEnabled="False" ToolTip="Seleccionar">
+                <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Select}" />
+            </Button>
+            <Button Style="{StaticResource ToolButton}" IsEnabled="False" ToolTip="Lápiz">
+                <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Pencil}" />
+            </Button>
+            <Button Style="{StaticResource ToolButton}" IsEnabled="False" ToolTip="Borrador">
+                <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Eraser}" />
+            </Button>
+            <Button Style="{StaticResource ToolButton}" IsEnabled="False" ToolTip="Línea">
+                <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Line}" />
+            </Button>
+            <Button Style="{StaticResource ToolButton}" IsEnabled="False" ToolTip="Flecha">
+                <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Arrow}" />
+            </Button>
+            <Button Style="{StaticResource ToolButton}" IsEnabled="False" ToolTip="Rectángulo">
+                <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Rectangle}" />
+            </Button>
+            <Button Style="{StaticResource ToolButton}" IsEnabled="False" ToolTip="Texto">
+                <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Text}" />
+            </Button>
+
+            <Rectangle Style="{StaticResource ToolDivider}" />
+
+            <!-- Color (funcional): abre el popover de tintas -->
+            <Button x:Name="ColorButton" Style="{StaticResource ToolButton}"
+                    Command="{Binding ToggleInkPopoverCommand}" ToolTip="Color">
+                <Ellipse Width="18" Height="18"
+                         Fill="{Binding ActiveInkBrush}"
+                         Stroke="{StaticResource Stroke.Highlight}" StrokeThickness="1.5" />
+            </Button>
+
+            <!-- Grosor (funcional): abre el popover de grosor -->
+            <Button x:Name="ThicknessButton" Style="{StaticResource ToolButton}"
+                    Command="{Binding ToggleThicknessPopoverCommand}" ToolTip="Grosor">
+                <StackPanel Width="16" VerticalAlignment="Center">
+                    <Rectangle Height="1.5" Margin="0,1.5" RadiusX="1" RadiusY="1"
+                               Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
+                    <Rectangle Height="2.5" Margin="0,1.5" RadiusX="1" RadiusY="1"
+                               Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
+                    <Rectangle Height="4" Margin="0,1.5" RadiusX="1" RadiusY="1"
+                               Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
+                </StackPanel>
+            </Button>
+
+            <Rectangle Style="{StaticResource ToolDivider}" />
+
+            <!-- Deshacer / Limpiar (funcionales) -->
+            <Button Style="{StaticResource ToolButton}" Command="{Binding Overlay.UndoCommand}" ToolTip="Deshacer">
+                <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Undo}" />
+            </Button>
+            <Button Style="{StaticResource ToolButton}" Command="{Binding Overlay.ClearCommand}" ToolTip="Limpiar todo">
+                <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Clear}" />
+            </Button>
+
+            <Rectangle Style="{StaticResource ToolDivider}" />
+
+            <!-- Captura / Ajustes (placeholders: captura=HU-12) -->
+            <Button Style="{StaticResource ToolButton}" IsEnabled="False" ToolTip="Captura">
+                <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Capture}" />
+            </Button>
+            <Button Style="{StaticResource ToolButton}" IsEnabled="False" ToolTip="Ajustes">
+                <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Settings}" />
+            </Button>
+
+            <Rectangle Style="{StaticResource ToolDivider}" />
+
+            <!-- Cerrar (funcional): oculta overlay y barra -->
+            <Button Style="{StaticResource ToolButton}" Command="{Binding CloseCommand}" ToolTip="Cerrar">
+                <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Close}" />
+            </Button>
+
+            <!-- Popover de tintas -->
+            <Popup PlacementTarget="{Binding ElementName=ColorButton}" Placement="Bottom"
+                   IsOpen="{Binding IsInkPopoverOpen, Mode=TwoWay}"
+                   AllowsTransparency="True" StaysOpen="False" Focusable="False" PopupAnimation="Fade">
+                <Border Style="{StaticResource PopoverSurface}">
+                    <ItemsControl ItemsSource="{Binding Swatches}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Rows="1" Columns="6" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type vm:InkSwatchItem}">
+                                <Button Margin="4" Cursor="Hand"
+                                        Command="{Binding DataContext.PickColorCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                        CommandParameter="{Binding Color}">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="Ring" Width="30" Height="30" Padding="3"
+                                                    CornerRadius="{StaticResource Radius.Swatch}"
+                                                    BorderBrush="Transparent" BorderThickness="2">
+                                                <Border Background="{Binding Fill}" CornerRadius="5" />
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                    <Setter TargetName="Ring" Property="BorderBrush" Value="{StaticResource Accent.Ring}" />
+                                                </DataTrigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Border>
+            </Popup>
+
+            <!-- Popover de grosor -->
+            <Popup PlacementTarget="{Binding ElementName=ThicknessButton}" Placement="Bottom"
+                   IsOpen="{Binding IsThicknessPopoverOpen, Mode=TwoWay}"
+                   AllowsTransparency="True" StaysOpen="False" Focusable="False" PopupAnimation="Fade">
+                <Border Style="{StaticResource PopoverSurface}">
+                    <ItemsControl ItemsSource="{Binding Thicknesses}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type vm:ThicknessItem}">
+                                <Button Width="36" Height="36" Cursor="Hand"
+                                        Command="{Binding DataContext.PickThicknessCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                        CommandParameter="{Binding Index}">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="Cell" Background="Transparent"
+                                                    CornerRadius="{StaticResource Radius.Button}">
+                                                <Ellipse x:Name="Dot" Width="{Binding Diameter}" Height="{Binding Diameter}"
+                                                         HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                         Fill="{StaticResource Fg.Resting}" />
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="Cell" Property="Background" Value="{StaticResource Fill.Hover}" />
+                                                </Trigger>
+                                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                    <Setter TargetName="Cell" Property="Background" Value="{StaticResource Accent.Fill}" />
+                                                    <Setter TargetName="Dot" Property="Fill" Value="{StaticResource Accent}" />
+                                                </DataTrigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Border>
+            </Popup>
+
+        </StackPanel>
+    </Border>
+</Window>

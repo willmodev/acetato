@@ -1,0 +1,28 @@
+using Acetato.Application.Abstractions;
+using Acetato.Infrastructure.Interop;
+
+namespace Acetato.Infrastructure.Overlay;
+
+/// <summary>
+/// Aplica los estilos extendidos de la barra flotante (HU-10): WS_EX_NOACTIVATE
+/// para que no robe el foco a la app de abajo ni al overlay, WS_EX_TOOLWINDOW
+/// para quedar fuera del Alt-Tab y WS_EX_LAYERED para componerse por capa. El
+/// interop vive en Infrastructure.
+/// </summary>
+public sealed class Win32ToolbarWindowStyler : IToolbarWindowStyler
+{
+    public void ApplyToolbarStyles(nint windowHandle)
+    {
+        if (windowHandle == nint.Zero)
+        {
+            throw new ArgumentException("El manejador de ventana no es válido.", nameof(windowHandle));
+        }
+
+        long current = NativeMethods.GetWindowLongPtr(windowHandle, NativeMethods.GwlExStyle);
+        long updated = current
+            | NativeMethods.WsExNoActivate
+            | NativeMethods.WsExToolWindow
+            | NativeMethods.WsExLayered;
+        NativeMethods.SetWindowLongPtr(windowHandle, NativeMethods.GwlExStyle, (nint)updated);
+    }
+}

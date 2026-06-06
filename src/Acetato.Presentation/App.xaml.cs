@@ -30,8 +30,19 @@ public partial class App : System.Windows.Application
         base.OnStartup(e);
 
         _services = BuildServiceProvider();
+        InitializeToolbar();
         WireHotkeys();
         InitializeTrayIcon();
+    }
+
+    // Asigna el DataContext de la barra (HU-10) fuera del contenedor para romper
+    // el ciclo OverlayController → IToolbarSurface → ToolbarWindow → ToolbarViewModel
+    // → IOverlayController. La ventana se construye sin VM; aquí se enlaza.
+    private void InitializeToolbar()
+    {
+        var services = _services!;
+        var window = services.GetRequiredService<ToolbarWindow>();
+        window.DataContext = services.GetRequiredService<ToolbarViewModel>();
     }
 
     // Conecta el servicio de atajos con el enrutador, que marshala cada acción
@@ -100,8 +111,16 @@ public partial class App : System.Windows.Application
         });
         services.AddSingleton<IOverlaySurface, OverlayWindowSurface>();
 
+        // Barra flotante (HU-10): VM, ventana (DataContext se asigna fuera del
+        // contenedor para evitar el ciclo) y su superficie.
+        services.AddSingleton<ToolbarViewModel>();
+        services.AddSingleton<ToolbarWindow>();
+        services.AddSingleton<IToolbarSurface, ToolbarWindowSurface>();
+
         // Adaptadores de Infrastructure (interop Win32) — solo en el root.
         services.AddSingleton<IOverlayWindowStyler, Win32OverlayWindowStyler>();
+        services.AddSingleton<IToolbarWindowStyler, Win32ToolbarWindowStyler>();
+        services.AddSingleton<IWindowDragHandler, Win32WindowDragHandler>();
         services.AddSingleton<IGlobalHotkeyService, Win32GlobalHotkeyService>();
 
         // Casos de uso / orquestación (Application).

@@ -16,6 +16,8 @@ public sealed class DrawingSettings : IDrawingSettings
 
     public double Thickness => ThicknessScale.At(_thicknessIndex);
 
+    public int ThicknessIndex => _thicknessIndex;
+
     public event EventHandler? Changed;
 
     public void SelectColor(TintaColor color)
@@ -32,6 +34,9 @@ public sealed class DrawingSettings : IDrawingSettings
     public void IncreaseThickness() => MoveThicknessTo(ThicknessScale.Next(_thicknessIndex));
 
     public void DecreaseThickness() => MoveThicknessTo(ThicknessScale.Previous(_thicknessIndex));
+
+    public void SelectThickness(int index) =>
+        MoveThicknessTo(Math.Clamp(index, ThicknessScale.MinIndex, ThicknessScale.MaxIndex));
 
     private void MoveThicknessTo(int newIndex)
     {

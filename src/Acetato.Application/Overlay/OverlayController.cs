@@ -3,22 +3,33 @@ using Acetato.Application.Abstractions;
 namespace Acetato.Application.Overlay;
 
 /// <summary>
-/// Orquesta la visibilidad y el modo del overlay (HU-01/HU-02). Aplica los
-/// estilos nativos la primera vez que la superficie obtiene manejador. Al
-/// mostrarse arranca en modo dibujo (captura clics); el modo normal activa el
-/// click-through. Es agnóstico de plataforma: depende solo de puertos.
+/// Orquesta la visibilidad y el modo del overlay y de la barra flotante
+/// (HU-01/HU-02/HU-10). Aplica los estilos nativos de cada superficie la primera
+/// vez que obtiene manejador. Al mostrarse arranca en modo dibujo (la capa
+/// captura los clics); el modo normal activa el click-through del overlay. La
+/// barra se muestra y oculta junto al overlay. Es agnóstico de plataforma:
+/// depende solo de puertos.
 /// </summary>
 public sealed class OverlayController : IOverlayController
 {
     private readonly IOverlaySurface _surface;
     private readonly IOverlayWindowStyler _styler;
-    private bool _stylesApplied;
+    private readonly IToolbarSurface _toolbar;
+    private readonly IToolbarWindowStyler _toolbarStyler;
+    private bool _overlayStylesApplied;
+    private bool _toolbarStylesApplied;
     private bool _drawingMode;
 
-    public OverlayController(IOverlaySurface surface, IOverlayWindowStyler styler)
+    public OverlayController(
+        IOverlaySurface surface,
+        IOverlayWindowStyler styler,
+        IToolbarSurface toolbar,
+        IToolbarWindowStyler toolbarStyler)
     {
         _surface = surface;
         _styler = styler;
+        _toolbar = toolbar;
+        _toolbarStyler = toolbarStyler;
     }
 
     public bool IsVisible => _surface.IsVisible;
@@ -29,13 +40,11 @@ public sealed class OverlayController : IOverlayController
     {
         if (_surface.IsVisible)
         {
-            _surface.Hide();
+            HideAll();
             return;
         }
 
-        _surface.Show();
-        EnsureNativeStyles();
-        SetDrawingMode(true);
+        ShowAll();
     }
 
     public void SetDrawingMode(bool enabled)
@@ -52,20 +61,35 @@ public sealed class OverlayController : IOverlayController
         _styler.SetClickThrough(handle, !enabled);
     }
 
+    private void HideAll()
+    {
+        _surface.Hide();
+        _toolbar.Hide();
+    }
+
+    private void ShowAll()
+    {
+        // El overlay primero; la barra después para quedar encima entre ventanas topmost.
+        _surface.Show();
+        _toolbar.Show();
+        EnsureNativeStyles();
+        SetDrawingMode(true);
+    }
+
     private void EnsureNativeStyles()
     {
-        if (_stylesApplied)
+        _overlayStylesApplied = TryApplyStyles(_overlayStylesApplied, _surface.Handle, _styler.ApplyOverlayStyles);
+        _toolbarStylesApplied = TryApplyStyles(_toolbarStylesApplied, _toolbar.Handle, _toolbarStyler.ApplyToolbarStyles);
+    }
+
+    private static bool TryApplyStyles(bool alreadyApplied, nint handle, Action<nint> apply)
+    {
+        if (alreadyApplied || handle == nint.Zero)
         {
-            return;
+            return alreadyApplied;
         }
 
-        nint handle = _surface.Handle;
-        if (handle == nint.Zero)
-        {
-            return;
-        }
-
-        _styler.ApplyOverlayStyles(handle);
-        _stylesApplied = true;
+        apply(handle);
+        return true;
     }
 }

@@ -15,6 +15,9 @@ public interface IDrawingSettings
     /// <summary>Grosor activo (px) del próximo trazo.</summary>
     public double Thickness { get; }
 
+    /// <summary>Índice del grosor activo en la escala (0 = más fino).</summary>
+    public int ThicknessIndex { get; }
+
     /// <summary>Cambia el color activo (HU-05).</summary>
     public void SelectColor(TintaColor color);
 
@@ -23,6 +26,9 @@ public interface IDrawingSettings
 
     /// <summary>Baja un paso de grosor; en el mínimo se mantiene (HU-06).</summary>
     public void DecreaseThickness();
+
+    /// <summary>Fija el grosor por índice de la escala; hace clamp al rango (HU-10).</summary>
+    public void SelectThickness(int index);
 
     /// <summary>Se dispara cuando color o grosor cambian de verdad.</summary>
     public event EventHandler? Changed;

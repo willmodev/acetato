@@ -14,9 +14,13 @@ internal static partial class NativeMethods
     // Mensajes de ventana y modificadores de RegisterHotKey.
     internal const uint WmHotkey = 0x0312;
     internal const uint WmQuit = 0x0012;
+    internal const uint WmNcLButtonDown = 0x00A1; // Clic en área no cliente (arrastre)
     internal const uint ModAlt = 0x0001;
     internal const uint ModControl = 0x0002;
     internal const uint ModNoRepeat = 0x4000;
+
+    // Hit-test para arrastrar la barra como si pulsaran su barra de título.
+    internal const int HtCaption = 2;
 
     // Virtual-key codes de los atajos (fila superior, no numpad).
     internal const uint VkBack = 0x08; // Retroceso
@@ -30,11 +34,12 @@ internal static partial class NativeMethods
     internal const uint VkE = 0x45;
     internal const uint VkZ = 0x5A;
 
-    // Estilos extendidos de ventana del overlay.
+    // Estilos extendidos de ventana del overlay y de la barra.
     internal const int GwlExStyle = -20;
     internal const long WsExTransparent = 0x00000020;
     internal const long WsExToolWindow = 0x00000080;
     internal const long WsExLayered = 0x00080000;
+    internal const long WsExNoActivate = 0x08000000; // La barra no roba el foco
 
     [LibraryImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
@@ -59,4 +64,11 @@ internal static partial class NativeMethods
 
     [LibraryImport("user32.dll", EntryPoint = "SetWindowLongPtrW", SetLastError = true)]
     internal static partial nint SetWindowLongPtr(nint hWnd, int nIndex, nint dwNewLong);
+
+    [LibraryImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static partial bool ReleaseCapture();
+
+    [LibraryImport("user32.dll", EntryPoint = "SendMessageW")]
+    internal static partial nint SendMessage(nint hWnd, uint msg, nint wParam, nint lParam);
 }

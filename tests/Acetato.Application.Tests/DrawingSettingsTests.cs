@@ -98,4 +98,37 @@ public sealed class DrawingSettingsTests
 
         raised.Should().Be(0);
     }
+
+    [Fact]
+    public void Select_thickness_sets_the_step_by_index()
+    {
+        var settings = CreateSettings();
+
+        settings.SelectThickness(3);
+
+        settings.Thickness.Should().Be(ThicknessScale.Steps[3]);
+        settings.ThicknessIndex.Should().Be(3);
+    }
+
+    [Fact]
+    public void Select_thickness_clamps_an_out_of_range_index()
+    {
+        var settings = CreateSettings();
+
+        settings.SelectThickness(99);
+
+        settings.ThicknessIndex.Should().Be(ThicknessScale.MaxIndex);
+    }
+
+    [Fact]
+    public void Select_same_thickness_does_not_raise_changed()
+    {
+        var settings = CreateSettings();
+        var raised = 0;
+        settings.Changed += (_, _) => raised++;
+
+        settings.SelectThickness(ThicknessScale.DefaultIndex); // ya está ahí
+
+        raised.Should().Be(0);
+    }
 }
