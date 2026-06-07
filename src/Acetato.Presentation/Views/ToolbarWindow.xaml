@@ -96,8 +96,8 @@
 
             <Rectangle Style="{StaticResource ToolDivider}" />
 
-            <!-- Captura / Ajustes (placeholders: captura=HU-12) -->
-            <Button Style="{StaticResource ToolButton}" IsEnabled="False" ToolTip="Captura">
+            <!-- Captura (funcional, HU-12) / Ajustes (placeholder) -->
+            <Button Style="{StaticResource ToolButton}" Command="{Binding Overlay.CaptureCommand}" ToolTip="Captura">
                 <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Capture}" />
             </Button>
             <Button Style="{StaticResource ToolButton}" IsEnabled="False" ToolTip="Ajustes">

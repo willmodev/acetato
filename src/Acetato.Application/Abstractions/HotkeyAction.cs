@@ -40,4 +40,7 @@ public enum HotkeyAction
 
     /// <summary>Cambiar a la siguiente herramienta del anillo (HU-11).</summary>
     CycleTool,
+
+    /// <summary>Guardar la pantalla anotada como PNG (HU-12).</summary>
+    Capture,
 }

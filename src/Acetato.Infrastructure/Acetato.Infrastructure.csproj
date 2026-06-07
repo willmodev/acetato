@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!-- net9.0-windows: el interop Win32 (P/Invoke) vive aquí -->
-    <TargetFramework>net9.0-windows</TargetFramework>
+    <!-- net9.0-windows10: interop Win32 (P/Invoke) + API de toasts de WinRT (HU-12) -->
+    <TargetFramework>net9.0-windows10.0.19041.0</TargetFramework>
     <RootNamespace>Acetato.Infrastructure</RootNamespace>
     <!-- Requerido por el código generado de [LibraryImport] (P/Invoke source-gen) -->
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -11,6 +11,15 @@
   <ItemGroup>
     <ProjectReference Include="..\Acetato.Application\Acetato.Application.csproj" />
     <ProjectReference Include="..\Acetato.Domain\Acetato.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Captura de pantalla + encode PNG (HU-12): Graphics.CopyFromScreen evita
+         el P/Invoke BitBlt de 9 parámetros (rompería S107). -->
+    <PackageReference Include="System.Drawing.Common" />
+    <!-- Toast clickable al guardar (HU-12): registra la identidad de la app sin
+         acceso directo en Inicio; al activarlo abre el PNG. -->
+    <PackageReference Include="CommunityToolkit.WinUI.Notifications" />
   </ItemGroup>
 
 </Project>

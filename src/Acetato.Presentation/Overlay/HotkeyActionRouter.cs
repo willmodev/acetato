@@ -44,5 +44,6 @@ internal sealed class HotkeyActionRouter
         [HotkeyAction.ColorBlack] = () => vm.SetColorCommand.Execute(TintaColor.Black),
         [HotkeyAction.Undo] = () => vm.UndoCommand.Execute(null),
         [HotkeyAction.CycleTool] = () => vm.CycleToolCommand.Execute(null),
+        [HotkeyAction.Capture] = () => vm.CaptureCommand.Execute(null),
     };
 }

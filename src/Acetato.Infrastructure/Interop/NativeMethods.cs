@@ -33,6 +33,7 @@ internal static partial class NativeMethods
     internal const uint Vk6 = 0x36;
     internal const uint VkD = 0x44;
     internal const uint VkE = 0x45;
+    internal const uint VkS = 0x53; // Captura (Snapshot, HU-12)
     internal const uint VkZ = 0x5A;
 
     // Estilos extendidos de ventana del overlay y de la barra.
@@ -41,6 +42,13 @@ internal static partial class NativeMethods
     internal const long WsExToolWindow = 0x00000080;
     internal const long WsExLayered = 0x00080000;
     internal const long WsExNoActivate = 0x08000000; // La barra no roba el foco
+
+    // Métricas de pantalla del monitor primario (HU-12).
+    internal const int SmCxScreen = 0;
+    internal const int SmCyScreen = 1;
+
+    // Afinidad de presentación: la barra queda visible pero fuera de toda captura (HU-12).
+    internal const uint WdaExcludeFromCapture = 0x00000011;
 
     [LibraryImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
@@ -72,4 +80,11 @@ internal static partial class NativeMethods
 
     [LibraryImport("user32.dll", EntryPoint = "SendMessageW")]
     internal static partial nint SendMessage(nint hWnd, uint msg, nint wParam, nint lParam);
+
+    [LibraryImport("user32.dll")]
+    internal static partial int GetSystemMetrics(int nIndex);
+
+    [LibraryImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static partial bool SetWindowDisplayAffinity(nint hWnd, uint dwAffinity);
 }

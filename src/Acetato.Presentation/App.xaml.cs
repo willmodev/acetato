@@ -1,8 +1,10 @@
 using System.Windows;
 using System.Windows.Controls;
 using Acetato.Application.Abstractions;
+using Acetato.Application.Capture;
 using Acetato.Application.Drawing;
 using Acetato.Application.Overlay;
+using Acetato.Infrastructure.Capture;
 using Acetato.Infrastructure.Hotkeys;
 using Acetato.Infrastructure.Overlay;
 using Acetato.Presentation.Overlay;
@@ -102,6 +104,14 @@ public partial class App : System.Windows.Application
 
         // Estado del trazo activo (color/grosor) compartido por la sesión.
         services.AddSingleton<IDrawingSettings, DrawingSettings>();
+
+        // Captura de pantalla anotada (HU-12): reloj para el sello de tiempo,
+        // caso de uso, adaptadores de plataforma y aviso del sistema (toast).
+        services.AddSingleton(TimeProvider.System);
+        services.AddSingleton<ICaptureService, CaptureService>();
+        services.AddSingleton<IScreenCaptureService, GdiScreenCaptureService>();
+        services.AddSingleton<ICaptureDirectoryProvider, PicturesCaptureDirectoryProvider>();
+        services.AddSingleton<ICaptureNotifier, ToastCaptureNotifier>();
 
         // Vistas, su ViewModel y el adaptador de superficie.
         services.AddSingleton<OverlayViewModel>();

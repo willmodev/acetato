@@ -1,5 +1,8 @@
+using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows.Controls;
 using System.Windows.Ink;
+using Acetato.Application.Capture;
 using Acetato.Application.Drawing;
 using Acetato.Domain;
 using Acetato.Presentation.Overlay;
@@ -18,6 +21,7 @@ namespace Acetato.Presentation.ViewModels;
 public sealed partial class OverlayViewModel : ObservableObject, IDisposable
 {
     private readonly IDrawingSettings _settings;
+    private readonly ICaptureService _capture;
     private readonly UndoStack _undo;
 
     /// <summary>Trazos dibujados; enlazado a <c>InkCanvas.Strokes</c>.</summary>
@@ -41,9 +45,10 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private InkCanvasEditingMode _editingMode = InkCanvasEditingMode.Ink;
 
-    public OverlayViewModel(IDrawingSettings settings)
+    public OverlayViewModel(IDrawingSettings settings, ICaptureService capture)
     {
         _settings = settings;
+        _capture = capture;
         _settings.Changed += OnSettingsChanged;
         _undo = new UndoStack(Strokes);
         SyncAttributes();
@@ -73,6 +78,24 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
     /// <summary>Cambia a la siguiente herramienta del anillo (HU-11).</summary>
     [RelayCommand]
     private void CycleTool() => _settings.CycleTool();
+
+    /// <summary>
+    /// Guarda la pantalla anotada como PNG (HU-12); el caso de uso emite el aviso
+    /// del sistema. Se tragan fallas raras de E/S o GDI para no dejar la tarea sin
+    /// observar.
+    /// </summary>
+    [RelayCommand]
+    private async Task CaptureAsync()
+    {
+        try
+        {
+            await _capture.CaptureAsync().ConfigureAwait(true);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ExternalException)
+        {
+            // Falla rara de E/S o GDI: la captura no se realiza.
+        }
+    }
 
     private void OnSettingsChanged(object? sender, EventArgs e)
     {
