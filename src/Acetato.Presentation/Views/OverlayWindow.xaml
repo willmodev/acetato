@@ -9,7 +9,7 @@
         Background="Transparent"
         ShowInTaskbar="False"
         Topmost="True"
-        WindowState="Maximized">
+        WindowStartupLocation="Manual">
 
     <!--
       Capa de dibujo a pantalla completa (HU-03). El InkCanvas captura y renderiza

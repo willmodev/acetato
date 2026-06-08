@@ -9,27 +9,25 @@ namespace Acetato.Application.Tests;
 public sealed class OverlayControllerTests
 {
     private readonly IOverlaySurface _surface = Substitute.For<IOverlaySurface>();
-    private readonly IOverlayWindowStyler _styler = Substitute.For<IOverlayWindowStyler>();
     private readonly IToolbarSurface _toolbar = Substitute.For<IToolbarSurface>();
     private readonly IToolbarWindowStyler _toolbarStyler = Substitute.For<IToolbarWindowStyler>();
 
-    private OverlayController CreateController() => new(_surface, _styler, _toolbar, _toolbarStyler);
+    private OverlayController CreateController() => new(_surface, _toolbar, _toolbarStyler);
 
     [Fact]
     public void Toggle_when_hidden_shows_applies_styles_and_enters_drawing_mode()
     {
         _surface.IsVisible.Returns(false);
-        _surface.Handle.Returns(new nint(42));
         var controller = CreateController();
 
         controller.Toggle();
 
         _surface.Received(1).Show();
         _surface.DidNotReceive().Hide();
-        _styler.Received(1).ApplyOverlayStyles(new nint(42));
+        _surface.Received(1).ApplyStyles();
         controller.IsDrawingMode.Should().BeTrue();
         // Modo dibujo => la capa captura los clics => sin click-through.
-        _styler.Received(1).SetClickThrough(new nint(42), false);
+        _surface.Received(1).SetClickThrough(false);
     }
 
     [Fact]
@@ -42,7 +40,7 @@ public sealed class OverlayControllerTests
 
         _surface.Received(1).Hide();
         _surface.DidNotReceive().Show();
-        _styler.DidNotReceive().ApplyOverlayStyles(Arg.Any<nint>());
+        _surface.DidNotReceive().ApplyStyles();
     }
 
     [Fact]
@@ -109,49 +107,35 @@ public sealed class OverlayControllerTests
     [Fact]
     public void Set_normal_mode_enables_click_through()
     {
-        _surface.Handle.Returns(new nint(7));
         var controller = CreateController();
 
         controller.SetDrawingMode(false);
 
         controller.IsDrawingMode.Should().BeFalse();
-        _styler.Received(1).SetClickThrough(new nint(7), true);
+        _surface.Received(1).SetClickThrough(true);
     }
 
     [Fact]
     public void Set_drawing_mode_disables_click_through()
     {
-        _surface.Handle.Returns(new nint(7));
         var controller = CreateController();
 
         controller.SetDrawingMode(true);
 
         controller.IsDrawingMode.Should().BeTrue();
-        _styler.Received(1).SetClickThrough(new nint(7), false);
+        _surface.Received(1).SetClickThrough(false);
     }
 
     [Fact]
-    public void Styles_are_applied_only_once_across_multiple_shows()
+    public void Overlay_styles_are_applied_each_time_it_is_shown()
     {
         _surface.IsVisible.Returns(false);
-        _surface.Handle.Returns(new nint(7));
         var controller = CreateController();
 
         controller.Toggle();
         controller.Toggle();
 
-        _styler.Received(1).ApplyOverlayStyles(Arg.Any<nint>());
-    }
-
-    [Fact]
-    public void Mode_is_not_applied_when_handle_is_not_ready()
-    {
-        _surface.Handle.Returns(nint.Zero);
-        var controller = CreateController();
-
-        controller.SetDrawingMode(true);
-
-        controller.IsDrawingMode.Should().BeTrue();
-        _styler.DidNotReceive().SetClickThrough(Arg.Any<nint>(), Arg.Any<bool>());
+        // La idempotencia vive ahora en la superficie; el controlador la invoca al mostrar.
+        _surface.Received(2).ApplyStyles();
     }
 }

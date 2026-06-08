@@ -47,8 +47,24 @@ internal static partial class NativeMethods
     internal const int SmCxScreen = 0;
     internal const int SmCyScreen = 1;
 
+    // Métricas del escritorio virtual (HU-09): origen y tamaño que abarcan todos
+    // los monitores. El origen puede ser negativo si hay pantallas a la izquierda
+    // o arriba del primario.
+    internal const int SmXVirtualScreen = 76;
+    internal const int SmYVirtualScreen = 77;
+    internal const int SmCxVirtualScreen = 78;
+    internal const int SmCyVirtualScreen = 79;
+
+    // Comando de presentación para SetWindowPlacement: maximizar (HU-09).
+    internal const uint SwShowMaximized = 3;
+
     // Afinidad de presentación: la barra queda visible pero fuera de toda captura (HU-12).
     internal const uint WdaExcludeFromCapture = 0x00000011;
+
+    // Fondo del sistema (pulido): blur acrílico de la barra en Windows 11 22H2+.
+    // En versiones previas la llamada DWM devuelve error y no surte efecto.
+    internal const uint DwmwaSystemBackdropType = 38;
+    internal const int DwmsbtTransientWindow = 3; // Acrylic, apropiado para flotantes
 
     [LibraryImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
@@ -87,4 +103,20 @@ internal static partial class NativeMethods
     [LibraryImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     internal static partial bool SetWindowDisplayAffinity(nint hWnd, uint dwAffinity);
+
+    // Posición del cursor (HU-09) para elegir el monitor activo (barra/deshacer).
+    [LibraryImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static partial bool GetCursorPos(out NativePoint lpPoint);
+
+    // Posiciona/maximiza una ventana en píxeles físicos (HU-09): rcNormalPosition
+    // en coordenadas del monitor objetivo + SW_SHOWMAXIMIZED → Windows maximiza en
+    // ese monitor y WPF adopta su DPI. Solo 2 parámetros (a diferencia de
+    // MoveWindow/SetWindowPos, que romperían S107).
+    [LibraryImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static partial bool SetWindowPlacement(nint hWnd, ref WindowPlacementNative lpwndpl);
+
+    [LibraryImport("dwmapi.dll")]
+    internal static partial int DwmSetWindowAttribute(nint hwnd, uint attribute, ref int pvAttribute, uint cbAttribute);
 }

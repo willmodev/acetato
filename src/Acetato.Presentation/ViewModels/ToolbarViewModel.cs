@@ -1,6 +1,7 @@
 using System.Windows.Media;
 using Acetato.Application.Abstractions;
 using Acetato.Application.Drawing;
+using Acetato.Application.Overlay;
 using Acetato.Domain;
 using Acetato.Presentation.Resources;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -9,8 +10,10 @@ using CommunityToolkit.Mvvm.Input;
 namespace Acetato.Presentation.ViewModels;
 
 /// <summary>
-/// ViewModel de la barra flotante (HU-10). Reutiliza los comandos del
-/// <see cref="OverlayViewModel"/> y refleja el estado activo (tinta/grosor) para
+/// ViewModel de la barra flotante (HU-10). Las acciones de dibujo (limpiar,
+/// deshacer, captura) van por el <see cref="OverlayBroadcaster"/>, que las
+/// reparte entre las panes de cada monitor (HU-09); color/grosor/herramienta van
+/// por el estado compartido. Refleja el estado activo (tinta/grosor) para
 /// resaltarlo con el acento. Gestiona los popovers y el cierre. El code-behind
 /// solo llama a InitializeComponent.
 /// </summary>
@@ -18,6 +21,7 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
 {
     private readonly IDrawingSettings _settings;
     private readonly IOverlayController _controller;
+    private readonly OverlayBroadcaster _broadcaster;
 
     /// <summary>Pincel de la tinta activa (para el botón de color de la barra).</summary>
     [ObservableProperty]
@@ -32,12 +36,12 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
     private bool _isThicknessPopoverOpen;
 
     public ToolbarViewModel(
-        OverlayViewModel overlay,
+        OverlayBroadcaster broadcaster,
         IDrawingSettings settings,
         IOverlayController controller,
         IWindowDragHandler dragHandler)
     {
-        Overlay = overlay;
+        _broadcaster = broadcaster;
         _settings = settings;
         _controller = controller;
         DragHandler = dragHandler;
@@ -47,9 +51,6 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
         _settings.Changed += OnSettingsChanged;
         SyncActiveState();
     }
-
-    /// <summary>Comandos de dibujo compartidos (deshacer, limpiar, color…).</summary>
-    public OverlayViewModel Overlay { get; }
 
     /// <summary>Inicia el arrastre nativo de la ventana desde el grip.</summary>
     public IWindowDragHandler DragHandler { get; }
@@ -98,6 +99,18 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
     /// <summary>Selecciona la herramienta activa (HU-11).</summary>
     [RelayCommand]
     private void PickTool(ToolKind tool) => _settings.SelectTool(tool);
+
+    /// <summary>Deshace el último trazo de la pantalla bajo el cursor (HU-07/HU-09).</summary>
+    [RelayCommand]
+    private void Undo() => _broadcaster.Undo();
+
+    /// <summary>Borra los trazos de todas las pantallas (HU-04/HU-09).</summary>
+    [RelayCommand]
+    private void Clear() => _broadcaster.Clear();
+
+    /// <summary>Guarda el escritorio virtual anotado como PNG (HU-12).</summary>
+    [RelayCommand]
+    private Task Capture() => _broadcaster.CaptureAsync();
 
     /// <summary>Oculta el overlay y la barra (botón Cerrar).</summary>
     [RelayCommand]

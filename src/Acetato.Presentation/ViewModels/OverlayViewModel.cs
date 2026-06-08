@@ -1,8 +1,5 @@
-using System.IO;
-using System.Runtime.InteropServices;
 using System.Windows.Controls;
 using System.Windows.Ink;
-using Acetato.Application.Capture;
 using Acetato.Application.Drawing;
 using Acetato.Domain;
 using Acetato.Presentation.Overlay;
@@ -13,18 +10,19 @@ using CommunityToolkit.Mvvm.Input;
 namespace Acetato.Presentation.ViewModels;
 
 /// <summary>
-/// ViewModel del overlay. Posee los trazos del usuario (enlazados al InkCanvas)
-/// y los atributos de dibujo activos (color/grosor). Traduce el estado agnóstico
-/// de <see cref="IDrawingSettings"/> a los tipos de WPF. El code-behind solo
-/// llama a InitializeComponent.
+/// ViewModel de una pane del overlay (una por monitor, HU-09). Posee los trazos
+/// de SU pantalla (enlazados al InkCanvas) y los atributos de dibujo activos
+/// (color/grosor). Traduce el estado agnóstico de <see cref="IDrawingSettings"/>
+/// —compartido entre panes— a los tipos de WPF. Las acciones que abarcan varias
+/// pantallas (limpiar, deshacer, captura, color, herramienta) las orquesta el
+/// OverlayBroadcaster. El code-behind solo llama a InitializeComponent.
 /// </summary>
 public sealed partial class OverlayViewModel : ObservableObject, IDisposable
 {
     private readonly IDrawingSettings _settings;
-    private readonly ICaptureService _capture;
     private readonly UndoStack _undo;
 
-    /// <summary>Trazos dibujados; enlazado a <c>InkCanvas.Strokes</c>.</summary>
+    /// <summary>Trazos dibujados en esta pantalla; enlazado a <c>InkCanvas.Strokes</c>.</summary>
     public StrokeCollection Strokes { get; } = [];
 
     /// <summary>
@@ -45,57 +43,30 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private InkCanvasEditingMode _editingMode = InkCanvasEditingMode.Ink;
 
-    public OverlayViewModel(IDrawingSettings settings, ICaptureService capture)
+    public OverlayViewModel(IDrawingSettings settings)
     {
         _settings = settings;
-        _capture = capture;
         _settings.Changed += OnSettingsChanged;
         _undo = new UndoStack(Strokes);
         SyncAttributes();
         SyncTool();
     }
 
-    /// <summary>Borra todos los trazos. No falla si la capa ya está vacía.</summary>
+    /// <summary>Borra los trazos de esta pantalla. No falla si ya está vacía (HU-04).</summary>
     [RelayCommand]
     private void Clear() => Strokes.Clear();
 
-    /// <summary>Cambia la tinta del próximo trazo (HU-05).</summary>
-    [RelayCommand]
-    private void SetColor(TintaColor color) => _settings.SelectColor(color);
-
-    /// <summary>Sube un paso de grosor (HU-06).</summary>
+    /// <summary>Sube un paso de grosor (HU-06); enlazado a la rueda del mouse.</summary>
     [RelayCommand]
     private void IncreaseThickness() => _settings.IncreaseThickness();
 
-    /// <summary>Baja un paso de grosor (HU-06).</summary>
+    /// <summary>Baja un paso de grosor (HU-06); enlazado a la rueda del mouse.</summary>
     [RelayCommand]
     private void DecreaseThickness() => _settings.DecreaseThickness();
 
-    /// <summary>Deshace el último trazo (HU-07).</summary>
+    /// <summary>Deshace el último trazo de esta pantalla (HU-07).</summary>
     [RelayCommand]
     private void Undo() => _undo.UndoLast();
-
-    /// <summary>Cambia a la siguiente herramienta del anillo (HU-11).</summary>
-    [RelayCommand]
-    private void CycleTool() => _settings.CycleTool();
-
-    /// <summary>
-    /// Guarda la pantalla anotada como PNG (HU-12); el caso de uso emite el aviso
-    /// del sistema. Se tragan fallas raras de E/S o GDI para no dejar la tarea sin
-    /// observar.
-    /// </summary>
-    [RelayCommand]
-    private async Task CaptureAsync()
-    {
-        try
-        {
-            await _capture.CaptureAsync().ConfigureAwait(true);
-        }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ExternalException)
-        {
-            // Falla rara de E/S o GDI: la captura no se realiza.
-        }
-    }
 
     private void OnSettingsChanged(object? sender, EventArgs e)
     {

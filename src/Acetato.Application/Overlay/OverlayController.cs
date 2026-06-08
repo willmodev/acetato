@@ -4,30 +4,27 @@ namespace Acetato.Application.Overlay;
 
 /// <summary>
 /// Orquesta la visibilidad y el modo del overlay y de la barra flotante
-/// (HU-01/HU-02/HU-10). Aplica los estilos nativos de cada superficie la primera
-/// vez que obtiene manejador. Al mostrarse arranca en modo dibujo (la capa
-/// captura los clics); el modo normal activa el click-through del overlay. La
-/// barra se muestra y oculta junto al overlay. Es agnóstico de plataforma:
-/// depende solo de puertos.
+/// (HU-01/HU-02/HU-10). La superficie del overlay puede agrupar varias ventanas
+/// (una por monitor, HU-09); este controlador es agnóstico de su número: delega
+/// el estilado y el click-through en la propia superficie. Al mostrarse arranca
+/// en modo dibujo (la capa captura los clics); el modo normal activa el
+/// click-through. La barra se muestra y oculta junto al overlay. Es agnóstico de
+/// plataforma: depende solo de puertos.
 /// </summary>
 public sealed class OverlayController : IOverlayController
 {
     private readonly IOverlaySurface _surface;
-    private readonly IOverlayWindowStyler _styler;
     private readonly IToolbarSurface _toolbar;
     private readonly IToolbarWindowStyler _toolbarStyler;
-    private bool _overlayStylesApplied;
     private bool _toolbarStylesApplied;
     private bool _drawingMode;
 
     public OverlayController(
         IOverlaySurface surface,
-        IOverlayWindowStyler styler,
         IToolbarSurface toolbar,
         IToolbarWindowStyler toolbarStyler)
     {
         _surface = surface;
-        _styler = styler;
         _toolbar = toolbar;
         _toolbarStyler = toolbarStyler;
     }
@@ -50,15 +47,8 @@ public sealed class OverlayController : IOverlayController
     public void SetDrawingMode(bool enabled)
     {
         _drawingMode = enabled;
-
-        nint handle = _surface.Handle;
-        if (handle == nint.Zero)
-        {
-            return;
-        }
-
         // Modo dibujo = la capa captura los clics = sin click-through.
-        _styler.SetClickThrough(handle, !enabled);
+        _surface.SetClickThrough(!enabled);
     }
 
     private void HideAll()
@@ -78,18 +68,19 @@ public sealed class OverlayController : IOverlayController
 
     private void EnsureNativeStyles()
     {
-        _overlayStylesApplied = TryApplyStyles(_overlayStylesApplied, _surface.Handle, _styler.ApplyOverlayStyles);
-        _toolbarStylesApplied = TryApplyStyles(_toolbarStylesApplied, _toolbar.Handle, _toolbarStyler.ApplyToolbarStyles);
+        // La superficie aplica sus estilos de forma idempotente a cada ventana.
+        _surface.ApplyStyles();
+        _toolbarStylesApplied = TryApplyToolbarStyles(_toolbarStylesApplied, _toolbar.Handle);
     }
 
-    private static bool TryApplyStyles(bool alreadyApplied, nint handle, Action<nint> apply)
+    private bool TryApplyToolbarStyles(bool alreadyApplied, nint handle)
     {
         if (alreadyApplied || handle == nint.Zero)
         {
             return alreadyApplied;
         }
 
-        apply(handle);
+        _toolbarStyler.ApplyToolbarStyles(handle);
         return true;
     }
 }

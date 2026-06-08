@@ -6,6 +6,8 @@
     <RootNamespace>Acetato.Infrastructure</RootNamespace>
     <!-- Requerido por el código generado de [LibraryImport] (P/Invoke source-gen) -->
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!-- Enumeración fiable de monitores vía System.Windows.Forms.Screen (HU-09) -->
+    <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
   <ItemGroup>

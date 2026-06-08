@@ -11,7 +11,7 @@
         ShowActivated="False"
         Topmost="True"
         SizeToContent="WidthAndHeight"
-        WindowStartupLocation="CenterScreen"
+        WindowStartupLocation="Manual"
         FontFamily="{StaticResource Font.Ui}">
 
     <!-- Barra glass: único elemento visible (principio #1, CERO distracción). -->
@@ -87,17 +87,17 @@
             <Rectangle Style="{StaticResource ToolDivider}" />
 
             <!-- Deshacer / Limpiar (funcionales) -->
-            <Button Style="{StaticResource ToolButton}" Command="{Binding Overlay.UndoCommand}" ToolTip="Deshacer">
+            <Button Style="{StaticResource ToolButton}" Command="{Binding UndoCommand}" ToolTip="Deshacer">
                 <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Undo}" />
             </Button>
-            <Button Style="{StaticResource ToolButton}" Command="{Binding Overlay.ClearCommand}" ToolTip="Limpiar todo">
+            <Button Style="{StaticResource ToolButton}" Command="{Binding ClearCommand}" ToolTip="Limpiar todo">
                 <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Clear}" />
             </Button>
 
             <Rectangle Style="{StaticResource ToolDivider}" />
 
             <!-- Captura (funcional, HU-12) / Ajustes (placeholder) -->
-            <Button Style="{StaticResource ToolButton}" Command="{Binding Overlay.CaptureCommand}" ToolTip="Captura">
+            <Button Style="{StaticResource ToolButton}" Command="{Binding CaptureCommand}" ToolTip="Captura">
                 <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Capture}" />
             </Button>
             <Button Style="{StaticResource ToolButton}" IsEnabled="False" ToolTip="Ajustes">
