@@ -12,6 +12,13 @@ public interface IOverlayCanvas
     /// <summary>Monitor que cubre este lienzo (píxeles físicos).</summary>
     public MonitorInfo Monitor { get; }
 
+    /// <summary>
+    /// Manejador nativo (HWND) de la ventana de esta pane. Permite que la barra
+    /// flotante se haga ventana "owned" de la pane de su monitor y quede siempre
+    /// por encima del lienzo sin pelear el orden Z (0 si aún no existe).
+    /// </summary>
+    public nint Handle { get; }
+
     /// <summary>Borra todos los trazos de este lienzo (HU-04).</summary>
     public void Clear();
 

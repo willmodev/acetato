@@ -10,9 +10,10 @@ namespace Acetato.Presentation.Overlay;
 /// Una ventana de overlay sobre un solo monitor (HU-09) con su propio
 /// <see cref="OverlayViewModel"/> (trazos/undo independientes). Implementa
 /// <see cref="IOverlayCanvas"/> para que el broadcaster dirija limpiar/deshacer
-/// por monitor. La ventana se posiciona y maximiza en píxeles FÍSICOS sobre su
-/// monitor (vía <see cref="IOverlayWindowPlacer"/>): en DIP, WPF la descolocaría
-/// en monitores con DPI distinto.
+/// por monitor. La ventana siembra su Left/Top en el monitor objetivo (para que WPF
+/// no la reubique al primario) y luego maximiza en píxeles FÍSICOS sobre ese monitor
+/// (vía <see cref="IOverlayWindowPlacer"/>), de modo que cubra el monitor correcto y
+/// adopte su DPI sin desfase del trazo, en escalado igual o mixto.
 /// </summary>
 public sealed class OverlayPane : IOverlayCanvas, IDisposable
 {
@@ -41,9 +42,10 @@ public sealed class OverlayPane : IOverlayCanvas, IDisposable
 
     public bool IsVisible => _window.IsVisible;
 
-    private nint Handle => new WindowInteropHelper(_window).Handle;
+    // Público para que la barra flotante se haga "owned" de esta pane (IOverlayCanvas).
+    public nint Handle => new WindowInteropHelper(_window).Handle;
 
-    public void Show()
+    public void Show(double primaryScale)
     {
         if (_shown)
         {
@@ -51,9 +53,16 @@ public sealed class OverlayPane : IOverlayCanvas, IDisposable
             return;
         }
 
+        // Sembrar Left/Top en el monitor objetivo (DIP con la escala del primario)
+        // ANTES de Show: en una ventana WPF layered (AllowsTransparency), si quedan en
+        // su valor por defecto (sobre el primario), WPF reubica la ventana al primario
+        // y pisa el SetWindowPlacement nativo → solo se dibuja en el principal. La barra
+        // flotante (misma clase de ventana) ya usa este sembrado y cae en su monitor.
+        _window.Left = DipConverter.ToDip(Monitor.X, primaryScale);
+        _window.Top = DipConverter.ToDip(Monitor.Y, primaryScale);
         _window.Show();
-        // Posicionar + maximizar en píxeles físicos sobre su monitor (síncrono tras
-        // Show → sin parpadeo perceptible; la capa es casi transparente).
+        // Maximizar en píxeles FÍSICOS sobre su monitor (síncrono tras Show); corrige
+        // el tamaño/DPI exactos tras el sembrado, también en DPI mixto.
         _placer.MaximizeOnMonitor(Handle, Monitor);
         _shown = true;
     }

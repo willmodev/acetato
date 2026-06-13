@@ -31,9 +31,12 @@ public sealed class MultiMonitorOverlaySurface : IOverlaySurface, IOverlayCanvas
     public void Show()
     {
         EnsurePanes();
+        // Escala del primario para sembrar la posición de cada pane antes de que WPF
+        // adopte el DPI por-monitor (igual que la barra flotante).
+        double primaryScale = DisplayMetrics.PrimaryScale(_monitors.GetMonitors());
         foreach (var pane in _panes)
         {
-            pane.Show();
+            pane.Show(primaryScale);
         }
     }
 
