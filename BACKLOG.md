@@ -332,6 +332,158 @@ Escenario: Capturar pantalla anotada
 
 ---
 
+#### HU-13 — Anotar con texto
+- **Épica:** EP-02 · **Prioridad:** Could · **Estimación:** 8
+- **Narrativa:**
+  Como usuario, quiero escribir texto sobre la pantalla, para etiquetar o explicar con palabras además de dibujar.
+
+**Criterios de aceptación**
+```
+Escenario: Colocar un cuadro de texto
+  Dado que seleccioné la herramienta "texto"
+  Cuando hago clic en un punto de la pantalla
+  Entonces aparece un cursor de edición en ese punto listo para escribir.
+
+Escenario: Confirmar el texto
+  Dado que estoy escribiendo en un cuadro de texto
+  Cuando hago clic fuera del cuadro o presiono Esc
+  Entonces el texto queda fijo en pantalla en esa posición.
+
+Escenario: El texto usa el estilo activo
+  Dado que tengo un color seleccionado
+  Cuando escribo un texto nuevo
+  Entonces el texto se renderiza con ese color
+  Y los textos anteriores conservan su color original.
+
+Escenario: Deshacer y limpiar afectan al texto
+  Dado que hay uno o más textos en pantalla
+  Cuando deshago o limpio
+  Entonces el texto se quita igual que un trazo.
+```
+**Notas técnicas:** `ToolKind.Text` e `Icon.Text` ya existen (placeholder `IsEnabled=false` en `ToolbarViewModel.BuildTools`). Reto arquitectónico: la `StrokeCollection` del `InkCanvas` solo almacena `Stroke` y `UndoStack` opera sobre ella; el texto necesita un modelo paralelo o un behavior dedicado (`EditingMode` no cubre la entrada de texto nativamente). El overlay **sí puede recibir foco de teclado** (no tiene `WS_EX_NOACTIVATE`, a diferencia de la barra). Integrar con `OverlayBroadcaster` (limpiar = todas las panes, deshacer = pane del cursor). El tamaño de fuente puede derivarse del grosor activo.
+
+---
+
+#### HU-14 — Seleccionar y mover anotaciones
+- **Épica:** EP-02 · **Prioridad:** Could · **Estimación:** 8
+- **Narrativa:**
+  Como usuario, quiero seleccionar un trazo o forma ya dibujado para moverlo o borrarlo, para corregir sin deshacer todo lo posterior.
+
+**Criterios de aceptación**
+```
+Escenario: Seleccionar una anotación
+  Dado que seleccioné la herramienta "seleccionar"
+  Cuando hago clic o trazo un lazo sobre un trazo existente
+  Entonces ese trazo queda marcado como seleccionado.
+
+Escenario: Mover la selección
+  Dado que tengo un trazo seleccionado
+  Cuando lo arrastro
+  Entonces el trazo se reubica
+  Y el resto de los trazos permanece intacto.
+
+Escenario: Borrar la selección
+  Dado que tengo un trazo seleccionado
+  Cuando presiono la tecla de borrar
+  Entonces solo se elimina lo seleccionado
+  Y el resto permanece.
+```
+**Notas técnicas:** `ToolKind.Select` e `Icon.Select` ya existen (placeholder). Encaja con el modo nativo `InkCanvasEditingMode.Select` de WPF (lazo + mover + redimensionar + borrar selección), mapeable en `OverlayViewModel.ToEditingMode`. Mover/borrar deberían integrarse con `UndoStack` / Rehacer (HU-17) para ser deshacibles.
+
+---
+
+#### HU-15 — Resaltador (trazo translúcido)
+- **Épica:** EP-02 · **Prioridad:** Could · **Estimación:** 2
+- **Narrativa:**
+  Como usuario, quiero un resaltador semitransparente, para enfatizar sin tapar el contenido de abajo.
+
+**Criterios de aceptación**
+```
+Escenario: Trazar con el resaltador
+  Dado que seleccioné la herramienta "resaltador"
+  Cuando dibujo a mano alzada
+  Entonces el trazo es translúcido y deja ver lo que hay debajo.
+
+Escenario: Respeta color y grosor
+  Dado que cambié el color o el grosor
+  Cuando dibujo con el resaltador
+  Entonces el nuevo trazo refleja ese color y grosor
+  Y los trazos previos no cambian.
+```
+**Notas técnicas:** `ToolKind.Marker` ya está en el enum pero **no se lista** en `BuildTools` ni tiene icono. Requiere: entrada en la barra, `Icon.Marker` (Lucide *highlighter*) portado a `Resources/Icons.xaml`, y un `DrawingAttributes` con `IsHighlighter=true` (o alfa reducido) en `OverlayViewModel`. `EditingMode=Ink`. Decidir si entra al `ToolRing` (ciclo `Ctrl+Alt+Espacio`).
+
+---
+
+#### HU-16 — Dibujar elipses / círculos
+- **Épica:** EP-02 · **Prioridad:** Could · **Estimación:** 3
+- **Narrativa:**
+  Como usuario, quiero dibujar elipses y círculos, para encerrar y resaltar regiones.
+
+**Criterios de aceptación**
+```
+Escenario: Dibujar una elipse
+  Dado que seleccioné la herramienta "elipse"
+  Cuando hago clic y arrastro
+  Entonces se dibuja una elipse inscrita en el rectángulo definido por el arrastre.
+
+Escenario: La elipse es un único trazo
+  Dado que dibujé una elipse
+  Cuando deshago una vez
+  Entonces la elipse se quita entera
+  Y respeta el color y grosor activos.
+```
+**Notas técnicas:** `ToolKind.Ellipse` ya está en el enum (sin uso). Requiere: caso `Ellipse` en `ShapeBuilder.Build` (polilínea que aproxima la elipse, cerrada — mismo patrón que `Rectangle`), añadir `Ellipse` a `ShapeDrawingBehavior.IsShapeTool`, entrada en la barra con `Icon.Ellipse` (Lucide *circle*) e incorporarla al `ToolRing`. Bajo riesgo: reutiliza el pipeline de formas existente.
+
+---
+
+#### HU-17 — Rehacer el último trazo deshecho
+- **Épica:** EP-02 · **Prioridad:** Could · **Estimación:** 3
+- **Narrativa:**
+  Como usuario, quiero rehacer un trazo que deshice, para recuperarlo si me arrepentí.
+
+**Criterios de aceptación**
+```
+Escenario: Rehacer tras deshacer
+  Dado que deshice un trazo
+  Cuando presiono el atajo de rehacer
+  Entonces el último trazo eliminado vuelve a aparecer.
+
+Escenario: Un trazo nuevo invalida el rehacer
+  Dado que deshice un trazo
+  Cuando dibujo un trazo nuevo
+  Entonces ya no es posible rehacer el trazo anterior.
+
+Escenario: Rehacer sin nada que rehacer
+  Dado que no hay trazos deshechos pendientes
+  Cuando presiono el atajo de rehacer
+  Entonces no ocurre ningún error.
+```
+**Notas técnicas:** HU-07 dejó rehacer **fuera de alcance** explícitamente. `UndoStack` (Presentation) hoy solo quita el último; ampliarlo con pila de rehacer (o sustituirlo). Nuevo `HotkeyAction.Redo` + fila en `HotkeyBindingTable` (p. ej. `Ctrl+Alt+Y`), enrutado por `OverlayBroadcaster` a la pane del cursor; conectar el botón "rehacer" de la barra si está como placeholder. "Limpiar todo" debe vaciar también la pila de rehacer.
+
+---
+
+#### HU-18 — Blur acrílico/Mica real en la barra
+- **Épica:** EP-03 · **Prioridad:** Could · **Estimación:** 5
+- **Narrativa:**
+  Como usuario, quiero que la barra tenga un fondo con desenfoque real (acrílico), para que se sienta nativa de Windows 11 y discreta sobre cualquier fondo.
+
+**Criterios de aceptación**
+```
+Escenario: Acrílico real en Windows compatible
+  Dado un Windows 11 con soporte de backdrop del sistema
+  Cuando se muestra la barra
+  Entonces su fondo presenta acrílico/Mica real (no solo un brush translúcido).
+
+Escenario: Degradación elegante
+  Dado un Windows sin soporte de backdrop
+  Cuando se muestra la barra
+  Entonces cae al glass opaco de respaldo sin romperse
+  Y los popovers y las esquinas redondeadas siguen funcionando.
+```
+**Notas técnicas:** hoy el `DwmSetWindowAttribute(DWMWA_SYSTEMBACKDROP_TYPE)` es best-effort y **no compone** con `AllowsTransparency=True` (esquinas redondeadas). Trade-off a evaluar: el acrílico real exige quitar `AllowsTransparency`, lo que afecta esquinas redondeadas y los `Popup` de color/grosor → riesgo. Consultar el design system (`/acetato-design`) para el look glass de marca.
+
+---
+
 ## Definition of Done (global)
 
 Una historia se considera **terminada** cuando:
@@ -351,3 +503,6 @@ Una historia se considera **terminada** cuando:
 2. **Iteración 1:** HU-05 → HU-06 → HU-07 (herramientas básicas de dibujo).
 3. **Iteración 2:** HU-08 (integración con el sistema).
 4. **Backlog futuro:** HU-09, HU-10, HU-11, HU-12.
+5. **Iteración 5 — pulido de herramientas:** primero las rápidas HU-15, HU-16, HU-17
+   (resaltador, elipse, rehacer); luego las mayores HU-13, HU-14 (texto, seleccionar);
+   HU-18 (blur acrílico real) al final como pulido visual.
