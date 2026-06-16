@@ -44,3 +44,9 @@ publish/
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# ---- Notas de trabajo locales (no parte del repo) ----
+PROXIMOS-PASOS.md
+
+# ---- Skills: copia duplicada del instalador (la canónica vive en .claude/skills) ----
+.agents/
