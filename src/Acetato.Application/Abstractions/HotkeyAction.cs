@@ -43,4 +43,7 @@ public enum HotkeyAction
 
     /// <summary>Guardar la pantalla anotada como PNG (HU-12).</summary>
     Capture,
+
+    /// <summary>Seleccionar la herramienta Texto (HU-13).</summary>
+    SelectTextTool,
 }

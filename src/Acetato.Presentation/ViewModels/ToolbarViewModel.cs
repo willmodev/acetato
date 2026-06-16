@@ -152,7 +152,7 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
         new(ToolKind.Line, "Línea", Glyph("Icon.Line"), true),
         new(ToolKind.Arrow, "Flecha", Glyph("Icon.Arrow"), true),
         new(ToolKind.Rectangle, "Rectángulo", Glyph("Icon.Rectangle"), true),
-        new(ToolKind.Text, "Texto", Glyph("Icon.Text"), false),
+        new(ToolKind.Text, "Texto", Glyph("Icon.Text"), true),
     ];
 
     // Resuelve la geometría del icono desde los recursos (igual que las tintas).

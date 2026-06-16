@@ -10,13 +10,21 @@ public sealed class ToolRingTests
     public void Order_is_the_drawing_tool_cycle()
     {
         ToolRing.Order.Should().Equal(
-            ToolKind.Pencil, ToolKind.Line, ToolKind.Arrow, ToolKind.Rectangle, ToolKind.Eraser);
+            ToolKind.Pencil, ToolKind.Line, ToolKind.Arrow,
+            ToolKind.Rectangle, ToolKind.Text, ToolKind.Eraser);
     }
 
     [Fact]
     public void Next_advances_to_the_following_tool()
     {
         ToolRing.Next(ToolKind.Pencil).Should().Be(ToolKind.Line);
+    }
+
+    [Fact]
+    public void Next_cycles_through_text_before_the_eraser()
+    {
+        ToolRing.Next(ToolKind.Rectangle).Should().Be(ToolKind.Text);
+        ToolRing.Next(ToolKind.Text).Should().Be(ToolKind.Eraser);
     }
 
     [Fact]
@@ -28,6 +36,6 @@ public sealed class ToolRingTests
     [Fact]
     public void Next_from_a_tool_outside_the_ring_returns_the_first()
     {
-        ToolRing.Next(ToolKind.Text).Should().Be(ToolKind.Pencil);
+        ToolRing.Next(ToolKind.Marker).Should().Be(ToolKind.Pencil);
     }
 }

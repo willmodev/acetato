@@ -1,5 +1,7 @@
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Ink;
+using System.Windows.Media;
 using Acetato.Application.Drawing;
 using Acetato.Domain;
 using Acetato.Presentation.Overlay;
@@ -20,7 +22,7 @@ namespace Acetato.Presentation.ViewModels;
 public sealed partial class OverlayViewModel : ObservableObject, IDisposable
 {
     private readonly IDrawingSettings _settings;
-    private readonly UndoStack _undo;
+    private readonly AnnotationHistory _history;
 
     /// <summary>Trazos dibujados en esta pantalla; enlazado a <c>InkCanvas.Strokes</c>.</summary>
     public StrokeCollection Strokes { get; } = [];
@@ -36,6 +38,12 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private ToolKind _activeTool = ToolKind.Pencil;
 
+    /// <summary>Color de la tinta activa para el texto; igual que los trazos (HU-13).</summary>
+    public Color ActiveInkColor => ActiveAttributes.Color;
+
+    /// <summary>Tamaño de fuente del texto, derivado del grosor activo (HU-13).</summary>
+    public double ActiveFontSize => FontScale.FromThicknessIndex(_settings.ThicknessIndex);
+
     /// <summary>
     /// Modo de edición del InkCanvas según la herramienta: lápiz = tinta libre,
     /// borrador = borrar trazos, formas = ninguno (las dibuja el behavior).
@@ -47,14 +55,17 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
     {
         _settings = settings;
         _settings.Changed += OnSettingsChanged;
-        _undo = new UndoStack(Strokes);
+        _history = new AnnotationHistory(Strokes);
         SyncAttributes();
         SyncTool();
     }
 
-    /// <summary>Borra los trazos de esta pantalla. No falla si ya está vacía (HU-04).</summary>
+    /// <summary>Borra trazos y textos de esta pantalla. No falla si ya está vacía (HU-04/HU-13).</summary>
     [RelayCommand]
-    private void Clear() => Strokes.Clear();
+    private void Clear() => _history.Clear();
+
+    /// <summary>Registra un texto recién fijado en el historial de esta pane (HU-13).</summary>
+    public void RecordText(InkCanvas canvas, UIElement element) => _history.RecordText(canvas, element);
 
     /// <summary>Sube un paso de grosor (HU-06); enlazado a la rueda del mouse.</summary>
     [RelayCommand]
@@ -64,9 +75,9 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void DecreaseThickness() => _settings.DecreaseThickness();
 
-    /// <summary>Deshace el último trazo de esta pantalla (HU-07).</summary>
+    /// <summary>Deshace la última anotación (trazo o texto) de esta pantalla (HU-07/HU-13).</summary>
     [RelayCommand]
-    private void Undo() => _undo.UndoLast();
+    private void Undo() => _history.UndoLast();
 
     private void OnSettingsChanged(object? sender, EventArgs e)
     {
@@ -94,5 +105,9 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
         _ => InkCanvasEditingMode.None, // formas: las dibuja el behavior
     };
 
-    public void Dispose() => _settings.Changed -= OnSettingsChanged;
+    public void Dispose()
+    {
+        _settings.Changed -= OnSettingsChanged;
+        _history.Dispose();
+    }
 }

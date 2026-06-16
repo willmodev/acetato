@@ -84,4 +84,8 @@
     <sys:Double x:Key="Text.Kbd">11</sys:Double>
     <sys:Double x:Key="Text.Section">10</sys:Double>
 
+    <!-- Anotaciones de texto (HU-13): familia de marca (Font.Ui) + peso legible
+         sobre cualquier fondo. El color y el tamaño salen del estado de dibujo. -->
+    <FontWeight x:Key="Annotation.FontWeight">SemiBold</FontWeight>
+
 </ResourceDictionary>

@@ -79,6 +79,14 @@ public sealed class OverlayBroadcasterTests
     }
 
     [Fact]
+    public void SelectTool_updates_the_shared_settings()
+    {
+        CreateBroadcaster().SelectTool(ToolKind.Text);
+
+        _settings.Received(1).SelectTool(ToolKind.Text);
+    }
+
+    [Fact]
     public async Task CaptureAsync_invokes_the_capture_service()
     {
         _capture.CaptureAsync().Returns(new CaptureResult("ruta.png"));

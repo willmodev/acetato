@@ -51,6 +51,9 @@ public sealed class OverlayBroadcaster
     /// <summary>Avanza a la siguiente herramienta del anillo (HU-11).</summary>
     public void CycleTool() => _settings.CycleTool();
 
+    /// <summary>Selecciona una herramienta concreta; afecta a todas las pantallas (HU-13).</summary>
+    public void SelectTool(ToolKind tool) => _settings.SelectTool(tool);
+
     /// <summary>
     /// Guarda el escritorio virtual anotado como PNG (HU-12). Se tragan fallas
     /// raras de E/S o GDI para no dejar la tarea sin observar.

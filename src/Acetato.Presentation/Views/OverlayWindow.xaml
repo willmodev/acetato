@@ -38,5 +38,6 @@
                DefaultDrawingAttributes="{Binding ActiveAttributes}"
                behaviors:ThicknessWheelBehavior.IncreaseCommand="{Binding IncreaseThicknessCommand}"
                behaviors:ThicknessWheelBehavior.DecreaseCommand="{Binding DecreaseThicknessCommand}"
-               behaviors:ShapeDrawingBehavior.Tool="{Binding ActiveTool}" />
+               behaviors:ShapeDrawingBehavior.Tool="{Binding ActiveTool}"
+               behaviors:TextAnnotationBehavior.Tool="{Binding ActiveTool}" />
 </Window>

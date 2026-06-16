@@ -46,5 +46,6 @@ internal sealed class HotkeyActionRouter
         [HotkeyAction.Undo] = broadcaster.Undo,
         [HotkeyAction.CycleTool] = broadcaster.CycleTool,
         [HotkeyAction.Capture] = () => _ = broadcaster.CaptureAsync(),
+        [HotkeyAction.SelectTextTool] = () => broadcaster.SelectTool(ToolKind.Text),
     };
 }
