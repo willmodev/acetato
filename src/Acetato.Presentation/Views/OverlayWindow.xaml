@@ -32,12 +32,24 @@
       borrar trazos, formas = ninguno (las dibuja ShapeDrawingBehavior creando un
       Stroke por forma, así reutilizan undo/limpiar/color/grosor).
     -->
-    <InkCanvas Background="#01000000"
-               EditingMode="{Binding EditingMode}"
-               Strokes="{Binding Strokes}"
-               DefaultDrawingAttributes="{Binding ActiveAttributes}"
-               behaviors:ThicknessWheelBehavior.IncreaseCommand="{Binding IncreaseThicknessCommand}"
-               behaviors:ThicknessWheelBehavior.DecreaseCommand="{Binding DecreaseThicknessCommand}"
-               behaviors:ShapeDrawingBehavior.Tool="{Binding ActiveTool}"
-               behaviors:TextAnnotationBehavior.Tool="{Binding ActiveTool}" />
+    <!--
+      Grid de dos capas: el InkCanvas dibuja/captura los trazos; encima, LaserLayer
+      es una capa propia para el puntero láser (HU-15), efímera y fuera del historial.
+      La capa es IsHitTestVisible=False: el mouse llega al InkCanvas, donde el
+      LaserPointerBehavior lo escucha y dibuja el punto/estela en la capa.
+    -->
+    <Grid>
+        <InkCanvas x:Name="InkSurface"
+                   Background="#01000000"
+                   EditingMode="{Binding EditingMode}"
+                   Strokes="{Binding Strokes}"
+                   DefaultDrawingAttributes="{Binding ActiveAttributes}"
+                   behaviors:ThicknessWheelBehavior.IncreaseCommand="{Binding IncreaseThicknessCommand}"
+                   behaviors:ThicknessWheelBehavior.DecreaseCommand="{Binding DecreaseThicknessCommand}"
+                   behaviors:ShapeDrawingBehavior.Tool="{Binding ActiveTool}"
+                   behaviors:TextAnnotationBehavior.Tool="{Binding ActiveTool}"
+                   behaviors:LaserPointerBehavior.Tool="{Binding ActiveTool}"
+                   behaviors:LaserPointerBehavior.Layer="{Binding ElementName=LaserLayer}" />
+        <Canvas x:Name="LaserLayer" IsHitTestVisible="False" />
+    </Grid>
 </Window>

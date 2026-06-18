@@ -8,7 +8,7 @@ public enum ToolKind
 {
     Select,
     Pencil,
-    Marker,
+    Laser,
     Eraser,
     Arrow,
     Line,

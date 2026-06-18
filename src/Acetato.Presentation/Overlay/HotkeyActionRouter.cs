@@ -47,5 +47,6 @@ internal sealed class HotkeyActionRouter
         [HotkeyAction.CycleTool] = broadcaster.CycleTool,
         [HotkeyAction.Capture] = () => _ = broadcaster.CaptureAsync(),
         [HotkeyAction.SelectTextTool] = () => broadcaster.SelectTool(ToolKind.Text),
+        [HotkeyAction.SelectLaserTool] = () => broadcaster.SelectTool(ToolKind.Laser),
     };
 }

@@ -46,4 +46,7 @@ public enum HotkeyAction
 
     /// <summary>Seleccionar la herramienta Texto (HU-13).</summary>
     SelectTextTool,
+
+    /// <summary>Seleccionar la herramienta Láser (HU-15).</summary>
+    SelectLaserTool,
 }

@@ -170,7 +170,7 @@ public sealed class DrawingSettingsTests
 
         settings.CycleTool();
 
-        settings.SelectedTool.Should().Be(ToolKind.Line);
+        settings.SelectedTool.Should().Be(ToolKind.Laser);
     }
 
     [Fact]

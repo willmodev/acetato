@@ -392,25 +392,31 @@ Escenario: Borrar la selección
 
 ---
 
-#### HU-15 — Resaltador (trazo translúcido)
+#### HU-15 — Puntero láser
 - **Épica:** EP-02 · **Prioridad:** Could · **Estimación:** 2
 - **Narrativa:**
-  Como usuario, quiero un resaltador semitransparente, para enfatizar sin tapar el contenido de abajo.
+  Como usuario, quiero un puntero láser, para señalar regiones en vivo sin dejar marcas permanentes.
 
 **Criterios de aceptación**
 ```
-Escenario: Trazar con el resaltador
-  Dado que seleccioné la herramienta "resaltador"
-  Cuando dibujo a mano alzada
-  Entonces el trazo es translúcido y deja ver lo que hay debajo.
+Escenario: Señalar con el láser
+  Dado que seleccioné la herramienta "láser"
+  Cuando muevo el puntero sobre la pantalla
+  Entonces aparece un punto luminoso que sigue al cursor
+  Y deja una estela breve que se desvanece sola.
 
-Escenario: Respeta color y grosor
-  Dado que cambié el color o el grosor
-  Cuando dibujo con el resaltador
-  Entonces el nuevo trazo refleja ese color y grosor
-  Y los trazos previos no cambian.
+Escenario: No deja trazo permanente
+  Dado que estuve señalando con el láser
+  Cuando dejo de moverme o cambio de herramienta
+  Entonces el punto y la estela desaparecen por completo
+  Y no queda nada que deshacer en el historial.
+
+Escenario: Respeta el color de tinta activo
+  Dado que cambié el color
+  Cuando uso el láser
+  Entonces el punto y la estela reflejan ese color (con brillo/halo).
 ```
-**Notas técnicas:** `ToolKind.Marker` ya está en el enum pero **no se lista** en `BuildTools` ni tiene icono. Requiere: entrada en la barra, `Icon.Marker` (Lucide *highlighter*) portado a `Resources/Icons.xaml`, y un `DrawingAttributes` con `IsHighlighter=true` (o alfa reducido) en `OverlayViewModel`. `EditingMode=Ink`. Decidir si entra al `ToolRing` (ciclo `Ctrl+Alt+Espacio`).
+**Notas técnicas:** Reemplaza al antiguo "resaltador". El láser es **efímero**: no genera `Stroke` persistente ni entra al `UndoStack` (a diferencia del resto de herramientas). Requiere: `ToolKind.Laser` en el enum (renombrar `Marker`), entrada en la barra, `Icon.Laser` (Lucide *pointer* / *target*) portado a `Resources/Icons.xaml`. Implementación sugerida: capa de overlay propia que renderice un punto con halo (radial gradient) siguiendo el cursor + estela con puntos que decaen por tiempo (timer/animación), separada del `InkCanvas`. El `EditingMode` debe inhibir el dibujo de tinta mientras el láser está activo. Decidir si entra al `ToolRing` (ciclo `Ctrl+Alt+Espacio`).
 
 ---
 
@@ -504,5 +510,5 @@ Una historia se considera **terminada** cuando:
 3. **Iteración 2:** HU-08 (integración con el sistema).
 4. **Backlog futuro:** HU-09, HU-10, HU-11, HU-12.
 5. **Iteración 5 — pulido de herramientas:** primero las rápidas HU-15, HU-16, HU-17
-   (resaltador, elipse, rehacer); luego las mayores HU-13, HU-14 (texto, seleccionar);
+   (láser, elipse, rehacer); luego las mayores HU-13, HU-14 (texto, seleccionar);
    HU-18 (blur acrílico real) al final como pulido visual.

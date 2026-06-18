@@ -102,6 +102,7 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
     {
         ToolKind.Eraser => InkCanvasEditingMode.EraseByStroke,
         ToolKind.Pencil => InkCanvasEditingMode.Ink,
+        ToolKind.Laser => InkCanvasEditingMode.None, // láser efímero: lo dibuja el behavior
         _ => InkCanvasEditingMode.None, // formas: las dibuja el behavior
     };
 

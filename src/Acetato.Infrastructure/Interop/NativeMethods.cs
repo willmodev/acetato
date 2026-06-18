@@ -33,6 +33,7 @@ internal static partial class NativeMethods
     internal const uint Vk6 = 0x36;
     internal const uint VkD = 0x44;
     internal const uint VkE = 0x45;
+    internal const uint VkL = 0x4C; // Herramienta Láser (HU-15)
     internal const uint VkS = 0x53; // Captura (Snapshot, HU-12)
     internal const uint VkT = 0x54; // Herramienta Texto (HU-13)
     internal const uint VkZ = 0x5A;

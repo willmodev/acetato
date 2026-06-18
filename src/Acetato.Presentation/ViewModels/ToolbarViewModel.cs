@@ -148,6 +148,7 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
     [
         new(ToolKind.Select, "Seleccionar", Glyph("Icon.Select"), false),
         new(ToolKind.Pencil, "Lápiz", Glyph("Icon.Pencil"), true),
+        new(ToolKind.Laser, "Láser", Glyph("Icon.Laser"), true),
         new(ToolKind.Eraser, "Borrador", Glyph("Icon.Eraser"), true),
         new(ToolKind.Line, "Línea", Glyph("Icon.Line"), true),
         new(ToolKind.Arrow, "Flecha", Glyph("Icon.Arrow"), true),
