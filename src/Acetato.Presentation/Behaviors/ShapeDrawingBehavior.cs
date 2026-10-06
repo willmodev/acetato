@@ -108,7 +108,8 @@ public static class ShapeDrawingBehavior
             canvas.Strokes.Remove(session.Preview);
         }
 
-        var points = ShapeBuilder.Build(GetTool(canvas), session.Start, current);
+        var thickness = canvas.DefaultDrawingAttributes.Width;
+        var points = ShapeBuilder.Build(GetTool(canvas), session.Start, current, thickness);
         var stroke = BuildStroke(points, canvas.DefaultDrawingAttributes);
         canvas.Strokes.Add(stroke);
         session.Preview = stroke;
