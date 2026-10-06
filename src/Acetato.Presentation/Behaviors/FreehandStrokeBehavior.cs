@@ -1,7 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Ink;
-using System.Windows.Input;
 using Acetato.Domain;
 using Acetato.Presentation.Overlay;
 
@@ -9,21 +8,27 @@ namespace Acetato.Presentation.Behaviors;
 
 /// <summary>
 /// Comportamiento adjunto que da estilo a los trazos a mano alzada (HU-19) sin lógica
-/// en el code-behind. Con la herramienta Flecha, el InkCanvas traza libre como el
-/// lápiz; al soltar (<see cref="InkCanvas.StrokeCollected"/>) este behavior reemplaza
-/// el trazo por un <see cref="StyledStroke"/> con punta, o lo descarta si es más corto
-/// que la punta. La baja y el alta pasan por la colección de trazos, así que el
-/// historial neto es UNA entrada (o ninguna si se descarta).
+/// en el code-behind. El InkCanvas traza libre (lápiz y flecha); al soltar
+/// (<see cref="InkCanvas.StrokeCollected"/>) este behavior reemplaza el trazo por un
+/// <see cref="StyledStroke"/>: con punta si la herramienta es Flecha (o lo descarta si es
+/// más corto que la punta) y con el par de degradado si el modo Degradado está activo.
+/// Un lápiz sólido se deja tal cual. La baja y el alta pasan por la colección de trazos,
+/// así que el historial neto es UNA entrada (o ninguna si se descarta).
 /// </summary>
 public static class FreehandStrokeBehavior
 {
-    /// <summary>Herramienta activa (enlazada al ViewModel del overlay).</summary>
+    /// <summary>
+    /// Herramienta activa (enlazada al ViewModel del overlay). El valor por defecto es
+    /// Select, que no traza: así el primer enlace con Lápiz (la herramienta inicial) SÍ
+    /// dispara el cambio y engancha el manejador. Con Lápiz como defecto no habría
+    /// cambio y el degradado del lápiz no se aplicaría hasta cambiar de herramienta.
+    /// </summary>
     public static readonly DependencyProperty ToolProperty =
         DependencyProperty.RegisterAttached(
             "Tool",
             typeof(ToolKind),
             typeof(FreehandStrokeBehavior),
-            new PropertyMetadata(ToolKind.Pencil, OnToolChanged));
+            new PropertyMetadata(ToolKind.Select, OnToolChanged));
 
     public static void SetTool(DependencyObject element, ToolKind value)
     {
@@ -52,37 +57,44 @@ public static class FreehandStrokeBehavior
     private static void OnStrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e)
     {
         var canvas = (InkCanvas)sender;
-        if (GetTool(canvas) != ToolKind.Arrow)
+        var tool = GetTool(canvas);
+        var gradient = InkGradient.GetPair(canvas);
+        if (!NeedsStyling(tool, gradient))
         {
             return;
         }
 
-        ReplaceWithArrow(canvas, e.Stroke);
+        bool kept = Restyle(canvas, e.Stroke, tool, gradient);
+        if (kept && gradient is not null)
+        {
+            InkGradient.NotifyUsed(canvas);
+        }
     }
 
-    // Quita el trazo recién recogido y, si da para una flecha, pone en su lugar el
-    // trazo con punta (mismos puntos y atributos, ya clonados por el lienzo).
-    private static void ReplaceWithArrow(InkCanvas canvas, Stroke collected)
+    // La flecha siempre se reemplaza (lleva punta); el lápiz solo si hay degradado.
+    private static bool NeedsStyling(ToolKind tool, TintaGradiente? gradient) =>
+        tool == ToolKind.Arrow || (tool == ToolKind.Pencil && gradient is not null);
+
+    // Quita el trazo recién recogido y pone en su lugar el trazo con estilo (mismos
+    // puntos y atributos, ya clonados por el lienzo). Devuelve false si se descartó.
+    private static bool Restyle(InkCanvas canvas, Stroke collected, ToolKind tool, TintaGradiente? gradient)
     {
-        var path = ToPath(collected.StylusPoints);
         _ = canvas.Strokes.Remove(collected);
 
-        if (!ArrowHeadBuilder.TryBuild(path, collected.DrawingAttributes.Width, out var head))
+        ArrowHead? head = null;
+        if (tool == ToolKind.Arrow)
         {
-            return;
+            var path = collected.StylusPoints.ToStrokePoints();
+            if (!ArrowHeadBuilder.TryBuild(path, collected.DrawingAttributes.Width, out var built))
+            {
+                return false;
+            }
+
+            head = built;
         }
 
-        canvas.Strokes.Add(new StyledStroke(collected.StylusPoints.Clone(), collected.DrawingAttributes.Clone(), head));
-    }
-
-    private static List<StrokePoint> ToPath(StylusPointCollection points)
-    {
-        var path = new List<StrokePoint>(points.Count);
-        foreach (var point in points)
-        {
-            path.Add(new StrokePoint(point.X, point.Y));
-        }
-
-        return path;
+        canvas.Strokes.Add(new StyledStroke(
+            collected.StylusPoints.Clone(), collected.DrawingAttributes.Clone(), head, gradient));
+        return true;
     }
 }

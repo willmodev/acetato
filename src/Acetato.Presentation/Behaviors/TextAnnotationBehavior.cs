@@ -14,7 +14,7 @@ namespace Acetato.Presentation.Behaviors;
 /// (con un placeholder "Texto" mientras está vacío) y le da foco; al confirmar
 /// (clic fuera o Esc) lo reemplaza por un <see cref="TextBlock"/> fijo y lo
 /// registra en el historial unificado, salvo que esté vacío (se descarta). Color
-/// (tinta activa) y tamaño (derivado del grosor) salen del ViewModel.
+/// (última tinta sólida) y tamaño (derivado del grosor) salen del ViewModel.
 /// </summary>
 public static class TextAnnotationBehavior
 {
@@ -93,7 +93,7 @@ public static class TextAnnotationBehavior
         BorderThickness = new Thickness(0),
         Padding = new Thickness(0),
         MinWidth = 4d,
-        Foreground = new SolidColorBrush(viewModel.ActiveInkColor),
+        Foreground = new SolidColorBrush(viewModel.SolidInkColor),
         FontSize = viewModel.ActiveFontSize,
         FontFamily = BrandFont(),
         FontWeight = BrandWeight(),

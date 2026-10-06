@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Ink;
 using System.Windows.Input;
 using Acetato.Domain;
+using Acetato.Presentation.Overlay;
 
 namespace Acetato.Presentation.Behaviors;
 
@@ -11,7 +12,9 @@ namespace Acetato.Presentation.Behaviors;
 /// en el code-behind. Cuando la herramienta activa es una forma (línea o
 /// rectángulo), captura el mouse y va reemplazando un trazo de previsualización
 /// mientras se arrastra; al soltar, el último queda fijo. Cada forma es UN
-/// <see cref="Stroke"/>, así reutiliza undo/limpiar/color/grosor. El lápiz y el
+/// <see cref="Stroke"/>, así reutiliza undo/limpiar/color/grosor. Con el modo Degradado
+/// activo (HU-19) la forma se pinta con su par ya durante el arrastre y, al soltar, avisa
+/// para sortear el par siguiente. El lápiz y el
 /// borrador los maneja el propio InkCanvas (este behavior no actúa).
 /// </summary>
 public static class ShapeDrawingBehavior
@@ -91,13 +94,18 @@ public static class ShapeDrawingBehavior
     private static void OnMouseUp(object sender, MouseButtonEventArgs e)
     {
         var canvas = (InkCanvas)sender;
-        if (canvas.GetValue(SessionProperty) is not ShapeDragSession)
+        if (canvas.GetValue(SessionProperty) is not ShapeDragSession session)
         {
             return;
         }
 
         canvas.ReleaseMouseCapture();
         canvas.SetValue(SessionProperty, null);
+        if (session.Preview is not null && InkGradient.GetPair(canvas) is not null)
+        {
+            InkGradient.NotifyUsed(canvas); // la forma quedó fija en degradado: sortea el par siguiente
+        }
+
         e.Handled = true;
     }
 
@@ -110,12 +118,12 @@ public static class ShapeDrawingBehavior
 
         var thickness = canvas.DefaultDrawingAttributes.Width;
         var points = ShapeBuilder.Build(GetTool(canvas), session.Start, current, thickness);
-        var stroke = BuildStroke(points, canvas.DefaultDrawingAttributes);
+        var stroke = BuildStroke(points, canvas.DefaultDrawingAttributes, InkGradient.GetPair(canvas));
         canvas.Strokes.Add(stroke);
         session.Preview = stroke;
     }
 
-    private static Stroke BuildStroke(IReadOnlyList<StrokePoint> points, DrawingAttributes baseAttributes)
+    private static Stroke BuildStroke(IReadOnlyList<StrokePoint> points, DrawingAttributes baseAttributes, TintaGradiente? gradient)
     {
         var stylusPoints = new StylusPointCollection(points.Count);
         foreach (var point in points)
@@ -125,7 +133,9 @@ public static class ShapeDrawingBehavior
 
         var attributes = baseAttributes.Clone();
         attributes.FitToCurve = false; // las formas son rectas, sin suavizado
-        return new Stroke(stylusPoints, attributes);
+        return gradient is null
+            ? new Stroke(stylusPoints, attributes)
+            : new StyledStroke(stylusPoints, attributes, head: null, gradient);
     }
 
     private static StrokePoint ToStrokePoint(Point point) => new(point.X, point.Y);

@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Acetato.Domain;
+using Acetato.Presentation.ViewModels;
 
 namespace Acetato.Presentation.Behaviors;
 
@@ -153,12 +154,13 @@ public static class LaserPointerBehavior
             return existing;
         }
 
-        if (GetLayer(canvas) is not Canvas layer)
+        if (GetLayer(canvas) is not Canvas layer || canvas.DataContext is not OverlayViewModel viewModel)
         {
             return null;
         }
 
-        var session = new LaserSession(layer, () => canvas.DefaultDrawingAttributes.Color);
+        // El láser usa la última tinta sólida, no el color en vivo del degradado (HU-19).
+        var session = new LaserSession(layer, () => viewModel.SolidInkColor);
         canvas.SetValue(SessionProperty, session);
         return session;
     }
