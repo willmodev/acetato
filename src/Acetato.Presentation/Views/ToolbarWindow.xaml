@@ -119,22 +119,27 @@
                     <ItemsControl ItemsSource="{Binding Swatches}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <UniformGrid Rows="1" Columns="6" />
+                                <UniformGrid Rows="1" Columns="7" />
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="{x:Type vm:InkSwatchItem}">
                                 <Button Margin="4" Cursor="Hand"
-                                        Command="{Binding DataContext.PickColorCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                        CommandParameter="{Binding Color}">
+                                        Command="{Binding DataContext.PickSwatchCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                        CommandParameter="{Binding}">
                                     <Button.Template>
                                         <ControlTemplate TargetType="Button">
                                             <Border x:Name="Ring" Width="30" Height="30" Padding="3"
                                                     CornerRadius="{StaticResource Radius.Swatch}"
                                                     BorderBrush="Transparent" BorderThickness="2">
-                                                <Border Background="{Binding Fill}" CornerRadius="5" />
+                                                <Border x:Name="Sample" Background="{Binding Fill}" CornerRadius="5" />
                                             </Border>
                                             <ControlTemplate.Triggers>
+                                                <!-- La muestra de degradado es redonda: es un modo, no una tinta (HU-19). -->
+                                                <DataTrigger Binding="{Binding IsGradient}" Value="True">
+                                                    <Setter TargetName="Ring" Property="CornerRadius" Value="15" />
+                                                    <Setter TargetName="Sample" Property="CornerRadius" Value="10" />
+                                                </DataTrigger>
                                                 <DataTrigger Binding="{Binding IsSelected}" Value="True">
                                                     <Setter TargetName="Ring" Property="BorderBrush" Value="{StaticResource Accent.Ring}" />
                                                 </DataTrigger>

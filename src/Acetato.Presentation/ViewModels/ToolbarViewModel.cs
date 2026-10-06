@@ -23,7 +23,7 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
     private readonly IOverlayController _controller;
     private readonly OverlayBroadcaster _broadcaster;
 
-    /// <summary>Pincel de la tinta activa (para el botón de color de la barra).</summary>
+    /// <summary>Pincel de la tinta activa, o el degradado de muestra (para el botón de color de la barra).</summary>
     [ObservableProperty]
     private Brush _activeInkBrush = Brushes.Transparent;
 
@@ -45,7 +45,7 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
         _settings = settings;
         _controller = controller;
         DragHandler = dragHandler;
-        Swatches = BuildSwatches();
+        Swatches = InkSwatchFactory.Create();
         Thicknesses = BuildThicknesses();
         Tools = BuildTools();
         _settings.Changed += OnSettingsChanged;
@@ -55,7 +55,7 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
     /// <summary>Inicia el arrastre nativo de la ventana desde el grip.</summary>
     public IWindowDragHandler DragHandler { get; }
 
-    /// <summary>Las 6 tintas del popover de color.</summary>
+    /// <summary>Las 6 tintas del popover de color y, al final, la muestra del modo Degradado.</summary>
     public IReadOnlyList<InkSwatchItem> Swatches { get; }
 
     /// <summary>Los pasos de grosor del popover.</summary>
@@ -80,11 +80,21 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
         IsThicknessPopoverOpen = !IsThicknessPopoverOpen;
     }
 
-    /// <summary>Elige una tinta y cierra el popover (HU-05).</summary>
+    /// <summary>
+    /// Elige una tinta sólida o el modo Degradado y cierra el popover (HU-05/HU-19).
+    /// </summary>
     [RelayCommand]
-    private void PickColor(TintaColor color)
+    private void PickSwatch(InkSwatchItem swatch)
     {
-        _settings.SelectColor(color);
+        if (swatch.Color is { } color)
+        {
+            _settings.SelectColor(color);
+        }
+        else
+        {
+            _settings.SelectGradient();
+        }
+
         IsInkPopoverOpen = false;
     }
 
@@ -115,22 +125,6 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
     /// <summary>Oculta el overlay y la barra (botón Cerrar).</summary>
     [RelayCommand]
     private void Close() => _controller.Toggle();
-
-    private static List<InkSwatchItem> BuildSwatches()
-    {
-        TintaColor[] colors =
-        [
-            TintaColor.Red, TintaColor.Blue, TintaColor.Yellow,
-            TintaColor.Green, TintaColor.White, TintaColor.Black,
-        ];
-        var items = new List<InkSwatchItem>(colors.Length);
-        foreach (var color in colors)
-        {
-            items.Add(new InkSwatchItem(color, new SolidColorBrush(TintaColorMap.Resolve(color))));
-        }
-
-        return items;
-    }
 
     private static List<ThicknessItem> BuildThicknesses()
     {
@@ -164,10 +158,12 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
 
     private void SyncActiveState()
     {
-        ActiveInkBrush = new SolidColorBrush(TintaColorMap.Resolve(_settings.Color));
+        ActiveInkBrush = _settings.IsGradient
+            ? InkSwatchFactory.GradientSample
+            : new SolidColorBrush(TintaColorMap.Resolve(_settings.Color));
         foreach (var swatch in Swatches)
         {
-            swatch.IsSelected = swatch.Color == _settings.Color;
+            swatch.IsSelected = IsActive(swatch);
         }
 
         foreach (var step in Thicknesses)
@@ -180,6 +176,10 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
             tool.IsSelected = tool.Kind == _settings.SelectedTool;
         }
     }
+
+    // La muestra de degradado está activa con el modo; una tinta, solo fuera del modo.
+    private bool IsActive(InkSwatchItem swatch) =>
+        swatch.IsGradient ? _settings.IsGradient : !_settings.IsGradient && swatch.Color == _settings.Color;
 
     public void Dispose() => _settings.Changed -= OnSettingsChanged;
 }
