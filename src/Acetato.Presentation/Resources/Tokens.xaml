@@ -59,6 +59,24 @@
     <SolidColorBrush x:Key="Ink.White" Color="{StaticResource Ink.White.Color}" />
     <SolidColorBrush x:Key="Ink.Black" Color="{StaticResource Ink.Black.Color}" />
 
+    <!--
+      Pares neón del modo Degradado (HU-19). Son tintas (trazos del usuario), no
+      chrome: viven en la paleta Ink.* y nunca se mezclan con Chrome.*. Cada trazo en
+      degradado toma un par al azar (inicio → fin). Hex iniciales, ajustables a ojo.
+    -->
+    <Color x:Key="Ink.Gradient.BlueCyan.Start.Color">#FF2D6BFF</Color>
+    <Color x:Key="Ink.Gradient.BlueCyan.End.Color">#FF00E5FF</Color>
+    <Color x:Key="Ink.Gradient.YellowLime.Start.Color">#FFFFE600</Color>
+    <Color x:Key="Ink.Gradient.YellowLime.End.Color">#FFB6FF00</Color>
+    <Color x:Key="Ink.Gradient.PinkRed.Start.Color">#FFFF2DAA</Color>
+    <Color x:Key="Ink.Gradient.PinkRed.End.Color">#FFFF2D2D</Color>
+    <Color x:Key="Ink.Gradient.VioletPink.Start.Color">#FF9B3DFF</Color>
+    <Color x:Key="Ink.Gradient.VioletPink.End.Color">#FFFF3DCB</Color>
+    <Color x:Key="Ink.Gradient.GreenCyan.Start.Color">#FF22FF7A</Color>
+    <Color x:Key="Ink.Gradient.GreenCyan.End.Color">#FF00E5FF</Color>
+    <Color x:Key="Ink.Gradient.OrangePink.Start.Color">#FFFF8A00</Color>
+    <Color x:Key="Ink.Gradient.OrangePink.End.Color">#FFFF3D9A</Color>
+
     <!-- Halos para que un trazo sobreviva a fondos del mismo color -->
     <SolidColorBrush x:Key="Ink.Halo.Dark" Color="#59000000" />
     <SolidColorBrush x:Key="Ink.Halo.Light" Color="#73FFFFFF" />
