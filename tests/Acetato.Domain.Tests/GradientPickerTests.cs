@@ -56,6 +56,23 @@ public sealed class GradientPickerTests
         }
     }
 
+    [Theory]
+    [InlineData(0, TintaGradiente.BlueCyan)]
+    [InlineData(3, TintaGradiente.VioletPink)]
+    [InlineData(5, TintaGradiente.OrangePink)]
+    public void First_returns_the_pair_at_the_drawn_index(int drawn, TintaGradiente expected)
+    {
+        GradientPicker.First(new SequenceRandomSource(drawn)).Should().Be(expected);
+    }
+
+    [Fact]
+    public void First_throws_when_the_random_source_is_null()
+    {
+        var act = () => GradientPicker.First(null!);
+
+        act.Should().Throw<ArgumentNullException>();
+    }
+
     [Fact]
     public void Next_throws_when_the_random_source_is_null()
     {

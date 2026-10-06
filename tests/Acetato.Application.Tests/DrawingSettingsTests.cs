@@ -1,6 +1,7 @@
 using Acetato.Application.Drawing;
 using Acetato.Domain;
 using FluentAssertions;
+using NSubstitute;
 using Xunit;
 
 namespace Acetato.Application.Tests;
@@ -8,6 +9,14 @@ namespace Acetato.Application.Tests;
 public sealed class DrawingSettingsTests
 {
     private static DrawingSettings CreateSettings() => new();
+
+    // Fuente de azar de prueba: devuelve los índices dados, en orden (y repite el último).
+    private static DrawingSettings CreateSettings(params int[] draws)
+    {
+        var random = Substitute.For<IRandomSource>();
+        random.NextInt(Arg.Any<int>()).Returns(draws[0], draws[1..]);
+        return new DrawingSettings(random);
+    }
 
     [Fact]
     public void Default_color_is_red()
@@ -182,5 +191,125 @@ public sealed class DrawingSettingsTests
         settings.CycleTool();
 
         settings.SelectedTool.Should().Be(ToolKind.Pencil);
+    }
+
+    [Fact]
+    public void Gradient_mode_is_off_by_default()
+    {
+        var settings = CreateSettings();
+
+        settings.IsGradient.Should().BeFalse();
+        Enum.IsDefined(settings.NextGradient).Should().BeTrue();
+    }
+
+    [Fact]
+    public void First_gradient_pair_comes_from_the_random_source()
+    {
+        CreateSettings(3).NextGradient.Should().Be(TintaGradiente.VioletPink);
+    }
+
+    [Fact]
+    public void Select_gradient_enters_the_mode_and_raises_changed()
+    {
+        var settings = CreateSettings();
+        var raised = 0;
+        settings.Changed += (_, _) => raised++;
+
+        settings.SelectGradient();
+
+        settings.IsGradient.Should().BeTrue();
+        raised.Should().Be(1);
+    }
+
+    [Fact]
+    public void Select_gradient_when_already_active_does_not_raise_changed()
+    {
+        var settings = CreateSettings();
+        settings.SelectGradient();
+        var raised = 0;
+        settings.Changed += (_, _) => raised++;
+
+        settings.SelectGradient();
+
+        raised.Should().Be(0);
+    }
+
+    [Fact]
+    public void Select_gradient_keeps_the_last_solid_color()
+    {
+        var settings = CreateSettings();
+        settings.SelectColor(TintaColor.Blue);
+
+        settings.SelectGradient();
+
+        settings.Color.Should().Be(TintaColor.Blue);
+    }
+
+    [Fact]
+    public void Select_color_leaves_the_gradient_mode()
+    {
+        var settings = CreateSettings();
+        settings.SelectGradient();
+
+        settings.SelectColor(TintaColor.Green);
+
+        settings.IsGradient.Should().BeFalse();
+        settings.Color.Should().Be(TintaColor.Green);
+    }
+
+    [Fact]
+    public void Select_the_same_solid_color_while_in_gradient_mode_leaves_the_mode_and_raises_changed()
+    {
+        var settings = CreateSettings();
+        settings.SelectGradient(); // el color sólido sigue siendo Red
+        var raised = 0;
+        settings.Changed += (_, _) => raised++;
+
+        settings.SelectColor(TintaColor.Red);
+
+        settings.IsGradient.Should().BeFalse();
+        raised.Should().Be(1);
+    }
+
+    [Fact]
+    public void Advance_gradient_raises_changed()
+    {
+        var settings = CreateSettings();
+        var raised = 0;
+        settings.Changed += (_, _) => raised++;
+
+        settings.AdvanceGradient();
+
+        raised.Should().Be(1);
+    }
+
+    [Fact]
+    public void Advance_gradient_never_repeats_the_previous_pair()
+    {
+        var settings = CreateSettings(3, 3, 0, 4, 2);
+        var previous = settings.NextGradient;
+
+        for (var i = 0; i < 20; i++)
+        {
+            settings.AdvanceGradient();
+
+            settings.NextGradient.Should().NotBe(previous);
+            previous = settings.NextGradient;
+        }
+    }
+
+    [Fact]
+    public void Advance_gradient_never_repeats_with_the_production_source()
+    {
+        var settings = CreateSettings();
+        var previous = settings.NextGradient;
+
+        for (var i = 0; i < 200; i++)
+        {
+            settings.AdvanceGradient();
+
+            settings.NextGradient.Should().NotBe(previous);
+            previous = settings.NextGradient;
+        }
     }
 }

@@ -31,6 +31,7 @@ internal static partial class NativeMethods
     internal const uint Vk4 = 0x34;
     internal const uint Vk5 = 0x35;
     internal const uint Vk6 = 0x36;
+    internal const uint Vk7 = 0x37; // Modo Degradado (HU-19)
     internal const uint VkD = 0x44;
     internal const uint VkE = 0x45;
     internal const uint VkL = 0x4C; // Herramienta Láser (HU-15)

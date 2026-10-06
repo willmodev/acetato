@@ -48,6 +48,9 @@ public sealed class OverlayBroadcaster
     /// <summary>Cambia la tinta activa; afecta a todas las pantallas (HU-05).</summary>
     public void SelectColor(TintaColor color) => _settings.SelectColor(color);
 
+    /// <summary>Activa el modo Degradado; afecta a todas las pantallas (HU-19).</summary>
+    public void SelectGradient() => _settings.SelectGradient();
+
     /// <summary>Avanza a la siguiente herramienta del anillo (HU-11).</summary>
     public void CycleTool() => _settings.CycleTool();
 

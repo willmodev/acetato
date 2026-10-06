@@ -4,6 +4,7 @@ using Acetato.Application.Abstractions;
 using Acetato.Application.Capture;
 using Acetato.Application.Drawing;
 using Acetato.Application.Overlay;
+using Acetato.Domain;
 using Acetato.Infrastructure.Capture;
 using Acetato.Infrastructure.Hotkeys;
 using Acetato.Infrastructure.Monitors;
@@ -112,6 +113,7 @@ public partial class App : System.Windows.Application
     // Estado del trazo activo (HU-05/06) y captura de pantalla anotada (HU-12).
     private static void RegisterDrawingAndCapture(IServiceCollection services)
     {
+        services.AddSingleton<IRandomSource>(SecureRandomSource.Instance);
         services.AddSingleton<IDrawingSettings, DrawingSettings>();
         services.AddSingleton(TimeProvider.System);
         services.AddSingleton<ICaptureService, CaptureService>();

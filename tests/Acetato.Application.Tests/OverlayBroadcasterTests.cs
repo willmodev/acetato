@@ -71,6 +71,14 @@ public sealed class OverlayBroadcasterTests
     }
 
     [Fact]
+    public void SelectGradient_updates_the_shared_settings()
+    {
+        CreateBroadcaster().SelectGradient();
+
+        _settings.Received(1).SelectGradient();
+    }
+
+    [Fact]
     public void CycleTool_advances_the_shared_settings()
     {
         CreateBroadcaster().CycleTool();

@@ -35,6 +35,9 @@ public enum HotkeyAction
     /// <summary>Tinta negra (HU-05).</summary>
     ColorBlack,
 
+    /// <summary>Modo Degradado: cada trazo con un par neón al azar (HU-19).</summary>
+    ColorGradient,
+
     /// <summary>Deshacer el último trazo (HU-07).</summary>
     Undo,
 

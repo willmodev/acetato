@@ -43,6 +43,7 @@ internal sealed class HotkeyActionRouter
         [HotkeyAction.ColorGreen] = () => broadcaster.SelectColor(TintaColor.Green),
         [HotkeyAction.ColorWhite] = () => broadcaster.SelectColor(TintaColor.White),
         [HotkeyAction.ColorBlack] = () => broadcaster.SelectColor(TintaColor.Black),
+        [HotkeyAction.ColorGradient] = broadcaster.SelectGradient,
         [HotkeyAction.Undo] = broadcaster.Undo,
         [HotkeyAction.CycleTool] = broadcaster.CycleTool,
         [HotkeyAction.Capture] = () => _ = broadcaster.CaptureAsync(),

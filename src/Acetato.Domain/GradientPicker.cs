@@ -9,6 +9,14 @@ public static class GradientPicker
 {
     private static readonly int PairCount = Enum.GetValues<TintaGradiente>().Length;
 
+    /// <summary>Primer par, sin par previo que evitar: uniforme entre los 6.</summary>
+    public static TintaGradiente First(IRandomSource random)
+    {
+        ArgumentNullException.ThrowIfNull(random);
+
+        return (TintaGradiente)random.NextInt(PairCount);
+    }
+
     /// <summary>
     /// Devuelve un par al azar distinto de <paramref name="current"/>. Se sortea entre
     /// los pares restantes (uniforme) saltando el índice del actual.
