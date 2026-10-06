@@ -490,6 +490,83 @@ Escenario: Degradación elegante
 
 ---
 
+#### HU-19 — Trazo estilo ScreenBrush
+- **Épica:** EP-02 · **Prioridad:** Could · **Estimación:** 8
+- **Narrativa:**
+  Como usuario, quiero flechas a mano alzada con punta, rectángulos de esquinas redondeadas y un modo de degradado neón, para que mis anotaciones se vean vivas y se distingan unas de otras sin esfuerzo.
+
+**Criterios de aceptación**
+```
+Escenario: Flecha a mano alzada
+  Dado que seleccioné la herramienta "flecha"
+  Cuando trazo una curva y suelto
+  Entonces queda una flecha suavizada con punta abierta de dos alas
+  Y la punta apunta según el tramo final del recorrido
+  Y crece con el grosor activo.
+
+Escenario: Flecha demasiado corta
+  Dado que seleccioné la herramienta "flecha"
+  Cuando hago un clic suelto o un trazo más corto que la punta
+  Entonces no queda nada en pantalla
+  Y no se añade ninguna entrada al historial.
+
+Escenario: La flecha es un único trazo
+  Dado que dibujé una flecha
+  Cuando deshago una vez o paso el borrador por el cuerpo
+  Entonces se quita la flecha entera (cuerpo y punta).
+
+Escenario: Rectángulo con esquinas redondeadas
+  Dado que seleccioné la herramienta "rectángulo"
+  Cuando arrastro en cualquier dirección
+  Entonces las esquinas salen redondeadas
+  Y el radio crece con el grosor sin pasar de la mitad del lado menor.
+
+Escenario: Activar el modo Degradado
+  Dado que abrí el popover de color
+  Cuando elijo la muestra de degradado o presiono Ctrl+Alt+7
+  Entonces el modo Degradado queda activo
+  Y el botón Color de la barra muestra el degradado.
+
+Escenario: Cada trazo con un par distinto
+  Dado que el modo Degradado está activo
+  Cuando dibujo con lápiz, línea, flecha o rectángulo
+  Entonces el trazo sale con un par neón al azar
+  Y nunca repite el par del trazo anterior
+  Y conserva su par aunque cambie de modo después.
+
+Escenario: Dirección del degradado
+  Dado que el modo Degradado está activo
+  Cuando dibujo una línea o flecha
+  Entonces el degradado va del color inicial al final del trazo
+  Y en un rectángulo corre en diagonal.
+
+Escenario: Vista en vivo
+  Dado que el modo Degradado está activo
+  Cuando arrastro una línea o un rectángulo
+  Entonces veo el degradado mientras arrastro
+  Y con lápiz y flecha libre veo el primer color del par hasta soltar.
+
+Escenario: Salir del modo
+  Dado que el modo Degradado está activo
+  Cuando elijo una tinta sólida (popover o Ctrl+Alt+1…6)
+  Entonces el modo se apaga y los trazos siguientes salen sólidos
+  Y los trazos en degradado ya hechos no cambian.
+
+Escenario: Texto y láser no usan el degradado
+  Dado que el modo Degradado está activo
+  Cuando escribo texto o uso el láser
+  Entonces usan la última tinta sólida elegida.
+
+Escenario: Integración con captura y multi-monitor
+  Dado que dibujé trazos nuevos en uno o varios monitores
+  Cuando capturo con Ctrl+Alt+S
+  Entonces el PNG incluye flechas, esquinas redondeadas y degradados tal como se ven
+  Y el par no se repite al alternar de monitor.
+```
+**Notas técnicas:** Spec en [`specs/03-trazo-estilo-screenbrush.md`](./specs/03-trazo-estilo-screenbrush.md). La flecha libre **reemplaza** a la flecha recta por arrastre. Requiere un trazo propio (`StyledStroke`) que guarde el par de degradado y la punta, `GradientPicker` y `ArrowHeadBuilder` en Domain, pares neón como tokens `Ink.*` en `Tokens.xaml` y `HotkeyAction.ColorGradient` (`Ctrl+Alt+7`). Fuera de alcance: degradado siguiendo el recorrido o en vivo para lápiz/flecha, degradado en texto y láser, editar pares, recordar el modo entre sesiones, reconocimiento de formas y halo neón.
+
+---
+
 ## Definition of Done (global)
 
 Una historia se considera **terminada** cuando:
