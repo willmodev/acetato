@@ -34,6 +34,7 @@
 - La **flecha recta por arrastre** actual **se reemplaza** (una flecha recta se hace trazando recto).
 - Degradado **siguiendo el recorrido** del trazo.
 - Degradado **en vivo** para lápiz y flecha libre.
+- **Punta de flecha en vivo** (que aparezca mientras se traza, no al soltar). Candidata al **spec 04** junto con el degradado en vivo: ambas exigen un pintado propio del trazo en curso.
 - Degradado en **texto** y **láser**.
 - **Elegir o editar** los pares de colores desde la app.
 - **Recordar** el modo degradado entre sesiones.
@@ -229,6 +230,7 @@ Cada paso compila con `-warnaserror`, deja la app usable y es commiteable por s�
 - **Sí:** degradado lineal inicio → fin, diagonal en figuras cerradas. Simple, rápido de pintar y visualmente cercano a las referencias.
 - **No:** degradado siguiendo el recorrido. Exige pintar tramo por tramo, con riesgo de rendimiento, para una mejora visual menor.
 - **Sí:** lápiz y flecha libre en el primer color mientras se trazan, degradado al soltar. La pintura en vivo de Windows solo admite un color.
+- **No:** punta de flecha en vivo en este spec. El usuario la quiere (como ScreenBrush) pero exige el mismo pintado propio del trazo en curso que el degradado en vivo; se agrupa en el spec 04. Decisión del usuario al probar el paso 10.
 - **No:** degradado en vivo con un renderizador propio. Riesgo de rendimiento, y el color final cambiaría mientras se dibuja.
 - **Sí:** texto y láser con la última tinta sólida. El texto con degradado requiere otro tipo de pintado; el láser es efímero.
 - **Sí:** trazo propio (`StyledStroke`) que guarda par y punta, reemplazando al que entrega el lienzo al soltar. Única forma de pintar degradado y una punta no suavizada sin tocar historial ni borrador.
@@ -261,6 +263,7 @@ Cada paso compila con `-warnaserror`, deja la app usable y es commiteable por s�
 - Flecha recta por arrastre (se reemplaza por la flecha libre).
 - Degradado siguiendo el recorrido del trazo.
 - Degradado en vivo para lápiz y flecha libre.
+- Punta de flecha en vivo (spec 04).
 - Degradado en texto y láser.
 - Elegir o editar los pares de colores desde la app.
 - Recordar el modo degradado entre sesiones.
