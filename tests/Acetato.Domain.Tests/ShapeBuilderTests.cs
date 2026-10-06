@@ -121,27 +121,15 @@ public sealed class ShapeBuilderTests
     }
 
     [Fact]
-    public void Arrow_keeps_endpoints_and_has_five_points()
+    public void Arrow_is_no_longer_a_shape_and_falls_back_to_a_segment()
     {
+        // La flecha pasó a ser un trazo libre (FreehandStrokeBehavior + ArrowHeadBuilder).
         var start = new StrokePoint(0, 0);
         var end = new StrokePoint(100, 0);
 
         var points = ShapeBuilder.Build(ToolKind.Arrow, start, end, Thickness);
 
-        points.Should().HaveCount(5);
-        points[0].Should().Be(start);
-        points[1].Should().Be(end);
-        points[3].Should().Be(end); // retraza la punta
-    }
-
-    [Fact]
-    public void Arrow_with_zero_length_falls_back_to_a_segment()
-    {
-        var p = new StrokePoint(5, 5);
-
-        var points = ShapeBuilder.Build(ToolKind.Arrow, p, p, Thickness);
-
-        points.Should().Equal(p, p);
+        points.Should().Equal(start, end);
     }
 
     // El primer punto del rectángulo es donde termina el borde superior (derecha - radio).

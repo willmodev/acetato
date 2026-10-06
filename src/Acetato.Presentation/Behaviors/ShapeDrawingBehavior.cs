@@ -8,7 +8,7 @@ namespace Acetato.Presentation.Behaviors;
 
 /// <summary>
 /// Comportamiento adjunto que dibuja formas (HU-11) sobre el InkCanvas sin lógica
-/// en el code-behind. Cuando la herramienta activa es una forma (línea, flecha,
+/// en el code-behind. Cuando la herramienta activa es una forma (línea o
 /// rectángulo), captura el mouse y va reemplazando un trazo de previsualización
 /// mientras se arrastra; al soltar, el último queda fijo. Cada forma es UN
 /// <see cref="Stroke"/>, así reutiliza undo/limpiar/color/grosor. El lápiz y el
@@ -61,7 +61,7 @@ public static class ShapeDrawingBehavior
     }
 
     private static bool IsShapeTool(ToolKind tool) =>
-        tool is ToolKind.Line or ToolKind.Arrow or ToolKind.Rectangle;
+        tool is ToolKind.Line or ToolKind.Rectangle;
 
     private static void OnMouseDown(object sender, MouseButtonEventArgs e)
     {

@@ -47,6 +47,7 @@
                    behaviors:ThicknessWheelBehavior.IncreaseCommand="{Binding IncreaseThicknessCommand}"
                    behaviors:ThicknessWheelBehavior.DecreaseCommand="{Binding DecreaseThicknessCommand}"
                    behaviors:ShapeDrawingBehavior.Tool="{Binding ActiveTool}"
+                   behaviors:FreehandStrokeBehavior.Tool="{Binding ActiveTool}"
                    behaviors:TextAnnotationBehavior.Tool="{Binding ActiveTool}"
                    behaviors:LaserPointerBehavior.Tool="{Binding ActiveTool}"
                    behaviors:LaserPointerBehavior.Layer="{Binding ElementName=LaserLayer}" />

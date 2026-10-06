@@ -45,7 +45,7 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
     public double ActiveFontSize => FontScale.FromThicknessIndex(_settings.ThicknessIndex);
 
     /// <summary>
-    /// Modo de edición del InkCanvas según la herramienta: lápiz = tinta libre,
+    /// Modo de edición del InkCanvas según la herramienta: lápiz y flecha = tinta libre,
     /// borrador = borrar trazos, formas = ninguno (las dibuja el behavior).
     /// </summary>
     [ObservableProperty]
@@ -102,6 +102,7 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
     {
         ToolKind.Eraser => InkCanvasEditingMode.EraseByStroke,
         ToolKind.Pencil => InkCanvasEditingMode.Ink,
+        ToolKind.Arrow => InkCanvasEditingMode.Ink, // flecha libre: traza como el lápiz; FreehandStrokeBehavior añade la punta
         ToolKind.Laser => InkCanvasEditingMode.None, // láser efímero: lo dibuja el behavior
         _ => InkCanvasEditingMode.None, // formas: las dibuja el behavior
     };

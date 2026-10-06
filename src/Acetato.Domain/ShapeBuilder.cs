@@ -8,8 +8,6 @@ namespace Acetato.Domain;
 /// </summary>
 public static class ShapeBuilder
 {
-    private const double ArrowHeadLength = 16d;
-    private const double ArrowHeadWidth = 9d;
     private const double MinCornerRadius = 8d;
     private const double CornerRadiusPerThickness = 2d;
     private const int CornerSegments = 6;
@@ -22,7 +20,6 @@ public static class ShapeBuilder
     public static IReadOnlyList<StrokePoint> Build(ToolKind tool, StrokePoint start, StrokePoint end, double thickness) => tool switch
     {
         ToolKind.Rectangle => Rectangle(start, end, thickness),
-        ToolKind.Arrow => Arrow(start, end),
         _ => [start, end],
     };
 
@@ -69,27 +66,5 @@ public static class ShapeBuilder
                 center.X + (radius * Math.Cos(angle)),
                 center.Y + (radius * Math.Sin(angle))));
         }
-    }
-
-    // Eje inicio→fin más la punta. Se retraza la punta (fin→ala→fin→ala) para que
-    // toda la flecha sea UN solo trazo (un undo la quita entera).
-    private static IReadOnlyList<StrokePoint> Arrow(StrokePoint start, StrokePoint end)
-    {
-        double dx = end.X - start.X;
-        double dy = end.Y - start.Y;
-        double length = Math.Sqrt((dx * dx) + (dy * dy));
-        if (length < Epsilon)
-        {
-            return [start, end];
-        }
-
-        double ux = dx / length;
-        double uy = dy / length;
-        double baseX = end.X - (ux * ArrowHeadLength);
-        double baseY = end.Y - (uy * ArrowHeadLength);
-        var left = new StrokePoint(baseX - (uy * ArrowHeadWidth), baseY + (ux * ArrowHeadWidth));
-        var right = new StrokePoint(baseX + (uy * ArrowHeadWidth), baseY - (ux * ArrowHeadWidth));
-
-        return [start, end, left, end, right];
     }
 }
