@@ -52,10 +52,13 @@
 // Los 6 pares neón. Los hex viven en el design system (Tokens.xaml), igual que TintaColor.
 public enum TintaGradiente { BlueCyan, YellowLime, PinkRed, VioletPink, GreenCyan, OrangePink }
 
-// Elige el siguiente par al azar, siempre distinto del actual. Random inyectado → tests deterministas.
+// Fuente de enteros al azar inyectable (puerto). Producción: SecureRandomSource (RandomNumberGenerator).
+public interface IRandomSource { int NextInt(int maxExclusive); }
+
+// Elige el siguiente par al azar, siempre distinto del actual. Fuente inyectada → tests deterministas.
 public static class GradientPicker
 {
-    public static TintaGradiente Next(TintaGradiente current, Random random);
+    public static TintaGradiente Next(TintaGradiente current, IRandomSource random);
 }
 
 // Punta abierta de la flecha libre: ala izquierda → vértice → ala derecha.
@@ -86,7 +89,7 @@ void AdvanceGradient();                   // tras fijar un trazo: sortea un par 
 ```
 
 - **`SelectColor`** además pone `IsGradient = false`. **`Color`** conserva siempre la **última tinta sólida**.
-- **`DrawingSettings`** recibe un `Random` por constructor (por defecto `Random.Shared`; los tests pasan uno con semilla).
+- **`DrawingSettings`** recibe un `IRandomSource` por constructor (por defecto `SecureRandomSource.Instance`; los tests pasan una secuencia fija).
 - **Instancia única compartida:** el sorteo no se repite aunque se dibuje en monitores distintos.
 - Nuevo **`HotkeyAction.ColorGradient`**.
 
@@ -116,7 +119,7 @@ internal sealed class StyledStroke : Stroke
 Cada paso compila con `-warnaserror`, deja la app usable y es commiteable por sí solo.
 
 1. **Backlog.** Añadir **HU-19 — Trazo estilo ScreenBrush** a `BACKLOG.md` (narrativa, Gherkin, referencia a este spec). Solo docs.
-2. **Pares de degradado (Domain).** `TintaGradiente` + `GradientPicker.Next(current, random)`. Tests: con semilla fija nunca devuelve el actual; en 100 sorteos aparecen los 6. Sin cambio visible.
+2. **Pares de degradado (Domain).** `TintaGradiente` + `IRandomSource` / `SecureRandomSource` + `GradientPicker.Next(current, random)`. Tests: con secuencia fija nunca devuelve el actual; en 100 sorteos aparecen los 6. Sin cambio visible.
 3. **Punta de flecha (Domain).** `ArrowHead` + `ArrowHeadBuilder.TryBuild`. Tests:
    - Un recorrido recto apunta en su dirección.
    - Un recorrido en curva apunta según el tramo final.
@@ -136,7 +139,7 @@ Cada paso compila con `-warnaserror`, deja la app usable y es commiteable por s�
    **Manual:** flecha curva con punta orientada; un deshacer la quita entera; un clic suelto no deja nada.
 7. **Tokens y mapa.** Los 12 colores `Ink.Gradient.<Par>.Start/End.Color` en `Tokens.xaml` + `TintaGradienteMap`. Sin cambio visible.
 8. **Modo degradado (Application + atajo).**
-   - `IsGradient` / `NextGradient` / `SelectGradient` / `AdvanceGradient` en `IDrawingSettings` y `DrawingSettings` (con `Random` inyectado).
+   - `IsGradient` / `NextGradient` / `SelectGradient` / `AdvanceGradient` en `IDrawingSettings` y `DrawingSettings` (con `IRandomSource` inyectado).
    - `SelectColor` apaga el modo.
    - `HotkeyAction.ColorGradient`, `Vk7` en `NativeMethods`, fila `Ctrl+Alt+7` en `HotkeyBindingTable`, ruta en `HotkeyActionRouter`.
 
@@ -231,7 +234,7 @@ Cada paso compila con `-warnaserror`, deja la app usable y es commiteable por s�
 - **Sí:** trazo propio (`StyledStroke`) que guarda par y punta, reemplazando al que entrega el lienzo al soltar. Única forma de pintar degradado y una punta no suavizada sin tocar historial ni borrador.
 - **No:** añadir la punta como puntos del mismo trazo. El suavizado del lápiz la deformaría y redondearía el vértice.
 - **Sí:** el sorteo vive en `DrawingSettings` (instancia compartida). No repite entre monitores y reutiliza el aviso `Changed` existente.
-- **Sí:** `Random` inyectado. Tests deterministas con semilla fija.
+- **Sí:** fuente de azar inyectada mediante `IRandomSource` (no `Random`). El analizador CA5394 rechaza `Random` y la regla es no suprimir; `SecureRandomSource` usa `RandomNumberGenerator`, sin supresiones. Tests deterministas con secuencia fija. Acordado con el usuario en el paso 2.
 - **No:** recordar el modo entre sesiones. Hoy nada persiste (ni color ni grosor); sería un cambio aparte.
 - **Sí:** atajo `Ctrl+Alt+7`. Sigue a los de colores (`Ctrl+Alt+1…6`) y respeta la convención de solo Ctrl+Alt.
 
