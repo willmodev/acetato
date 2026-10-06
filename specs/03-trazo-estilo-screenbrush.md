@@ -1,6 +1,6 @@
 # SPEC 03 — Trazo estilo ScreenBrush (HU-19)
 
-> **Estado:** Aprobado · **Depende de:** SPEC 01 (historial unificado), SPEC 02 (láser) — sobre el código ya implementado HU-01…HU-15 · **Fecha:** 2026-10-06
+> **Estado:** Implementado · **Depende de:** SPEC 01 (historial unificado), SPEC 02 (láser) — sobre el código ya implementado HU-01…HU-15 · **Fecha:** 2026-10-06
 > **Objetivo:** Dar a los trazos el estilo de ScreenBrush: flechas a mano alzada con punta, rectángulos de esquinas redondeadas y un modo "Degradado" que pinta cada trazo con un par de colores neón al azar.
 
 ---
