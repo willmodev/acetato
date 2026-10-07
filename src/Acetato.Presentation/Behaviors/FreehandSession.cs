@@ -9,8 +9,9 @@ namespace Acetato.Presentation.Behaviors;
 /// Estado de un trazo libre en curso (HU-20), por InkCanvas: acumula los puntos y arma
 /// el trazo a mostrar en vivo y el que queda fijo al soltar. Atributos (color, grosor) y
 /// par de degradado se fijan al empezar: girar la rueda a mitad del trazo solo afecta
-/// al siguiente. La flecha filtra el temblor en vivo y lleva su punta desde que el
-/// recorrido es más largo que ella. No toca el lienzo ni el historial.
+/// al siguiente. La flecha filtra el temblor en vivo, lleva su punta desde que el
+/// recorrido es más largo que ella y se suaviza al soltar. No toca el lienzo ni el
+/// historial.
 /// </summary>
 internal sealed class FreehandSession
 {
@@ -77,7 +78,8 @@ internal sealed class FreehandSession
 
     /// <summary>
     /// Trazo que queda fijo al soltar; <c>null</c> si no hay nada que fijar (sin puntos, o
-    /// una flecha más corta que su punta: un clic suelto no deja nada).
+    /// una flecha más corta que su punta: un clic suelto no deja nada). La flecha se
+    /// suaviza con curvas Bézier y su punta se recalcula sobre la curva suavizada.
     /// </summary>
     public Stroke? BuildFinal()
     {
@@ -86,12 +88,25 @@ internal sealed class FreehandSession
             return BuildStroke(_points, head: null);
         }
 
-        return ArrowHeadBuilder.TryBuild(_points, Thickness, out var head) ? BuildStroke(_points, head) : null;
+        var smoothed = ArrowPathSmoother.Smooth(_points, Thickness);
+        if (!ArrowHeadBuilder.TryBuild(smoothed, Thickness, out var head))
+        {
+            return null;
+        }
+
+        // Los puntos ya salen de curvas: sin el suavizado del lienzo, que los alteraría.
+        var stroke = BuildStroke(smoothed, head);
+        if (stroke is not null)
+        {
+            stroke.DrawingAttributes.FitToCurve = false;
+        }
+
+        return stroke;
     }
 
     // Cada llamada usa una colección de puntos (y atributos) nueva: un Stroke se suscribe
     // a los cambios de ambos, así que compartirlos entre trazos acumularía manejadores.
-    private Stroke? BuildStroke(List<StrokePoint> path, ArrowHead? head)
+    private Stroke? BuildStroke(IReadOnlyList<StrokePoint> path, ArrowHead? head)
     {
         if (path.Count == 0)
         {
@@ -104,7 +119,7 @@ internal sealed class FreehandSession
             : new StyledStroke(stylusPoints, _attributes.Clone(), head, _gradient);
     }
 
-    private static StylusPointCollection ToStylusPoints(List<StrokePoint> path)
+    private static StylusPointCollection ToStylusPoints(IReadOnlyList<StrokePoint> path)
     {
         var stylusPoints = new StylusPointCollection(path.Count);
         foreach (var point in path)
