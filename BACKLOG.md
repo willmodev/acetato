@@ -567,6 +567,46 @@ Escenario: Integración con captura y multi-monitor
 
 ---
 
+#### HU-20 — Trazo libre en vivo y flecha suavizada
+- **Épica:** EP-02 · **Prioridad:** Could · **Estimación:** 8
+- **Narrativa:**
+  Como usuario, quiero ver la punta y el degradado del lápiz y la flecha mientras trazo, y que mis flechas salgan con curvas limpias aunque mi pulso no sea bueno, para que la anotación se vea final desde el primer momento.
+
+**Criterios de aceptación**
+```
+Escenario: Degradado en vivo
+  Dado que el modo Degradado está activo
+  Cuando trazo con el lápiz o la flecha
+  Entonces veo el degradado mientras trazo, con el color final en la punta del trazo
+  Y al soltar queda igual a lo que vi.
+
+Escenario: Punta de flecha en vivo
+  Dado que seleccioné la herramienta "flecha"
+  Cuando trazo un recorrido más largo que la punta
+  Entonces la punta aparece mientras trazo y sigue la dirección del tramo final.
+
+Escenario: Flecha suavizada
+  Dado que seleccioné la herramienta "flecha"
+  Cuando trazo una curva con temblor y suelto
+  Entonces la flecha queda con una curva continua y sin dientes
+  Y una esquina marcada se conserva
+  Y el lápiz no recibe este suavizado.
+
+Escenario: Trazo interrumpido
+  Dado que estoy trazando con el lápiz o la flecha
+  Cuando paso a click-through u oculto el overlay a mitad del trazo
+  Entonces lo dibujado queda fijo y no quedan restos en pantalla.
+
+Escenario: Cierre limpio
+  Dado que la app está en la bandeja
+  Cuando elijo "Salir"
+  Entonces el proceso Acetato.exe termina en menos de 2 segundos
+  Y los atajos globales quedan liberados.
+```
+**Notas técnicas:** Spec en [`specs/04-trazo-en-vivo-y-cierre-limpio.md`](./specs/04-trazo-en-vivo-y-cierre-limpio.md). Lápiz y flecha pasan a captura propia con una capa de pintado en vivo (`LiveStrokeLayer`); la flecha se suaviza con un filtro en vivo y un ajuste a curvas Bézier (Schneider) al soltar. El cierre se colgaba porque el hilo de atajos filtraba `WM_QUIT`. Fuera de alcance: suavizado del lápiz, presión del lápiz digital, degradado siguiendo el recorrido y reconocimiento de formas.
+
+---
+
 ## Definition of Done (global)
 
 Una historia se considera **terminada** cuando:
