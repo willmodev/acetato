@@ -48,15 +48,6 @@ public static class TextAnnotationBehavior
         // Re-suscribir es idempotente: evita enganchar el manejador dos veces.
         canvas.PreviewMouseLeftButtonDown -= OnMouseDown;
         canvas.PreviewMouseLeftButtonDown += OnMouseDown;
-        ApplyCursor(canvas, (ToolKind)e.NewValue == ToolKind.Text);
-    }
-
-    // I-beam cuando Texto está activa; por defecto en el resto. ForceCursor es
-    // necesario porque el InkCanvas fija su propio cursor e ignora Cursor a secas.
-    private static void ApplyCursor(InkCanvas canvas, bool isText)
-    {
-        canvas.Cursor = isText ? Cursors.IBeam : null;
-        canvas.ForceCursor = isText;
     }
 
     private static void OnMouseDown(object sender, MouseButtonEventArgs e)

@@ -40,8 +40,8 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
 
     /// <summary>
     /// Última tinta sólida elegida. La leen el texto (HU-13) y el láser (HU-15), que no
-    /// admiten degradado: con el modo Degradado activo, <see cref="ActiveAttributes"/>
-    /// lleva el primer color del par y no sirve para ellos (HU-19).
+    /// admiten degradado (HU-19). Coincide con el color de <see cref="ActiveAttributes"/>:
+    /// el degradado del trazo libre ya se pinta en vivo (HU-20).
     /// </summary>
     public Color SolidInkColor => TintaColorMap.Resolve(_settings.Color);
 
@@ -55,11 +55,12 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
     public double ActiveFontSize => FontScale.FromThicknessIndex(_settings.ThicknessIndex);
 
     /// <summary>
-    /// Modo de edición del InkCanvas según la herramienta: lápiz y flecha = tinta libre,
-    /// borrador = borrar trazos, formas = ninguno (las dibuja el behavior).
+    /// Modo de edición del InkCanvas según la herramienta: borrador = borrar trazos; el
+    /// resto = ninguno (lápiz y flecha los dibuja FreehandStrokeBehavior en vivo, HU-20;
+    /// formas, texto y láser, sus behaviors).
     /// </summary>
     [ObservableProperty]
-    private InkCanvasEditingMode _editingMode = InkCanvasEditingMode.Ink;
+    private InkCanvasEditingMode _editingMode = InkCanvasEditingMode.None;
 
     public OverlayViewModel(IDrawingSettings settings)
     {
@@ -105,10 +106,8 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
 
     private void SyncAttributes()
     {
-        // Con el degradado activo, la vista en vivo del lápiz usa el primer color del par.
-        ActiveAttributes.Color = _settings.IsGradient
-            ? TintaGradienteMap.Resolve(_settings.NextGradient).Start
-            : SolidInkColor;
+        // Siempre la tinta sólida: el degradado lo pinta StyledStroke con su par (HU-20).
+        ActiveAttributes.Color = SolidInkColor;
         ActiveAttributes.Width = _settings.Thickness;
         ActiveAttributes.Height = _settings.Thickness;
     }
@@ -122,10 +121,8 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
     private static InkCanvasEditingMode ToEditingMode(ToolKind tool) => tool switch
     {
         ToolKind.Eraser => InkCanvasEditingMode.EraseByStroke,
-        ToolKind.Pencil => InkCanvasEditingMode.Ink,
         ToolKind.Arrow => InkCanvasEditingMode.Ink, // flecha libre: traza como el lápiz; FreehandStrokeBehavior añade la punta
-        ToolKind.Laser => InkCanvasEditingMode.None, // láser efímero: lo dibuja el behavior
-        _ => InkCanvasEditingMode.None, // formas: las dibuja el behavior
+        _ => InkCanvasEditingMode.None, // lápiz (captura propia, HU-20), formas, texto y láser: los dibuja su behavior
     };
 
     public void Dispose()

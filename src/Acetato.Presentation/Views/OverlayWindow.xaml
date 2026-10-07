@@ -53,6 +53,8 @@
                    behaviors:ThicknessWheelBehavior.DecreaseCommand="{Binding DecreaseThicknessCommand}"
                    behaviors:ShapeDrawingBehavior.Tool="{Binding ActiveTool}"
                    behaviors:FreehandStrokeBehavior.Tool="{Binding ActiveTool}"
+                   behaviors:FreehandStrokeBehavior.Layer="{Binding ElementName=LiveLayer}"
+                   behaviors:ToolCursorBehavior.Tool="{Binding ActiveTool}"
                    behaviors:InkGradient.Pair="{Binding ActiveGradient}"
                    behaviors:InkGradient.UsedCommand="{Binding GradientUsedCommand}"
                    behaviors:TextAnnotationBehavior.Tool="{Binding ActiveTool}"

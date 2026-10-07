@@ -72,7 +72,6 @@ public static class LaserPointerBehavior
         }
 
         EnsureHandlers(canvas);
-        ApplyCursor(canvas, (ToolKind)e.NewValue, (ToolKind)e.OldValue);
         if ((ToolKind)e.NewValue is not ToolKind.Laser)
         {
             ClearSession(canvas);
@@ -97,23 +96,6 @@ public static class LaserPointerBehavior
         {
             // Cada pulsación es un trazo independiente: no se conecta con el anterior.
             GetOrCreateSession(canvas)?.BeginStroke();
-        }
-    }
-
-    // Oculta el cursor del SO con Láser activo (solo se ve el halo). ForceCursor es
-    // necesario porque el InkCanvas fija su propio cursor e ignora Cursor a secas.
-    // Solo soltamos el cursor forzado al SALIR de Láser, para no pisar el de Texto.
-    private static void ApplyCursor(InkCanvas canvas, ToolKind newTool, ToolKind oldTool)
-    {
-        if (newTool is ToolKind.Laser)
-        {
-            canvas.Cursor = Cursors.None;
-            canvas.ForceCursor = true;
-        }
-        else if (oldTool is ToolKind.Laser)
-        {
-            canvas.Cursor = null;
-            canvas.ForceCursor = false;
         }
     }
 
