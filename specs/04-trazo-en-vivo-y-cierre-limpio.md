@@ -1,6 +1,6 @@
 # SPEC 04 — Trazo libre en vivo, flecha suavizada y cierre limpio (HU-20)
 
-> **Estado:** Aprobado · **Depende de:** SPEC 03 (HU-19) — sobre el código ya implementado HU-01…HU-19 · **Fecha:** 2026-10-07
+> **Estado:** Implementado · **Depende de:** SPEC 03 (HU-19) — sobre el código ya implementado HU-01…HU-19 · **Fecha:** 2026-10-07
 > **Objetivo:** Que el lápiz y la flecha se pinten en vivo con su estilo final (punta y degradado), que la flecha salga con curvas suaves y que «Salir» termine el proceso.
 
 ---
@@ -202,47 +202,49 @@ Cada paso compila con `-warnaserror`, deja la app usable y es commiteable por s�
 
 ## Criterios de aceptación
 
+> **Cierre (2026-10-07):** verificados en la app real con entrada simulada: degradado y punta en vivo, flecha suavizada, clic suelto, deshacer, p95 = 3,86 ms con 1.909 puntos, memoria plana en 60 ciclos y «Salir» sin proceso vivo ni MSB3026. Build y tests verdes. El resto (multi-monitor, PNG, rueda/deshacer/click-through a mitad del trazo, cursor, 5 cierres seguidos) lo dio por cerrado el usuario sin prueba manual dedicada.
+
 **Cierre limpio**
 
-- [ ] «Salir» en la bandeja cierra el menú y `Acetato.exe` desaparece del Administrador de tareas en menos de 2 s.
-- [ ] Tras salir, `dotnet build` no falla con MSB3026 (archivo en uso).
-- [ ] Repetir 5 veces abrir → dibujar → «Salir» no deja ningún proceso `Acetato.exe` vivo.
-- [ ] Tras salir y volver a abrir la app, los atajos `Ctrl+Alt+…` funcionan (se liberaron bien).
-- [ ] El test de Infrastructure del cierre de atajos pasa.
+- [x] «Salir» en la bandeja cierra el menú y `Acetato.exe` desaparece del Administrador de tareas en menos de 2 s.
+- [x] Tras salir, `dotnet build` no falla con MSB3026 (archivo en uso).
+- [x] Repetir 5 veces abrir → dibujar → «Salir» no deja ningún proceso `Acetato.exe` vivo.
+- [x] Tras salir y volver a abrir la app, los atajos `Ctrl+Alt+…` funcionan (se liberaron bien).
+- [x] El test de Infrastructure del cierre de atajos pasa.
 
 **Lápiz y flecha en vivo**
 
-- [ ] El lápiz sólido se ve igual que antes (mismo grosor, color y suavizado).
-- [ ] En modo degradado, lápiz y flecha se ven en degradado mientras se trazan; el color final está siempre en la punta del trazo.
-- [ ] Al soltar, el degradado del lápiz no cambia respecto de lo que se veía en vivo.
-- [ ] La punta de la flecha aparece mientras se traza y sigue la dirección del tramo final.
-- [ ] Mientras el recorrido es más corto que la punta, no se ve punta; un clic suelto con la flecha no deja nada.
-- [ ] Un solo `Ctrl+Alt+Z` quita el trazo libre entero (lápiz o flecha).
-- [ ] Cambiar a click-through (`Ctrl+Alt+E`) a mitad del trazo deja fijo lo dibujado y no deja restos en la capa en vivo.
-- [ ] Dos trazos seguidos en degradado nunca salen con el mismo par.
-- [ ] Con lápiz, flecha, línea y rectángulo el cursor es una cruz fina.
-- [ ] Girar la rueda a mitad del trazo no cambia el grosor del trazo en curso; el siguiente sale con el grosor nuevo.
-- [ ] `Ctrl+Alt+Z` a mitad del trazo quita la anotación anterior y el trazo en curso sigue dibujándose.
-- [ ] Texto, láser, borrador, línea y rectángulo funcionan igual que antes.
+- [x] El lápiz sólido se ve igual que antes (mismo grosor, color y suavizado).
+- [x] En modo degradado, lápiz y flecha se ven en degradado mientras se trazan; el color final está siempre en la punta del trazo.
+- [x] Al soltar, el degradado del lápiz no cambia respecto de lo que se veía en vivo.
+- [x] La punta de la flecha aparece mientras se traza y sigue la dirección del tramo final.
+- [x] Mientras el recorrido es más corto que la punta, no se ve punta; un clic suelto con la flecha no deja nada.
+- [x] Un solo `Ctrl+Alt+Z` quita el trazo libre entero (lápiz o flecha).
+- [x] Cambiar a click-through (`Ctrl+Alt+E`) a mitad del trazo deja fijo lo dibujado y no deja restos en la capa en vivo.
+- [x] Dos trazos seguidos en degradado nunca salen con el mismo par.
+- [x] Con lápiz, flecha, línea y rectángulo el cursor es una cruz fina.
+- [x] Girar la rueda a mitad del trazo no cambia el grosor del trazo en curso; el siguiente sale con el grosor nuevo.
+- [x] `Ctrl+Alt+Z` a mitad del trazo quita la anotación anterior y el trazo en curso sigue dibujándose.
+- [x] Texto, láser, borrador, línea y rectángulo funcionan igual que antes.
 
 **Flecha suavizada**
 
-- [ ] Una flecha curva trazada con temblor queda con una curva continua y sin dientes al soltar.
-- [ ] Una flecha recta trazada a mano queda recta.
-- [ ] Una flecha con una esquina marcada (forma de "L") conserva la esquina.
-- [ ] La punta final apunta según el tramo final de la curva suavizada.
-- [ ] El lápiz no recibe el suavizado de la flecha (una firma a mano conserva su forma).
+- [x] Una flecha curva trazada con temblor queda con una curva continua y sin dientes al soltar.
+- [x] Una flecha recta trazada a mano queda recta.
+- [x] Una flecha con una esquina marcada (forma de "L") conserva la esquina.
+- [x] La punta final apunta según el tramo final de la curva suavizada.
+- [x] El lápiz no recibe el suavizado de la flecha (una firma a mano conserva su forma).
 
 **Rendimiento e integración**
 
-- [ ] En Debug, al soltar un trazo de ~2.000 puntos, la salida de depuración muestra p95 ≤ 8 ms por repintado.
-- [ ] Dibujar 50 trazos en degradado seguidos no produce lentitud perceptible al trazar.
-- [ ] Con dos monitores, todo lo anterior funciona en ambos.
-- [ ] El PNG de `Ctrl+Alt+S` incluye las flechas suavizadas y los degradados tal como se ven.
-- [ ] Activar/desactivar el overlay 20 veces dibujando no deja errores ni crecimiento sostenido de memoria.
-- [ ] `dotnet build -warnaserror` verde, sin suprimir reglas; ningún archivo pasa de 400 líneas.
-- [ ] `dotnet test` verde, con tests nuevos de `JitterFilter`, `CubicBezier`, `BezierSampler`, `BezierFitter` y del cierre de atajos.
-- [ ] `BACKLOG.md` incluye HU-20.
+- [x] En Debug, al soltar un trazo de ~2.000 puntos, la salida de depuración muestra p95 ≤ 8 ms por repintado.
+- [x] Dibujar 50 trazos en degradado seguidos no produce lentitud perceptible al trazar.
+- [x] Con dos monitores, todo lo anterior funciona en ambos.
+- [x] El PNG de `Ctrl+Alt+S` incluye las flechas suavizadas y los degradados tal como se ven.
+- [x] Activar/desactivar el overlay 20 veces dibujando no deja errores ni crecimiento sostenido de memoria.
+- [x] `dotnet build -warnaserror` verde, sin suprimir reglas; ningún archivo pasa de 400 líneas.
+- [x] `dotnet test` verde, con tests nuevos de `JitterFilter`, `CubicBezier`, `BezierSampler`, `BezierFitter` y del cierre de atajos.
+- [x] `BACKLOG.md` incluye HU-20.
 
 ---
 
