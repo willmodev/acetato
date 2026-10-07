@@ -12,6 +12,10 @@ namespace Acetato.Infrastructure.Hotkeys;
 /// </summary>
 public sealed class Win32GlobalHotkeyService : IGlobalHotkeyService, IDisposable
 {
+    // Tope de espera al cerrar (HU-20). El hilo es de fondo: si el tope vence, el
+    // proceso termina igual en vez de quedar vivo bloqueando el build.
+    private static readonly TimeSpan StopTimeout = TimeSpan.FromSeconds(2);
+
     private readonly Lock _gate = new();
     private Thread? _pump;
     private uint _pumpThreadId;
@@ -43,8 +47,13 @@ public sealed class Win32GlobalHotkeyService : IGlobalHotkeyService, IDisposable
                 return;
             }
 
-            NativeMethods.PostThreadMessage(_pumpThreadId, NativeMethods.WmQuit, nint.Zero, nint.Zero);
-            _pump.Join();
+            // Si el aviso no se pudo encolar, no tiene sentido esperar: el hilo de
+            // fondo muere con el proceso.
+            if (NativeMethods.PostThreadMessage(_pumpThreadId, NativeMethods.WmQuit, nint.Zero, nint.Zero))
+            {
+                _ = _pump.Join(StopTimeout);
+            }
+
             _pump = null;
             _pumpThreadId = 0;
         }
@@ -107,11 +116,18 @@ public sealed class Win32GlobalHotkeyService : IGlobalHotkeyService, IDisposable
         }
     }
 
+    // Sin filtro de mensajes (0, 0): un WM_QUIT ENVIADO con PostThreadMessage es un
+    // mensaje más de la cola y un filtro solo-WM_HOTKEY lo descartaría, dejando el
+    // bucle (y el cierre de la app) colgado para siempre (HU-20). GetMessage devuelve
+    // 0 con WM_QUIT y el bucle termina; el resto de mensajes se ignora.
     private void PumpMessages()
     {
-        while (NativeMethods.GetMessage(out var message, nint.Zero, NativeMethods.WmHotkey, NativeMethods.WmHotkey) > 0)
+        while (NativeMethods.GetMessage(out var message, nint.Zero, 0, 0) > 0)
         {
-            RaiseForHotkey(message.WParam);
+            if (message.Message == NativeMethods.WmHotkey)
+            {
+                RaiseForHotkey(message.WParam);
+            }
         }
     }
 

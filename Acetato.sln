@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acetato.Domain.Tests", "tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acetato.Application.Tests", "tests\Acetato.Application.Tests\Acetato.Application.Tests.csproj", "{D0000000-0000-0000-0000-000000000006}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acetato.Infrastructure.Tests", "tests\Acetato.Infrastructure.Tests\Acetato.Infrastructure.Tests.csproj", "{D0000000-0000-0000-0000-000000000007}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{D0000000-0000-0000-0000-000000000006}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0000000-0000-0000-0000-000000000006}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0000000-0000-0000-0000-000000000006}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0000000-0000-0000-0000-000000000007}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0000000-0000-0000-0000-000000000007}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0000000-0000-0000-0000-000000000007}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0000000-0000-0000-0000-000000000007}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,5 +66,6 @@ Global
 		{D0000000-0000-0000-0000-000000000004} = {F0000000-0000-0000-0000-0000000000A1}
 		{D0000000-0000-0000-0000-000000000005} = {F0000000-0000-0000-0000-0000000000A2}
 		{D0000000-0000-0000-0000-000000000006} = {F0000000-0000-0000-0000-0000000000A2}
+		{D0000000-0000-0000-0000-000000000007} = {F0000000-0000-0000-0000-0000000000A2}
 	EndGlobalSection
 EndGlobal

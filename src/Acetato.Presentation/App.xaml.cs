@@ -92,11 +92,14 @@ public partial class App : System.Windows.Application
         }
     }
 
+    // Orden (HU-20): atajos → servicios → icono de bandeja. El icono se quita al
+    // final: mientras se vea, la app sigue cerrándose (antes se quitaba primero y
+    // ocultaba que el proceso quedaba vivo).
     protected override void OnExit(ExitEventArgs e)
     {
-        _trayIcon?.Dispose();
         _hotkeys?.Unregister();
         _services?.Dispose();
+        _trayIcon?.Dispose();
         base.OnExit(e);
     }
 
