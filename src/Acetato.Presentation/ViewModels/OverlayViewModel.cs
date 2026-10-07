@@ -121,8 +121,7 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
     private static InkCanvasEditingMode ToEditingMode(ToolKind tool) => tool switch
     {
         ToolKind.Eraser => InkCanvasEditingMode.EraseByStroke,
-        ToolKind.Arrow => InkCanvasEditingMode.Ink, // flecha libre: traza como el lápiz; FreehandStrokeBehavior añade la punta
-        _ => InkCanvasEditingMode.None, // lápiz (captura propia, HU-20), formas, texto y láser: los dibuja su behavior
+        _ => InkCanvasEditingMode.None, // lápiz y flecha (captura propia, HU-20), formas, texto y láser: los dibuja su behavior
     };
 
     public void Dispose()

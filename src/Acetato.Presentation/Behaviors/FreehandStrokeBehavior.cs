@@ -9,13 +9,12 @@ namespace Acetato.Presentation.Behaviors;
 
 /// <summary>
 /// Comportamiento adjunto del trazo a mano alzada (HU-19/HU-20) sin lógica en el
-/// code-behind. El lápiz no usa el trazado nativo del InkCanvas: este behavior captura
-/// el mouse, acumula los puntos en una <see cref="FreehandSession"/> y pinta el trazo en
-/// curso en la <see cref="LiveStrokeLayer"/> con su aspecto final (también en degradado).
-/// Al soltar —o si se pierde el mouse a mitad del trazo— el trazo entra a la colección
-/// del lienzo UNA vez: una sola entrada en el historial.
-/// La flecha aún usa el trazado nativo y se reemplaza al soltar por un
-/// <see cref="StyledStroke"/> con punta (o se descarta si es más corta que la punta).
+/// code-behind. Lápiz y flecha no usan el trazado nativo del InkCanvas: este behavior
+/// captura el mouse, acumula los puntos en una <see cref="FreehandSession"/> y pinta el
+/// trazo en curso en la <see cref="LiveStrokeLayer"/> con su aspecto final (degradado y
+/// punta de flecha incluidos). Al soltar —o si se pierde el mouse a mitad del trazo— el
+/// trazo entra a la colección del lienzo UNA vez: una sola entrada en el historial. Una
+/// flecha más corta que su punta no deja nada.
 /// </summary>
 public static class FreehandStrokeBehavior
 {
@@ -95,12 +94,10 @@ public static class FreehandStrokeBehavior
         canvas.LostMouseCapture += OnLostMouseCapture;
         canvas.IsVisibleChanged -= OnVisibleChanged;
         canvas.IsVisibleChanged += OnVisibleChanged;
-        canvas.StrokeCollected -= OnStrokeCollected;
-        canvas.StrokeCollected += OnStrokeCollected;
     }
 
     // Herramientas que se trazan con captura propia y pintado en vivo.
-    private static bool IsLiveTool(ToolKind tool) => tool is ToolKind.Pencil;
+    private static bool IsLiveTool(ToolKind tool) => tool is ToolKind.Pencil or ToolKind.Arrow;
 
     private static void OnMouseDown(object sender, MouseButtonEventArgs e)
     {
@@ -179,33 +176,6 @@ public static class FreehandStrokeBehavior
         if (session.IsGradient)
         {
             InkGradient.NotifyUsed(canvas); // sortea el par del siguiente trazo
-        }
-    }
-
-    // Flecha (trazado nativo): al soltar se reemplaza por un StyledStroke con punta y,
-    // si toca, degradado; si es más corta que la punta se descarta.
-    private static void OnStrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e)
-    {
-        var canvas = (InkCanvas)sender;
-        if (GetTool(canvas) != ToolKind.Arrow)
-        {
-            return;
-        }
-
-        var collected = e.Stroke;
-        _ = canvas.Strokes.Remove(collected);
-        var path = collected.StylusPoints.ToStrokePoints();
-        if (!ArrowHeadBuilder.TryBuild(path, collected.DrawingAttributes.Width, out var head))
-        {
-            return;
-        }
-
-        var gradient = InkGradient.GetPair(canvas);
-        canvas.Strokes.Add(new StyledStroke(
-            collected.StylusPoints.Clone(), collected.DrawingAttributes.Clone(), head, gradient));
-        if (gradient is not null)
-        {
-            InkGradient.NotifyUsed(canvas);
         }
     }
 
