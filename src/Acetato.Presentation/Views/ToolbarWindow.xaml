@@ -15,7 +15,14 @@
         FontFamily="{StaticResource Font.Ui}">
 
     <!-- Barra glass: único elemento visible (principio #1, CERO distracción). -->
-    <Border Background="{StaticResource Chrome.Glass}"
+    <!--
+      Margen transparente para la sombra (BlurRadius 34, caída 10 hacia abajo). Sin él,
+      la ventana mide justo lo que la barra y la sombra solo cabe en las esquinas fuera
+      del radio: se ve un rectángulo oscuro detrás de las esquinas redondeadas. Los
+      píxeles del margen sin sombra son alfa 0: los clics pasan a lo de abajo.
+    -->
+    <Border Margin="36,28,36,48"
+            Background="{StaticResource Chrome.Glass}"
             CornerRadius="{StaticResource Radius.Toolbar}"
             BorderBrush="{StaticResource Stroke.Outer}"
             BorderThickness="1"

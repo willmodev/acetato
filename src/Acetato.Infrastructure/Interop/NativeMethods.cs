@@ -64,11 +64,6 @@ internal static partial class NativeMethods
     // Afinidad de presentación: la barra queda visible pero fuera de toda captura (HU-12).
     internal const uint WdaExcludeFromCapture = 0x00000011;
 
-    // Fondo del sistema (pulido): blur acrílico de la barra en Windows 11 22H2+.
-    // En versiones previas la llamada DWM devuelve error y no surte efecto.
-    internal const uint DwmwaSystemBackdropType = 38;
-    internal const int DwmsbtTransientWindow = 3; // Acrylic, apropiado para flotantes
-
     [LibraryImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     internal static partial bool RegisterHotKey(nint hWnd, int id, uint fsModifiers, uint vk);
@@ -119,7 +114,4 @@ internal static partial class NativeMethods
     [LibraryImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     internal static partial bool SetWindowPlacement(nint hWnd, ref WindowPlacementNative lpwndpl);
-
-    [LibraryImport("dwmapi.dll")]
-    internal static partial int DwmSetWindowAttribute(nint hwnd, uint attribute, ref int pvAttribute, uint cbAttribute);
 }
