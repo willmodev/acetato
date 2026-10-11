@@ -126,6 +126,33 @@ public sealed class OverlayControllerTests
         _surface.Received(1).SetClickThrough(false);
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Toggle_raises_StateChanged_once(bool visible)
+    {
+        _surface.IsVisible.Returns(visible);
+        var controller = CreateController();
+        int raised = 0;
+        controller.StateChanged += (_, _) => raised++;
+
+        controller.Toggle();
+
+        raised.Should().Be(1);
+    }
+
+    [Fact]
+    public void SetDrawingMode_raises_StateChanged()
+    {
+        var controller = CreateController();
+        int raised = 0;
+        controller.StateChanged += (_, _) => raised++;
+
+        controller.SetDrawingMode(false);
+
+        raised.Should().Be(1);
+    }
+
     [Fact]
     public void Overlay_styles_are_applied_each_time_it_is_shown()
     {

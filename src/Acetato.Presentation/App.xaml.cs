@@ -52,6 +52,7 @@ public partial class App : System.Windows.Application
 
     // Conecta el servicio de atajos con el enrutador, que marshala cada acción
     // al hilo de UI y la reparte vía el broadcaster (a las panes de cada monitor).
+    // El coordinador (HU-21) decide qué combinaciones se registran en cada momento.
     private void WireHotkeys()
     {
         var services = _services!;
@@ -62,7 +63,7 @@ public partial class App : System.Windows.Application
         _hotkeys = services.GetRequiredService<IGlobalHotkeyService>();
         _hotkeys.ActionRequested += _router.Handle;
         _hotkeys.Register();
-        _ = _hotkeys.Apply([.. HotkeyCatalog.All.Select(definition => new HotkeyAssignment(definition.Action, definition.Default))]);
+        services.GetRequiredService<HotkeyCoordinator>().Start();
     }
 
     // Crea el icono de bandeja (HU-08) y cablea sus comandos en código. No se
@@ -150,6 +151,7 @@ public partial class App : System.Windows.Application
         services.AddSingleton<IOverlayCanvasProvider>(sp => sp.GetRequiredService<MultiMonitorOverlaySurface>());
         services.AddSingleton<OverlayBroadcaster>();
         services.AddSingleton<IOverlayController, OverlayController>();
+        services.AddSingleton<HotkeyCoordinator>();
 
         // Barra flotante (HU-10): VM, ventana (DataContext se asigna fuera del
         // contenedor para evitar el ciclo) y su superficie.

@@ -33,18 +33,29 @@ public sealed class OverlayController : IOverlayController
 
     public bool IsDrawingMode => _drawingMode;
 
+    public event EventHandler? StateChanged;
+
     public void Toggle()
     {
         if (_surface.IsVisible)
         {
             HideAll();
-            return;
+        }
+        else
+        {
+            ShowAll();
         }
 
-        ShowAll();
+        StateChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public void SetDrawingMode(bool enabled)
+    {
+        ApplyDrawingMode(enabled);
+        StateChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void ApplyDrawingMode(bool enabled)
     {
         _drawingMode = enabled;
         // Modo dibujo = la capa captura los clics = sin click-through.
@@ -63,7 +74,8 @@ public sealed class OverlayController : IOverlayController
         _surface.Show();
         _toolbar.Show();
         EnsureNativeStyles();
-        SetDrawingMode(true);
+        // Sin aviso aquí: Toggle avisa una sola vez al terminar.
+        ApplyDrawingMode(true);
     }
 
     private void EnsureNativeStyles()
