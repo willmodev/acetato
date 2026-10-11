@@ -22,7 +22,7 @@ public sealed class SettingsViewModelTests : IDisposable
         _hotkeys.Apply(Arg.Do<IReadOnlyList<HotkeyAssignment>>(_applied.Add)).Returns([]);
         _hotkeys.IsAvailable(Arg.Any<KeyChord>()).Returns(true);
         _store.Load().Returns(new HotkeySettingsLoad(HotkeyMap.Defaults, WasCorrupt: false));
-        _coordinator = new HotkeyCoordinator(_hotkeys, Substitute.For<IOverlayController>(), _store);
+        _coordinator = new HotkeyCoordinator(_hotkeys, Substitute.For<IOverlayController>(), _store, Substitute.For<IHotkeyNotifier>());
         _coordinator.Start();
         _settings = new SettingsViewModel(_coordinator, Substitute.For<IWindowDragHandler>());
     }

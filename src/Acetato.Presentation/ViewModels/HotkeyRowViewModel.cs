@@ -39,11 +39,13 @@ internal sealed partial class HotkeyRowViewModel : ObservableObject
 
     /// <summary>La combinación no se pudo registrar (otra app la tiene).</summary>
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowsUnavailable))]
     private bool _isUnavailable;
 
     /// <summary>Error o conflicto en línea; <c>null</c> si no hay.</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasMessage))]
+    [NotifyPropertyChangedFor(nameof(ShowsUnavailable))]
     private string? _message;
 
     /// <summary>El conflicto es con otra acción: se ofrece Reemplazar.</summary>
@@ -69,6 +71,12 @@ internal sealed partial class HotkeyRowViewModel : ObservableObject
 
     /// <summary>Hay un mensaje que mostrar bajo la fila.</summary>
     public bool HasMessage => Message is not null;
+
+    /// <summary>Se muestra «No disponible» (un mensaje en curso tiene prioridad).</summary>
+    public bool ShowsUnavailable => IsUnavailable && !HasMessage;
+
+    /// <summary>Texto de la marca de atajo no disponible.</summary>
+    public static string UnavailableText => HotkeyMessages.Unavailable;
 
     /// <summary>Relee el estado del coordinador.</summary>
     public void Refresh()

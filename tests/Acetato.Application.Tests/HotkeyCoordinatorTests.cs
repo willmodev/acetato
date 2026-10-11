@@ -27,7 +27,7 @@ public sealed class HotkeyCoordinatorTests
     private HotkeyCoordinator CreateStarted(bool visible, bool drawing)
     {
         SetOverlay(visible, drawing);
-        var coordinator = new HotkeyCoordinator(_hotkeys, _overlay, _store);
+        var coordinator = new HotkeyCoordinator(_hotkeys, _overlay, _store, Substitute.For<IHotkeyNotifier>());
         coordinator.Start();
         return coordinator;
     }

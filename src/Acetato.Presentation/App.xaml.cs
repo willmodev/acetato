@@ -65,7 +65,16 @@ public partial class App : System.Windows.Application
         _hotkeys = services.GetRequiredService<IGlobalHotkeyService>();
         _hotkeys.ActionRequested += _router.Handle;
         _hotkeys.Register();
+        WireSettingsRequests(services);
         services.GetRequiredService<HotkeyCoordinator>().Start();
+    }
+
+    // Clic en el aviso de atajos (HU-21): llega en otro hilo, se abre Ajustes en el de UI.
+    private void WireSettingsRequests(IServiceProvider services)
+    {
+        var launcher = services.GetRequiredService<SettingsWindowLauncher>();
+        services.GetRequiredService<IHotkeyNotifier>().SettingsRequested +=
+            (_, _) => _ = Dispatcher.BeginInvoke(launcher.Open);
     }
 
     // Crea el icono de bandeja (HU-08) y cablea sus comandos en código. No se
@@ -140,6 +149,7 @@ public partial class App : System.Windows.Application
         services.AddSingleton<IWindowDragHandler, Win32WindowDragHandler>();
         services.AddSingleton<IGlobalHotkeyService, Win32GlobalHotkeyService>();
         services.AddSingleton<IHotkeySettingsStore>(_ => new JsonHotkeySettingsStore());
+        services.AddSingleton<IHotkeyNotifier, ToastHotkeyNotifier>();
         services.AddSingleton<IMonitorService, Win32MonitorService>();
         services.AddSingleton<ICursorPositionProvider, Win32CursorPositionProvider>();
     }

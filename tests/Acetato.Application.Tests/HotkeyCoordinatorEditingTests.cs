@@ -25,7 +25,7 @@ public sealed class HotkeyCoordinatorEditingTests : IDisposable
         _store.Load().Returns(new HotkeySettingsLoad(HotkeyMap.Defaults, WasCorrupt: false));
         _overlay.IsVisible.Returns(true);
         _overlay.IsDrawingMode.Returns(true);
-        _coordinator = new HotkeyCoordinator(_hotkeys, _overlay, _store);
+        _coordinator = new HotkeyCoordinator(_hotkeys, _overlay, _store, Substitute.For<IHotkeyNotifier>());
         _coordinator.Start();
     }
 
@@ -160,7 +160,7 @@ public sealed class HotkeyCoordinatorEditingTests : IDisposable
         hotkeys.IsAvailable(DefaultOf(HotkeyAction.Capture)).Returns(false);
         hotkeys.Apply(Arg.Any<IReadOnlyList<HotkeyAssignment>>()).Returns([]);
         _overlay.IsVisible.Returns(false);
-        using var coordinator = new HotkeyCoordinator(hotkeys, _overlay, _store);
+        using var coordinator = new HotkeyCoordinator(hotkeys, _overlay, _store, Substitute.For<IHotkeyNotifier>());
 
         coordinator.Start();
 

@@ -25,7 +25,7 @@ public sealed class HotkeyRowViewModelTests : IDisposable
         _hotkeys.Apply(Arg.Do<IReadOnlyList<HotkeyAssignment>>(_applied.Add)).Returns([]);
         _hotkeys.IsAvailable(Arg.Any<KeyChord>()).Returns(true);
         _store.Load().Returns(new HotkeySettingsLoad(HotkeyMap.Defaults, WasCorrupt: false));
-        _coordinator = new HotkeyCoordinator(_hotkeys, _overlay, _store);
+        _coordinator = new HotkeyCoordinator(_hotkeys, _overlay, _store, Substitute.For<IHotkeyNotifier>());
         _coordinator.Start();
         _undo = new HotkeyRowViewModel(HotkeyAction.Undo, _coordinator);
     }

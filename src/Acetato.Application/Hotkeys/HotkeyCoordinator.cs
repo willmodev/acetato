@@ -17,16 +17,22 @@ public sealed class HotkeyCoordinator : IDisposable
     private readonly IGlobalHotkeyService _hotkeys;
     private readonly IOverlayController _overlay;
     private readonly IHotkeySettingsStore _store;
+    private readonly IHotkeyNotifier _notifier;
     private readonly HotkeyAvailability _availability;
     private List<HotkeyAssignment> _applied = [];
     private bool _started;
     private bool _capturing;
 
-    public HotkeyCoordinator(IGlobalHotkeyService hotkeys, IOverlayController overlay, IHotkeySettingsStore store)
+    public HotkeyCoordinator(
+        IGlobalHotkeyService hotkeys,
+        IOverlayController overlay,
+        IHotkeySettingsStore store,
+        IHotkeyNotifier notifier)
     {
         _hotkeys = hotkeys;
         _overlay = overlay;
         _store = store;
+        _notifier = notifier;
         _availability = new HotkeyAvailability(hotkeys);
     }
 
@@ -43,8 +49,9 @@ public sealed class HotkeyCoordinator : IDisposable
 
     /// <summary>
     /// Carga los atajos guardados, prueba todas sus combinaciones (también las
-    /// de dibujo, que aún no se registran), aplica las activas y empieza a
-    /// seguir el estado del overlay.
+    /// de dibujo, que aún no se registran), aplica las activas, empieza a seguir
+    /// el estado del overlay y avisa si algo falló. Solo aquí se avisa: lo que
+    /// falle después se marca «No disponible» sin repetir la notificación.
     /// </summary>
     public void Start()
     {
@@ -54,10 +61,15 @@ public sealed class HotkeyCoordinator : IDisposable
         }
 
         _started = true;
-        Map = _store.Load().Map;
+        var load = _store.Load();
+        Map = load.Map;
         _ = _availability.Probe(Map, HotkeyCatalog.All.Select(definition => definition.Action));
         _overlay.StateChanged += OnOverlayStateChanged;
         _ = Refresh(force: true);
+        if (Unavailable.Count > 0 || load.WasCorrupt)
+        {
+            _notifier.NotifyStartupProblems(Unavailable.Count, load.WasCorrupt);
+        }
     }
 
     /// <summary>Intenta asignar la combinación; solo cambia algo si devuelve <see cref="ChordAssigned"/>.</summary>
