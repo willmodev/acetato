@@ -14,30 +14,38 @@ internal static partial class NativeMethods
     // Mensajes de ventana y modificadores de RegisterHotKey.
     internal const uint WmHotkey = 0x0312;
     internal const uint WmQuit = 0x0012;
+    internal const uint WmApp = 0x8000; // Aviso de petición encolada al hilo de atajos (HU-21)
     internal const uint WmNcLButtonDown = 0x00A1; // Clic en área no cliente (arrastre)
     internal const uint ModAlt = 0x0001;
     internal const uint ModControl = 0x0002;
+    internal const uint ModShift = 0x0004;
+    internal const uint ModWin = 0x0008;
     internal const uint ModNoRepeat = 0x4000;
+
+    // PeekMessage sin retirar: fuerza a crear la cola de mensajes del hilo.
+    internal const uint PmNoRemove = 0x0000;
 
     // Hit-test para arrastrar la barra como si pulsaran su barra de título.
     internal const int HtCaption = 2;
 
-    // Virtual-key codes de los atajos (fila superior, no numpad).
+    // Virtual-key codes de las teclas de atajo (HU-21). Las series A–Z, 0–9
+    // (fila superior), F1–F12 y numpad son contiguas: basta con su inicio.
+    internal const uint VkA = 0x41;
+    internal const uint Vk0 = 0x30;
+    internal const uint VkF1 = 0x70;
+    internal const uint VkNumPad0 = 0x60;
     internal const uint VkBack = 0x08; // Retroceso
     internal const uint VkSpace = 0x20; // Espacio
-    internal const uint Vk1 = 0x31;
-    internal const uint Vk2 = 0x32;
-    internal const uint Vk3 = 0x33;
-    internal const uint Vk4 = 0x34;
-    internal const uint Vk5 = 0x35;
-    internal const uint Vk6 = 0x36;
-    internal const uint Vk7 = 0x37; // Modo Degradado (HU-19)
-    internal const uint VkD = 0x44;
-    internal const uint VkE = 0x45;
-    internal const uint VkL = 0x4C; // Herramienta Láser (HU-15)
-    internal const uint VkS = 0x53; // Captura (Snapshot, HU-12)
-    internal const uint VkT = 0x54; // Herramienta Texto (HU-13)
-    internal const uint VkZ = 0x5A;
+    internal const uint VkPrior = 0x21; // RePág
+    internal const uint VkNext = 0x22; // AvPág
+    internal const uint VkEnd = 0x23;
+    internal const uint VkHome = 0x24;
+    internal const uint VkLeft = 0x25;
+    internal const uint VkUp = 0x26;
+    internal const uint VkRight = 0x27;
+    internal const uint VkDown = 0x28;
+    internal const uint VkInsert = 0x2D;
+    internal const uint VkDelete = 0x2E; // Supr
 
     // Estilos extendidos de ventana del overlay y de la barra.
     internal const int GwlExStyle = -20;
@@ -74,6 +82,10 @@ internal static partial class NativeMethods
 
     [LibraryImport("user32.dll", EntryPoint = "GetMessageW", SetLastError = true)]
     internal static partial int GetMessage(out NativeMessage lpMsg, nint hWnd, uint wMsgFilterMin, uint wMsgFilterMax);
+
+    [LibraryImport("user32.dll", EntryPoint = "PeekMessageW")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static partial bool PeekMessage(out NativeMessage lpMsg, nint hWnd, uint wMsgFilterMin, uint wMsgFilterMax, uint wRemoveMsg);
 
     [LibraryImport("user32.dll", EntryPoint = "PostThreadMessageW", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]

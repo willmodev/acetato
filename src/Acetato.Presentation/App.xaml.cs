@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using Acetato.Application.Abstractions;
 using Acetato.Application.Capture;
 using Acetato.Application.Drawing;
+using Acetato.Application.Hotkeys;
 using Acetato.Application.Overlay;
 using Acetato.Domain;
 using Acetato.Infrastructure.Capture;
@@ -61,6 +62,7 @@ public partial class App : System.Windows.Application
         _hotkeys = services.GetRequiredService<IGlobalHotkeyService>();
         _hotkeys.ActionRequested += _router.Handle;
         _hotkeys.Register();
+        _ = _hotkeys.Apply([.. HotkeyCatalog.All.Select(definition => new HotkeyAssignment(definition.Action, definition.Default))]);
     }
 
     // Crea el icono de bandeja (HU-08) y cablea sus comandos en código. No se
