@@ -8,6 +8,7 @@
                 <ResourceDictionary Source="Resources/Tokens.xaml" />
                 <ResourceDictionary Source="Resources/Icons.xaml" />
                 <ResourceDictionary Source="Resources/ToolbarStyles.xaml" />
+                <ResourceDictionary Source="Resources/SettingsStyles.xaml" />
                 <ResourceDictionary Source="Resources/TrayIcon.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

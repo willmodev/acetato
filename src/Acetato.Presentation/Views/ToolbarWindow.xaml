@@ -103,11 +103,11 @@
 
             <Rectangle Style="{StaticResource ToolDivider}" />
 
-            <!-- Captura (funcional, HU-12) / Ajustes (placeholder) -->
+            <!-- Captura (funcional, HU-12) / Ajustes (HU-21) -->
             <Button Style="{StaticResource ToolButton}" Command="{Binding CaptureCommand}" ToolTip="Captura">
                 <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Capture}" />
             </Button>
-            <Button Style="{StaticResource ToolButton}" IsEnabled="False" ToolTip="Ajustes">
+            <Button Style="{StaticResource ToolButton}" Command="{Binding OpenSettingsCommand}" ToolTip="Ajustes">
                 <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Settings}" />
             </Button>
 

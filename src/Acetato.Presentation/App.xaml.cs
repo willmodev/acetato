@@ -12,6 +12,7 @@ using Acetato.Infrastructure.Monitors;
 using Acetato.Infrastructure.Overlay;
 using Acetato.Infrastructure.Settings;
 using Acetato.Presentation.Overlay;
+using Acetato.Presentation.Settings;
 using Acetato.Presentation.ViewModels;
 using Acetato.Presentation.Views;
 using H.NotifyIcon;
@@ -90,6 +91,7 @@ public partial class App : System.Windows.Application
             item.Command = (item.Tag as string) switch
             {
                 "activate" => viewModel.ActivateDrawingCommand,
+                "settings" => viewModel.OpenSettingsCommand,
                 "exit" => viewModel.ExitCommand,
                 _ => item.Command,
             };
@@ -154,6 +156,7 @@ public partial class App : System.Windows.Application
         services.AddSingleton<OverlayBroadcaster>();
         services.AddSingleton<IOverlayController, OverlayController>();
         services.AddSingleton<HotkeyCoordinator>();
+        services.AddSingleton<SettingsWindowLauncher>();
 
         // Barra flotante (HU-10): VM, ventana (DataContext se asigna fuera del
         // contenedor para evitar el ciclo) y su superficie.

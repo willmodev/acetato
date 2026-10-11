@@ -4,6 +4,7 @@ using Acetato.Application.Drawing;
 using Acetato.Application.Overlay;
 using Acetato.Domain;
 using Acetato.Presentation.Resources;
+using Acetato.Presentation.Settings;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -22,6 +23,7 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
     private readonly IDrawingSettings _settings;
     private readonly IOverlayController _controller;
     private readonly OverlayBroadcaster _broadcaster;
+    private readonly SettingsWindowLauncher _settingsLauncher;
 
     /// <summary>Pincel de la tinta activa, o el degradado de muestra (para el botón de color de la barra).</summary>
     [ObservableProperty]
@@ -39,9 +41,11 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
         OverlayBroadcaster broadcaster,
         IDrawingSettings settings,
         IOverlayController controller,
-        IWindowDragHandler dragHandler)
+        IWindowDragHandler dragHandler,
+        SettingsWindowLauncher settingsLauncher)
     {
         _broadcaster = broadcaster;
+        _settingsLauncher = settingsLauncher;
         _settings = settings;
         _controller = controller;
         DragHandler = dragHandler;
@@ -121,6 +125,10 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
     /// <summary>Guarda el escritorio virtual anotado como PNG (HU-12).</summary>
     [RelayCommand]
     private Task Capture() => _broadcaster.CaptureAsync();
+
+    /// <summary>Abre la ventana Ajustes (HU-21).</summary>
+    [RelayCommand]
+    private void OpenSettings() => _settingsLauncher.Open();
 
     /// <summary>Oculta el overlay y la barra (botón Cerrar).</summary>
     [RelayCommand]

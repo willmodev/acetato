@@ -19,6 +19,7 @@
             -->
             <ContextMenu>
                 <MenuItem Header="Activar dibujo" Tag="activate" />
+                <MenuItem Header="Ajustes" Tag="settings" />
                 <Separator />
                 <MenuItem Header="Salir" Tag="exit" />
             </ContextMenu>

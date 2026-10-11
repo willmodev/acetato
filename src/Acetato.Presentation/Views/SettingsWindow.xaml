@@ -1,0 +1,57 @@
+<!--
+  Ventana Ajustes (HU-21). Ventana normal (no overlay): aparece en la barra de
+  tareas y queda encima del overlay. Sin barra de título de Windows: título
+  propio arrastrable con WindowDragBehavior y botón Cerrar. Solo la sección
+  Atajos por ahora. Code-behind solo con InitializeComponent (MVVM estricto).
+-->
+<Window x:Class="Acetato.Presentation.Views.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:b="clr-namespace:Acetato.Presentation.Behaviors"
+        Title="Ajustes"
+        Icon="pack://application:,,,/Resources/acetato.ico"
+        Width="480" Height="600"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        ShowInTaskbar="True"
+        Topmost="True"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource Chrome.Solid}"
+        BorderBrush="{StaticResource Stroke.Outer}"
+        BorderThickness="1"
+        FontFamily="{StaticResource Font.Ui}">
+
+    <DockPanel>
+
+        <!-- Título arrastrable + Cerrar. El arrastre va solo en la columna del
+             título: en la del botón robaría su clic. -->
+        <Grid DockPanel.Dock="Top" Height="48">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Border Background="Transparent" b:WindowDragBehavior.DragHandler="{Binding DragHandler}">
+                <TextBlock Style="{StaticResource SettingsTitle}" Margin="20,0" Text="Ajustes" />
+            </Border>
+            <Button Grid.Column="1" Margin="0,0,6,0" Style="{StaticResource ToolButton}"
+                    Command="{Binding CloseCommand}" ToolTip="Cerrar">
+                <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Close}" />
+            </Button>
+        </Grid>
+
+        <Rectangle DockPanel.Dock="Top" Style="{StaticResource SettingsDivider}" />
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+            <StackPanel Margin="20,4,20,16">
+                <TextBlock Style="{StaticResource SettingsCaption}" Text="Siempre activos" />
+                <ItemsControl ItemsSource="{Binding AlwaysRows}" ItemTemplate="{StaticResource HotkeyRowTemplate}"
+                              Focusable="False" />
+
+                <TextBlock Style="{StaticResource SettingsCaption}" Text="Solo al dibujar" />
+                <ItemsControl ItemsSource="{Binding DrawingRows}" ItemTemplate="{StaticResource HotkeyRowTemplate}"
+                              Focusable="False" />
+            </StackPanel>
+        </ScrollViewer>
+
+    </DockPanel>
+</Window>
