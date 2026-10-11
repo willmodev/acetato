@@ -1,24 +1,33 @@
 using Acetato.Application.Abstractions;
 using Acetato.Application.Hotkeys;
+using Acetato.Domain;
 using Acetato.Presentation.Settings;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace Acetato.Presentation.ViewModels;
 
 /// <summary>
-/// Fila de un atajo en Ajustes (HU-21): nombre de la acción y combinación
-/// actual. Refleja el estado del <see cref="HotkeyCoordinator"/>, que es la
-/// única fuente de verdad.
+/// Fila de un atajo en Ajustes (HU-21): nombre de la acción, combinación actual
+/// y su edición. Al pulsar la combinación entra en captura (todos los atajos en
+/// pausa) hasta recibir una válida, <c>Esc</c> o un conflicto con otra acción,
+/// que ofrece Reemplazar. El <see cref="HotkeyCoordinator"/> es la única fuente
+/// de verdad; la fila solo refleja su estado.
 /// </summary>
 internal sealed partial class HotkeyRowViewModel : ObservableObject
 {
-    private const string NoChordText = "Sin atajo";
-
     private readonly HotkeyCoordinator _coordinator;
+    private KeyChord? _pendingChord;
 
-    /// <summary>Combinación en texto: «Ctrl+Z» o «Sin atajo».</summary>
+    /// <summary>Combinación actual en texto: «Ctrl+Z» o «Sin atajo».</summary>
     [ObservableProperty]
-    private string _chordText = NoChordText;
+    [NotifyPropertyChangedFor(nameof(ChordText))]
+    private string _currentChordText = HotkeyMessages.NoChord;
+
+    /// <summary>La fila espera una combinación.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ChordText))]
+    private bool _isCapturing;
 
     /// <summary>Conserva el atajo por defecto.</summary>
     [ObservableProperty]
@@ -27,6 +36,15 @@ internal sealed partial class HotkeyRowViewModel : ObservableObject
     /// <summary>La combinación no se pudo registrar (otra app la tiene).</summary>
     [ObservableProperty]
     private bool _isUnavailable;
+
+    /// <summary>Error o conflicto en línea; <c>null</c> si no hay.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasMessage))]
+    private string? _message;
+
+    /// <summary>El conflicto es con otra acción: se ofrece Reemplazar.</summary>
+    [ObservableProperty]
+    private bool _canReplace;
 
     public HotkeyRowViewModel(HotkeyAction action, HotkeyCoordinator coordinator)
     {
@@ -42,12 +60,114 @@ internal sealed partial class HotkeyRowViewModel : ObservableObject
     /// <summary>Nombre de la acción: «Deshacer», «Tinta roja»…</summary>
     public string Label { get; }
 
+    /// <summary>Texto de la combinación: la actual o «Pulsa la combinación…».</summary>
+    public string ChordText => IsCapturing ? HotkeyMessages.Capturing : CurrentChordText;
+
+    /// <summary>Hay un mensaje que mostrar bajo la fila.</summary>
+    public bool HasMessage => Message is not null;
+
     /// <summary>Relee el estado del coordinador.</summary>
     public void Refresh()
     {
         var map = _coordinator.Map;
-        ChordText = map.ChordOf(Action) is { } chord ? KeyChordText.Format(chord) : NoChordText;
+        CurrentChordText = map.ChordOf(Action) is { } chord ? KeyChordText.Format(chord) : HotkeyMessages.NoChord;
         IsDefault = map.IsDefault(Action);
         IsUnavailable = _coordinator.Unavailable.Contains(Action);
+    }
+
+    /// <summary>Entra en captura: pausa todos los atajos y espera la combinación.</summary>
+    [RelayCommand]
+    private void StartCapture()
+    {
+        if (IsCapturing)
+        {
+            return;
+        }
+
+        ClearMessage();
+        // Primero el estado (Ajustes cancela otra fila que capture) y luego la pausa.
+        IsCapturing = true;
+        _coordinator.BeginCapture();
+    }
+
+    /// <summary>
+    /// Recibe la combinación pulsada; <c>null</c> = tecla no admitida. Si no se
+    /// asigna por un error, la captura sigue para probar otra.
+    /// </summary>
+    [RelayCommand]
+    private void Capture(KeyChord? chord)
+    {
+        if (!IsCapturing)
+        {
+            return;
+        }
+
+        if (chord is not { } pressed)
+        {
+            Message = HotkeyMessages.UnsupportedKey;
+            return;
+        }
+
+        Show(_coordinator.Assign(Action, pressed), pressed);
+    }
+
+    /// <summary>Cancela la captura o el conflicto pendiente sin cambios.</summary>
+    [RelayCommand]
+    private void CancelCapture()
+    {
+        ClearMessage();
+        EndCapture();
+    }
+
+    /// <summary>Asigna la combinación en conflicto y deja sin atajo a la otra acción.</summary>
+    [RelayCommand]
+    private void Replace()
+    {
+        if (_pendingChord is { } chord)
+        {
+            ClearMessage();
+            _coordinator.Replace(Action, chord);
+        }
+    }
+
+    private void Show(AssignResult result, KeyChord chord)
+    {
+        switch (result)
+        {
+            case ChordInvalid invalid:
+                Message = HotkeyMessages.Of(invalid.Error);
+                break;
+            case ChordTakenByOtherApp:
+                Message = HotkeyMessages.TakenByOtherApp;
+                break;
+            case ChordTakenByAction taken:
+                EndCapture();
+                Message = HotkeyMessages.TakenBy(taken.Owner);
+                CanReplace = true;
+                _pendingChord = chord;
+                break;
+            default:
+                ClearMessage();
+                EndCapture();
+                break;
+        }
+    }
+
+    private void EndCapture()
+    {
+        if (!IsCapturing)
+        {
+            return;
+        }
+
+        IsCapturing = false;
+        _coordinator.EndCapture();
+    }
+
+    private void ClearMessage()
+    {
+        Message = null;
+        CanReplace = false;
+        _pendingChord = null;
     }
 }

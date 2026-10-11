@@ -19,7 +19,8 @@
         Background="{StaticResource Chrome.Solid}"
         BorderBrush="{StaticResource Stroke.Outer}"
         BorderThickness="1"
-        FontFamily="{StaticResource Font.Ui}">
+        FontFamily="{StaticResource Font.Ui}"
+        b:KeyChordCaptureBehavior.Target="{Binding CapturingRow}">
 
     <DockPanel>
 

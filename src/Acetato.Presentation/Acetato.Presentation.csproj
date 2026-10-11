@@ -17,6 +17,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Los tests de Ajustes (HU-21) prueban tipos internos (WpfKeyMap, KeyChordText…). -->
+    <InternalsVisibleTo Include="Acetato.Presentation.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- Icono de bandeja (HU-08), derivado del isotipo de marca. -->
     <Resource Include="Resources\acetato.ico" />
   </ItemGroup>
