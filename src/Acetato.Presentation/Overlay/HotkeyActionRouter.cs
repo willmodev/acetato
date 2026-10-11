@@ -49,5 +49,12 @@ internal sealed class HotkeyActionRouter
         [HotkeyAction.Capture] = () => _ = broadcaster.CaptureAsync(),
         [HotkeyAction.SelectTextTool] = () => broadcaster.SelectTool(ToolKind.Text),
         [HotkeyAction.SelectLaserTool] = () => broadcaster.SelectTool(ToolKind.Laser),
+        [HotkeyAction.SelectPencilTool] = () => broadcaster.SelectTool(ToolKind.Pencil),
+        [HotkeyAction.SelectEraserTool] = () => broadcaster.SelectTool(ToolKind.Eraser),
+        [HotkeyAction.SelectLineTool] = () => broadcaster.SelectTool(ToolKind.Line),
+        [HotkeyAction.SelectArrowTool] = () => broadcaster.SelectTool(ToolKind.Arrow),
+        [HotkeyAction.SelectRectangleTool] = () => broadcaster.SelectTool(ToolKind.Rectangle),
+        [HotkeyAction.ThicknessUp] = broadcaster.IncreaseThickness,
+        [HotkeyAction.ThicknessDown] = broadcaster.DecreaseThickness,
     };
 }

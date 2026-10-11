@@ -8,7 +8,7 @@ namespace Acetato.Application.Overlay;
 
 /// <summary>
 /// Reparte las acciones de dibujo entre los lienzos del overlay (uno por
-/// monitor, HU-09). Las acciones globales (color, herramienta) van por el estado
+/// monitor, HU-09). Las acciones globales (color, herramienta, grosor) van por el estado
 /// compartido <see cref="IDrawingSettings"/>; "limpiar" afecta a cada lienzo;
 /// "deshacer" solo al del monitor activo (bajo el cursor); la captura abarca el
 /// escritorio virtual completo. Lo usan tanto los atajos como los botones de la
@@ -56,6 +56,12 @@ public sealed class OverlayBroadcaster
 
     /// <summary>Selecciona una herramienta concreta; afecta a todas las pantallas (HU-13).</summary>
     public void SelectTool(ToolKind tool) => _settings.SelectTool(tool);
+
+    /// <summary>Sube el grosor un paso, con tope en el más grueso (HU-22).</summary>
+    public void IncreaseThickness() => _settings.IncreaseThickness();
+
+    /// <summary>Baja el grosor un paso, con tope en el más fino (HU-22).</summary>
+    public void DecreaseThickness() => _settings.DecreaseThickness();
 
     /// <summary>
     /// Guarda el escritorio virtual anotado como PNG (HU-12). Se tragan fallas

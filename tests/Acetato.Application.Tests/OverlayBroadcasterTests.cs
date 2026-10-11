@@ -95,6 +95,22 @@ public sealed class OverlayBroadcasterTests
     }
 
     [Fact]
+    public void IncreaseThickness_moves_the_shared_settings_one_step_up()
+    {
+        CreateBroadcaster().IncreaseThickness();
+
+        _settings.Received(1).IncreaseThickness();
+    }
+
+    [Fact]
+    public void DecreaseThickness_moves_the_shared_settings_one_step_down()
+    {
+        CreateBroadcaster().DecreaseThickness();
+
+        _settings.Received(1).DecreaseThickness();
+    }
+
+    [Fact]
     public async Task CaptureAsync_invokes_the_capture_service()
     {
         _capture.CaptureAsync().Returns(new CaptureResult("ruta.png"));
