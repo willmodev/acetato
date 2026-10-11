@@ -1,6 +1,6 @@
 # SPEC 06 — Atajos por herramienta (HU-22)
 
-> **Estado:** Listo para implementar · **Depende de:** SPEC 05 (HU-21) — atajos configurables · **Fecha:** 2026-10-11
+> **Estado:** Aprobado · **Depende de:** SPEC 05 (HU-21) — atajos configurables · **Fecha:** 2026-10-11
 > **Objetivo:** Que cada herramienta de dibujo y el grosor tengan su propio atajo configurable, y que la barra muestre el atajo de cada botón para descubrirlos sin abrir Ajustes.
 
 ---
