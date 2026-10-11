@@ -677,6 +677,58 @@ Escenario: Arranque con atajos ocupados
 
 ---
 
+#### HU-22 — Atajos por herramienta
+- **Épica:** EP-03 · **Prioridad:** Could · **Estimación:** 5
+- **Narrativa:**
+  Como presentador, quiero elegir cada herramienta y cambiar el grosor con su propio atajo, y ver el atajo de cada botón al pasar el mouse por la barra, para no tener que ciclar herramientas ni abrir Ajustes para descubrirlos.
+
+**Atajos por defecto nuevos**
+
+| Acción | Atajo | Activo |
+|--------|-------|--------|
+| Lápiz | `Ctrl+P` | Solo al dibujar |
+| Borrador | `Ctrl+B` | Solo al dibujar |
+| Línea | `Ctrl+I` | Solo al dibujar |
+| Flecha | `Ctrl+F` | Solo al dibujar |
+| Rectángulo | `Ctrl+R` | Solo al dibujar |
+| Más grueso | `Ctrl+RePág` | Solo al dibujar |
+| Más fino | `Ctrl+AvPág` | Solo al dibujar |
+
+**Criterios de aceptación**
+```
+Escenario: Elegir herramienta con su atajo
+  Dado que estoy en modo dibujo
+  Cuando pulso Ctrl+R
+  Entonces la herramienta activa es Rectángulo
+  Y el botón Rectángulo de la barra aparece activo.
+
+Escenario: Cambiar el grosor con el teclado
+  Dado que estoy en modo dibujo con el grosor más grueso
+  Cuando pulso Ctrl+RePág
+  Entonces el grosor no cambia
+  Y al pulsar Ctrl+AvPág baja un paso.
+
+Escenario: Las otras apps conservan sus atajos
+  Dado que el overlay está oculto o en click-through
+  Cuando pulso Ctrl+P, Ctrl+F o Ctrl+R en otra aplicación
+  Entonces esa aplicación imprime, busca o recarga con normalidad.
+
+Escenario: Configurables como los demás
+  Dado que abrí Ajustes
+  Cuando miro el grupo Solo al dibujar
+  Entonces veo las siete acciones nuevas
+  Y puedo cambiarlas, quitarlas y restaurarlas.
+
+Escenario: Atajo en el tooltip
+  Dado que Deshacer usa Ctrl+Z
+  Cuando paso el mouse sobre Deshacer en la barra
+  Entonces el tooltip dice "Deshacer" y "Ctrl+Z" en monoespaciada
+  Y si cambio el atajo en Ajustes, el tooltip muestra el nuevo sin reiniciar.
+```
+**Notas técnicas:** Spec en [`specs/06-atajos-por-herramienta.md`](./specs/06-atajos-por-herramienta.md). Reutiliza el catálogo, el coordinador y Ajustes de la HU-21: solo suma acciones y su presentación. Un `settings.json` existente recibe los atajos nuevos por defecto porque solo guarda diferencias. Fuera de alcance: atajos para Seleccionar y Elipse, atajos de una sola tecla, atajos en popovers y la captura de pantalla (SPEC 07).
+
+---
+
 ## Definition of Done (global)
 
 Una historia se considera **terminada** cuando:
