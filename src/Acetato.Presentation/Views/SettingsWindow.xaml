@@ -42,6 +42,24 @@
 
         <Rectangle DockPanel.Dock="Top" Style="{StaticResource SettingsDivider}" />
 
+        <!-- Pie: Restaurar todo, con confirmación en la misma ventana. -->
+        <Grid DockPanel.Dock="Bottom" Height="48" Margin="20,0,14,0">
+            <Button HorizontalAlignment="Right" Style="{StaticResource SettingsTextButton}"
+                    Content="Restaurar todo" Command="{Binding ResetAllCommand}"
+                    Visibility="{Binding IsConfirmingResetAll, Converter={StaticResource InverseBoolToVisibility}}" />
+            <DockPanel Visibility="{Binding IsConfirmingResetAll, Converter={StaticResource BoolToVisibility}}">
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Style="{StaticResource SettingsTextButton}" Content="Restaurar"
+                            Command="{Binding ConfirmResetAllCommand}" />
+                    <Button Style="{StaticResource SettingsTextButton}" Content="Cancelar"
+                            Command="{Binding CancelResetAllCommand}" />
+                </StackPanel>
+                <TextBlock Style="{StaticResource SettingsRowLabel}" Text="Restaurar todos los atajos" />
+            </DockPanel>
+        </Grid>
+
+        <Rectangle DockPanel.Dock="Bottom" Style="{StaticResource SettingsDivider}" />
+
         <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
             <StackPanel Margin="20,4,20,16">
                 <TextBlock Style="{StaticResource SettingsCaption}" Text="Siempre activos" />

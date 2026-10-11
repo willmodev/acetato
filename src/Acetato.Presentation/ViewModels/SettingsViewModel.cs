@@ -22,6 +22,10 @@ internal sealed partial class SettingsViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private HotkeyRowViewModel? _capturingRow;
 
+    /// <summary>Se pide confirmar la restauración global (en la propia ventana, sin diálogo del sistema).</summary>
+    [ObservableProperty]
+    private bool _isConfirmingResetAll;
+
     public SettingsViewModel(HotkeyCoordinator coordinator, IWindowDragHandler dragHandler)
     {
         _coordinator = coordinator;
@@ -61,6 +65,25 @@ internal sealed partial class SettingsViewModel : ObservableObject, IDisposable
 
     [RelayCommand]
     private void Close() => CloseRequested?.Invoke(this, EventArgs.Empty);
+
+    /// <summary>Pide confirmación para restaurar todos los atajos.</summary>
+    [RelayCommand]
+    private void ResetAll()
+    {
+        CapturingRow?.CancelCaptureCommand.Execute(null);
+        IsConfirmingResetAll = true;
+    }
+
+    /// <summary>Devuelve las 15 acciones a su atajo por defecto.</summary>
+    [RelayCommand]
+    private void ConfirmResetAll()
+    {
+        IsConfirmingResetAll = false;
+        _coordinator.ResetAll();
+    }
+
+    [RelayCommand]
+    private void CancelResetAll() => IsConfirmingResetAll = false;
 
     private List<HotkeyRowViewModel> RowsOf(HotkeyScope scope) =>
         [.. _rows.Where(row => HotkeyCatalog.Of(row.Action).Scope == scope)];

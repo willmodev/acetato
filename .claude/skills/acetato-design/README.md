@@ -158,6 +158,7 @@ is ever persistently on screen.
   | Elipse | `circle` | Ajustes | `settings-2` |
   | Texto | `type` | Mover | `grip-vertical` |
   | Fijar | `pin` | Cerrar | `x` |
+  | Restaurar | `rotate-ccw` | Quitar | `x` |
 
 - **Emoji / unicode as icons: never.** All iconography is vector line icons.
 - The **thickness** control uses a custom **3-stacked-lines glyph** (not a Lucide

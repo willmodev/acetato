@@ -29,9 +29,13 @@ internal sealed partial class HotkeyRowViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(ChordText))]
     private bool _isCapturing;
 
-    /// <summary>Conserva el atajo por defecto.</summary>
+    /// <summary>Conserva el atajo por defecto (si no, se ofrece Restaurar).</summary>
     [ObservableProperty]
     private bool _isDefault;
+
+    /// <summary>Tiene combinación (si no, no hay nada que quitar).</summary>
+    [ObservableProperty]
+    private bool _hasChord;
 
     /// <summary>La combinación no se pudo registrar (otra app la tiene).</summary>
     [ObservableProperty]
@@ -70,7 +74,9 @@ internal sealed partial class HotkeyRowViewModel : ObservableObject
     public void Refresh()
     {
         var map = _coordinator.Map;
-        CurrentChordText = map.ChordOf(Action) is { } chord ? KeyChordText.Format(chord) : HotkeyMessages.NoChord;
+        var chord = map.ChordOf(Action);
+        HasChord = chord.HasValue;
+        CurrentChordText = chord is { } current ? KeyChordText.Format(current) : HotkeyMessages.NoChord;
         IsDefault = map.IsDefault(Action);
         IsUnavailable = _coordinator.Unavailable.Contains(Action);
     }
@@ -128,6 +134,22 @@ internal sealed partial class HotkeyRowViewModel : ObservableObject
             ClearMessage();
             _coordinator.Replace(Action, chord);
         }
+    }
+
+    /// <summary>Deja la acción sin atajo; la combinación queda libre para otras apps.</summary>
+    [RelayCommand]
+    private void Remove()
+    {
+        CancelCapture();
+        _coordinator.Remove(Action);
+    }
+
+    /// <summary>Devuelve la acción a su atajo por defecto.</summary>
+    [RelayCommand]
+    private void Reset()
+    {
+        CancelCapture();
+        _coordinator.Reset(Action);
     }
 
     private void Show(AssignResult result, KeyChord chord)
