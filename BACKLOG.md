@@ -607,6 +607,76 @@ Escenario: Cierre limpio
 
 ---
 
+#### HU-21 — Atajos configurables
+- **Épica:** EP-03 · **Prioridad:** Could · **Estimación:** 13
+- **Narrativa:**
+  Como usuario, quiero ver, cambiar, quitar y restaurar los atajos de Acetato, y que los atajos de dibujo sean cortos sin quitarles `Ctrl+Z` o `Ctrl+S` a mis otras apps, para usar Acetato con las combinaciones que me resultan cómodas.
+
+**Atajos por defecto**
+
+| Acción | Atajo | Activo |
+|--------|-------|--------|
+| Mostrar/ocultar | `Ctrl+Alt+D` | Siempre |
+| Modo dibujo | `Ctrl+Alt+E` | Siempre |
+| Tintas | `Ctrl+1…6` | Solo al dibujar |
+| Degradado | `Ctrl+7` | Solo al dibujar |
+| Deshacer | `Ctrl+Z` | Solo al dibujar |
+| Limpiar todo | `Ctrl+Retroceso` | Solo al dibujar |
+| Siguiente herramienta | `Ctrl+Espacio` | Solo al dibujar |
+| Texto | `Ctrl+T` | Solo al dibujar |
+| Láser | `Ctrl+L` | Solo al dibujar |
+| Captura | `Ctrl+S` | Solo al dibujar |
+
+**Criterios de aceptación**
+```
+Escenario: Atajos cortos solo al dibujar
+  Dado que el overlay está oculto o en click-through
+  Cuando pulso Ctrl+Z en el Bloc de notas
+  Entonces el Bloc de notas deshace
+  Y al pasar a modo dibujo, Ctrl+Z deshace el último trazo de Acetato.
+
+Escenario: Cambiar un atajo
+  Dado que abrí Ajustes desde la barra o la bandeja
+  Cuando hago clic en el atajo de Deshacer y pulso Alt+Z
+  Entonces Deshacer queda en Alt+Z al instante, sin pulsar Guardar.
+
+Escenario: Combinación no válida
+  Dado que estoy capturando un atajo
+  Cuando pulso Z sola, Mayús+Z, Alt+F4 o Ctrl+ñ
+  Entonces veo el motivo del rechazo y el atajo anterior se conserva.
+
+Escenario: Conflicto con otra acción
+  Dado que Láser usa Ctrl+L
+  Cuando asigno Ctrl+L a Deshacer y elijo Reemplazar
+  Entonces Deshacer queda en Ctrl+L
+  Y Láser queda "Sin atajo".
+
+Escenario: Combinación ocupada por otra app
+  Dado que otra aplicación registró una combinación
+  Cuando intento asignarla
+  Entonces veo "En uso por otra aplicación" y no se asigna.
+
+Escenario: Quitar y restaurar
+  Dado que cambié o quité atajos
+  Cuando elijo Restaurar en una fila o Restaurar todo y confirmo
+  Entonces esas acciones vuelven a su atajo por defecto.
+
+Escenario: Persistencia
+  Dado que cambié un atajo
+  Cuando reinicio Acetato
+  Entonces el cambio sigue
+  Y %AppData%\Acetato\settings.json solo guarda lo que difiere del predeterminado.
+
+Escenario: Arranque con atajos ocupados
+  Dado que otra app ocupa un atajo guardado
+  Cuando arranco Acetato
+  Entonces aparece la notificación "N atajos no están disponibles"
+  Y al hacer clic se abre Ajustes con la fila marcada "No disponible".
+```
+**Notas técnicas:** Spec en [`specs/05-atajos-configurables.md`](./specs/05-atajos-configurables.md). El mapa de atajos vive en Application (`HotkeyCoordinator`) y se aplica al hilo de atajos mediante una cola; las combinaciones (`KeyChord`) y sus reglas están en Domain. Las combinaciones con `Win` que Windows intercepta antes (p. ej. `Win+E`) no se pueden capturar. Fuera de alcance: atajos en tooltips, otros ajustes, atajos para acciones nuevas, elegir el grupo de cada acción, teclas de símbolo e importar/exportar.
+
+---
+
 ## Definition of Done (global)
 
 Una historia se considera **terminada** cuando:
