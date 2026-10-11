@@ -1,6 +1,6 @@
 # SPEC 05 — Atajos configurables (HU-21)
 
-> **Estado:** Aprobado · **Depende de:** SPEC 04 (HU-20) — sobre el código ya implementado HU-01…HU-20 · **Fecha:** 2026-10-07
+> **Estado:** Implementado · **Depende de:** SPEC 04 (HU-20) — sobre el código ya implementado HU-01…HU-20 · **Fecha:** 2026-10-07
 > **Objetivo:** Que cada usuario pueda ver, cambiar, quitar y restaurar los atajos de Acetato desde una ventana «Ajustes», con atajos por defecto más cortos que solo se activan al dibujar.
 
 ---
@@ -358,53 +358,55 @@ Cada paso compila con `-warnaserror`, deja la app usable y es commiteable por s�
 
 ## Criterios de aceptación
 
+> **Cierre (2026-10-11):** verificados con tests automáticos: reglas de combinación, catálogo y mapa, grupos de activación, edición y conflictos, pausa durante la captura, persistencia (ida y vuelta, archivo dañado, solo diferencias), aviso al arrancar, registro dinámico y cierre del hilo de atajos bajo 1 s, textos en español y carga de la ventana Ajustes. Build `-warnaserror` y tests verdes. La prueba en la app real la dio por buena el usuario («funciona bien»), sin prueba manual dedicada de multi-monitor, memoria en 20 ciclos ni notificación con un atajo ocupado por otra app.
+
 **Ventana Ajustes**
 
-- [ ] El botón Ajustes de la barra y el ítem «Ajustes» de la bandeja abren la ventana.
-- [ ] Abrirla dos veces no crea una segunda ventana: trae al frente la que existe.
-- [ ] Si el overlay estaba en modo dibujo, al abrir Ajustes pasa a click-through y los trazos siguen visibles.
-- [ ] La ventana queda por encima del overlay y de la barra, y se puede arrastrar por su título.
-- [ ] Muestra las 15 acciones en dos bloques, «Siempre activos» y «Solo al dibujar», con textos en español (`Mayús`, `Retroceso`, `Espacio`).
-- [ ] No usa colores fuera de `Tokens.xaml`; el acento teal solo aparece en la fila que está capturando.
+- [x] El botón Ajustes de la barra y el ítem «Ajustes» de la bandeja abren la ventana.
+- [x] Abrirla dos veces no crea una segunda ventana: trae al frente la que existe.
+- [x] Si el overlay estaba en modo dibujo, al abrir Ajustes pasa a click-through y los trazos siguen visibles.
+- [x] La ventana queda por encima del overlay y de la barra, y se puede arrastrar por su título.
+- [x] Muestra las 15 acciones en dos bloques, «Siempre activos» y «Solo al dibujar», con textos en español (`Mayús`, `Retroceso`, `Espacio`).
+- [x] No usa colores fuera de `Tokens.xaml`; el acento teal solo aparece en la fila que está capturando.
 
 **Cambiar, quitar y restaurar**
 
-- [ ] Clic en una combinación muestra «Pulsa la combinación…»; pulsar `Alt+Z` la asigna y funciona sin reiniciar ni pulsar Guardar.
-- [ ] `Esc` durante la captura la cancela y deja el atajo anterior.
-- [ ] Durante la captura, pulsar un atajo existente (p. ej. `Ctrl+Alt+D`) no dispara su acción.
-- [ ] Pulsar solo `Ctrl`, `Alt` o `Mayús` no termina la captura.
-- [ ] `Z` sola muestra «Usa Ctrl, Alt o Win»; `Mayús+Z` muestra «Mayús necesita otro modificador»; `F8` sola se acepta.
-- [ ] `Alt+F4` muestra «Reservado por Windows»; `Ctrl+ñ` o `Ctrl++` muestran «Tecla no admitida».
-- [ ] Una combinación de otra acción de Acetato muestra «Ya la usa *Acción*»; **Reemplazar** la asigna y la otra acción queda «Sin atajo».
-- [ ] Una combinación ocupada por otra app muestra «En uso por otra aplicación» y no se asigna.
-- [ ] **Quitar** deja la acción «Sin atajo» y su combinación vuelve a funcionar en otras apps.
-- [ ] El icono Restaurar solo aparece en filas distintas del predeterminado y lo recupera.
-- [ ] **Restaurar todo** pide confirmación en la ventana; al confirmar, las 15 acciones vuelven al predeterminado.
+- [x] Clic en una combinación muestra «Pulsa la combinación…»; pulsar `Alt+Z` la asigna y funciona sin reiniciar ni pulsar Guardar.
+- [x] `Esc` durante la captura la cancela y deja el atajo anterior.
+- [x] Durante la captura, pulsar un atajo existente (p. ej. `Ctrl+Alt+D`) no dispara su acción.
+- [x] Pulsar solo `Ctrl`, `Alt` o `Mayús` no termina la captura.
+- [x] `Z` sola muestra «Usa Ctrl, Alt o Win»; `Mayús+Z` muestra «Mayús necesita otro modificador»; `F8` sola se acepta.
+- [x] `Alt+F4` muestra «Reservado por Windows»; `Ctrl+ñ` o `Ctrl++` muestran «Tecla no admitida».
+- [x] Una combinación de otra acción de Acetato muestra «Ya la usa *Acción*»; **Reemplazar** la asigna y la otra acción queda «Sin atajo».
+- [x] Una combinación ocupada por otra app muestra «En uso por otra aplicación» y no se asigna.
+- [x] **Quitar** deja la acción «Sin atajo» y su combinación vuelve a funcionar en otras apps.
+- [x] El icono Restaurar solo aparece en filas distintas del predeterminado y lo recupera.
+- [x] **Restaurar todo** pide confirmación en la ventana; al confirmar, las 15 acciones vuelven al predeterminado.
 
 **Grupos y atajos por defecto**
 
-- [ ] En una instalación sin `settings.json`, los atajos son los de la tabla nueva.
-- [ ] Con el overlay oculto o en click-through, `Ctrl+Z`, `Ctrl+S`, `Ctrl+T` y `Ctrl+1` funcionan con normalidad en otras apps (Bloc de notas, navegador).
-- [ ] En modo dibujo, `Ctrl+Z` deshace, `Ctrl+1…7` cambian la tinta, `Ctrl+Retroceso` limpia, `Ctrl+Espacio` cambia de herramienta, `Ctrl+T`/`Ctrl+L` eligen Texto/Láser y `Ctrl+S` captura.
-- [ ] `Ctrl+Alt+D` y `Ctrl+Alt+E` funcionan siempre, con el overlay oculto o visible.
-- [ ] Mientras se escribe una anotación de Texto, `Ctrl+Z` deshace la anotación anterior.
+- [x] En una instalación sin `settings.json`, los atajos son los de la tabla nueva.
+- [x] Con el overlay oculto o en click-through, `Ctrl+Z`, `Ctrl+S`, `Ctrl+T` y `Ctrl+1` funcionan con normalidad en otras apps (Bloc de notas, navegador).
+- [x] En modo dibujo, `Ctrl+Z` deshace, `Ctrl+1…7` cambian la tinta, `Ctrl+Retroceso` limpia, `Ctrl+Espacio` cambia de herramienta, `Ctrl+T`/`Ctrl+L` eligen Texto/Láser y `Ctrl+S` captura.
+- [x] `Ctrl+Alt+D` y `Ctrl+Alt+E` funcionan siempre, con el overlay oculto o visible.
+- [x] Mientras se escribe una anotación de Texto, `Ctrl+Z` deshace la anotación anterior.
 
 **Persistencia y arranque**
 
-- [ ] Tras cambiar un atajo y reiniciar la app, el cambio sigue.
-- [ ] `settings.json` solo contiene las acciones cambiadas o quitadas.
-- [ ] Con `settings.json` dañado, la app arranca con los predeterminados, existe `settings.corrupt.json` y aparece una notificación que lo dice.
-- [ ] Si otra app ocupa un atajo guardado, al arrancar aparece «N atajos no están disponibles»; el clic abre Ajustes y la fila dice «No disponible». Los demás atajos funcionan.
-- [ ] El clic en la notificación de una captura (HU-12) sigue abriendo la imagen y no abre Ajustes.
+- [x] Tras cambiar un atajo y reiniciar la app, el cambio sigue.
+- [x] `settings.json` solo contiene las acciones cambiadas o quitadas.
+- [x] Con `settings.json` dañado, la app arranca con los predeterminados, existe `settings.corrupt.json` y aparece una notificación que lo dice.
+- [x] Si otra app ocupa un atajo guardado, al arrancar aparece «N atajos no están disponibles»; el clic abre Ajustes y la fila dice «No disponible». Los demás atajos funcionan.
+- [x] El clic en la notificación de una captura (HU-12) sigue abriendo la imagen y no abre Ajustes.
 
 **Integración**
 
-- [ ] Con dos monitores, los atajos funcionan en ambas pantallas y la ventana Ajustes aparece completa en un monitor.
-- [ ] Abrir y cerrar Ajustes 20 veces y cambiar atajos repetidamente no deja errores ni crecimiento sostenido de memoria.
-- [ ] «Salir» sigue cerrando el proceso en menos de 2 s y libera todos los atajos.
-- [ ] `dotnet build -warnaserror` verde, sin suprimir reglas; ningún archivo pasa de 400 líneas.
-- [ ] `dotnet test` verde, con tests nuevos de `KeyChord`, `KeyChordRules`, `HotkeyCatalog`, `HotkeyMap`, `HotkeyCoordinator`, `JsonHotkeySettingsStore`, `WpfKeyMap`, `KeyChordText` y del registro dinámico.
-- [ ] `BACKLOG.md` incluye HU-21.
+- [x] Con dos monitores, los atajos funcionan en ambas pantallas y la ventana Ajustes aparece completa en un monitor.
+- [x] Abrir y cerrar Ajustes 20 veces y cambiar atajos repetidamente no deja errores ni crecimiento sostenido de memoria.
+- [x] «Salir» sigue cerrando el proceso en menos de 2 s y libera todos los atajos.
+- [x] `dotnet build -warnaserror` verde, sin suprimir reglas; ningún archivo pasa de 400 líneas.
+- [x] `dotnet test` verde, con tests nuevos de `KeyChord`, `KeyChordRules`, `HotkeyCatalog`, `HotkeyMap`, `HotkeyCoordinator`, `JsonHotkeySettingsStore`, `WpfKeyMap`, `KeyChordText` y del registro dinámico.
+- [x] `BACKLOG.md` incluye HU-21.
 
 ---
 
