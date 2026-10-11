@@ -14,6 +14,11 @@
         WindowStartupLocation="Manual"
         FontFamily="{StaticResource Font.Ui}">
 
+    <!-- Tooltips de la barra con nombre y atajo (HU-22); solo en esta ventana. -->
+    <Window.Resources>
+        <Style TargetType="ToolTip" BasedOn="{StaticResource ToolbarToolTip}" />
+    </Window.Resources>
+
     <!-- Barra glass: único elemento visible (principio #1, CERO distracción). -->
     <!--
       Margen transparente para la sombra (BlurRadius 34, caída 10 hacia abajo). Sin él,
@@ -36,7 +41,7 @@
             <!-- Grip de arrastre -->
             <Border Style="{StaticResource GripHandle}"
                     b:WindowDragBehavior.DragHandler="{Binding DragHandler}"
-                    ToolTip="Mover">
+                    ToolTip="{Binding MoveHint}">
                 <Path Style="{StaticResource GripGlyph}" />
             </Border>
 
@@ -53,7 +58,7 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="{x:Type vm:ToolItem}">
                         <Button x:Name="ToolBtn" Style="{StaticResource ToolButton}"
-                                IsEnabled="{Binding IsEnabled}" ToolTip="{Binding Label}"
+                                IsEnabled="{Binding IsEnabled}" ToolTip="{Binding Hint}"
                                 Command="{Binding DataContext.PickToolCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                 CommandParameter="{Binding Kind}">
                             <Path x:Name="ToolIcon" Style="{StaticResource ToolGlyph}" Data="{Binding Icon}" />
@@ -72,7 +77,7 @@
 
             <!-- Color (funcional): abre el popover de tintas -->
             <Button x:Name="ColorButton" Style="{StaticResource ToolButton}"
-                    Command="{Binding ToggleInkPopoverCommand}" ToolTip="Color">
+                    Command="{Binding ToggleInkPopoverCommand}" ToolTip="{Binding ColorHint}">
                 <Ellipse Width="18" Height="18"
                          Fill="{Binding ActiveInkBrush}"
                          Stroke="{StaticResource Stroke.Highlight}" StrokeThickness="1.5" />
@@ -80,7 +85,7 @@
 
             <!-- Grosor (funcional): abre el popover de grosor -->
             <Button x:Name="ThicknessButton" Style="{StaticResource ToolButton}"
-                    Command="{Binding ToggleThicknessPopoverCommand}" ToolTip="Grosor">
+                    Command="{Binding ToggleThicknessPopoverCommand}" ToolTip="{Binding ThicknessHint}">
                 <StackPanel Width="16" VerticalAlignment="Center">
                     <Rectangle Height="1.5" Margin="0,1.5" RadiusX="1" RadiusY="1"
                                Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
@@ -94,27 +99,27 @@
             <Rectangle Style="{StaticResource ToolDivider}" />
 
             <!-- Deshacer / Limpiar (funcionales) -->
-            <Button Style="{StaticResource ToolButton}" Command="{Binding UndoCommand}" ToolTip="Deshacer">
+            <Button Style="{StaticResource ToolButton}" Command="{Binding UndoCommand}" ToolTip="{Binding UndoHint}">
                 <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Undo}" />
             </Button>
-            <Button Style="{StaticResource ToolButton}" Command="{Binding ClearCommand}" ToolTip="Limpiar todo">
+            <Button Style="{StaticResource ToolButton}" Command="{Binding ClearCommand}" ToolTip="{Binding ClearHint}">
                 <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Clear}" />
             </Button>
 
             <Rectangle Style="{StaticResource ToolDivider}" />
 
             <!-- Captura (funcional, HU-12) / Ajustes (HU-21) -->
-            <Button Style="{StaticResource ToolButton}" Command="{Binding CaptureCommand}" ToolTip="Captura">
+            <Button Style="{StaticResource ToolButton}" Command="{Binding CaptureCommand}" ToolTip="{Binding CaptureHint}">
                 <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Capture}" />
             </Button>
-            <Button Style="{StaticResource ToolButton}" Command="{Binding OpenSettingsCommand}" ToolTip="Ajustes">
+            <Button Style="{StaticResource ToolButton}" Command="{Binding OpenSettingsCommand}" ToolTip="{Binding SettingsHint}">
                 <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Settings}" />
             </Button>
 
             <Rectangle Style="{StaticResource ToolDivider}" />
 
             <!-- Cerrar (funcional): oculta overlay y barra -->
-            <Button Style="{StaticResource ToolButton}" Command="{Binding CloseCommand}" ToolTip="Cerrar">
+            <Button Style="{StaticResource ToolButton}" Command="{Binding CloseCommand}" ToolTip="{Binding CloseHint}">
                 <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Close}" />
             </Button>
 

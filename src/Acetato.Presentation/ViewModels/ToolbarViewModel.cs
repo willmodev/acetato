@@ -15,8 +15,9 @@ namespace Acetato.Presentation.ViewModels;
 /// deshacer, captura) van por el <see cref="OverlayBroadcaster"/>, que las
 /// reparte entre las panes de cada monitor (HU-09); color/grosor/herramienta van
 /// por el estado compartido. Refleja el estado activo (tinta/grosor) para
-/// resaltarlo con el acento. Gestiona los popovers y el cierre. El code-behind
-/// solo llama a InitializeComponent.
+/// resaltarlo con el acento. Gestiona los popovers y el cierre. Cada botón
+/// tiene un tooltip con su nombre y, si su acción tiene atajo, la combinación
+/// vigente (HU-22). El code-behind solo llama a InitializeComponent.
 /// </summary>
 public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
 {
@@ -41,23 +42,56 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
         OverlayBroadcaster broadcaster,
         IDrawingSettings settings,
         IOverlayController controller,
-        IWindowDragHandler dragHandler,
-        SettingsWindowLauncher settingsLauncher)
+        ToolbarChrome chrome)
     {
+        ArgumentNullException.ThrowIfNull(chrome);
         _broadcaster = broadcaster;
-        _settingsLauncher = settingsLauncher;
+        _settingsLauncher = chrome.SettingsLauncher;
         _settings = settings;
         _controller = controller;
-        DragHandler = dragHandler;
+        DragHandler = chrome.DragHandler;
         Swatches = InkSwatchFactory.Create();
         Thicknesses = BuildThicknesses();
-        Tools = BuildTools();
+        var shortcuts = chrome.Shortcuts;
+        Tools = BuildTools(shortcuts);
+        MoveHint = shortcuts.Hint("Mover");
+        ColorHint = shortcuts.Hint("Color");
+        ThicknessHint = shortcuts.Hint("Grosor");
+        UndoHint = shortcuts.Hint("Deshacer", HotkeyAction.Undo);
+        ClearHint = shortcuts.Hint("Limpiar todo", HotkeyAction.Clear);
+        CaptureHint = shortcuts.Hint("Captura", HotkeyAction.Capture);
+        SettingsHint = shortcuts.Hint("Ajustes");
+        CloseHint = shortcuts.Hint("Cerrar", HotkeyAction.Toggle);
         _settings.Changed += OnSettingsChanged;
         SyncActiveState();
     }
 
     /// <summary>Inicia el arrastre nativo de la ventana desde el grip.</summary>
     public IWindowDragHandler DragHandler { get; }
+
+    /// <summary>Tooltip del grip de arrastre.</summary>
+    public ShortcutHint MoveHint { get; }
+
+    /// <summary>Tooltip del botón de tinta.</summary>
+    public ShortcutHint ColorHint { get; }
+
+    /// <summary>Tooltip del botón de grosor.</summary>
+    public ShortcutHint ThicknessHint { get; }
+
+    /// <summary>Tooltip de Deshacer, con su atajo.</summary>
+    public ShortcutHint UndoHint { get; }
+
+    /// <summary>Tooltip del botón que borra todos los trazos, con su atajo.</summary>
+    public ShortcutHint ClearHint { get; }
+
+    /// <summary>Tooltip de Captura, con su atajo.</summary>
+    public ShortcutHint CaptureHint { get; }
+
+    /// <summary>Tooltip de Ajustes.</summary>
+    public ShortcutHint SettingsHint { get; }
+
+    /// <summary>Tooltip de Cerrar, con el atajo de Mostrar/ocultar (hace lo mismo).</summary>
+    public ShortcutHint CloseHint { get; }
 
     /// <summary>Las 6 tintas del popover de color y, al final, la muestra del modo Degradado.</summary>
     public IReadOnlyList<InkSwatchItem> Swatches { get; }
@@ -145,17 +179,18 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
         return items;
     }
 
-    // Herramientas de la barra; las no implementadas van deshabilitadas (placeholder).
-    private static List<ToolItem> BuildTools() =>
+    // Herramientas de la barra con el atajo que las elige (HU-22); las no
+    // implementadas van deshabilitadas (placeholder) y sin atajo.
+    private static List<ToolItem> BuildTools(ToolbarShortcuts shortcuts) =>
     [
-        new(ToolKind.Select, "Seleccionar", Glyph("Icon.Select"), false),
-        new(ToolKind.Pencil, "Lápiz", Glyph("Icon.Pencil"), true),
-        new(ToolKind.Laser, "Láser", Glyph("Icon.Laser"), true),
-        new(ToolKind.Eraser, "Borrador", Glyph("Icon.Eraser"), true),
-        new(ToolKind.Line, "Línea", Glyph("Icon.Line"), true),
-        new(ToolKind.Arrow, "Flecha", Glyph("Icon.Arrow"), true),
-        new(ToolKind.Rectangle, "Rectángulo", Glyph("Icon.Rectangle"), true),
-        new(ToolKind.Text, "Texto", Glyph("Icon.Text"), true),
+        new(ToolKind.Select, shortcuts.Hint("Seleccionar"), Glyph("Icon.Select"), false),
+        new(ToolKind.Pencil, shortcuts.Hint("Lápiz", HotkeyAction.SelectPencilTool), Glyph("Icon.Pencil"), true),
+        new(ToolKind.Laser, shortcuts.Hint("Láser", HotkeyAction.SelectLaserTool), Glyph("Icon.Laser"), true),
+        new(ToolKind.Eraser, shortcuts.Hint("Borrador", HotkeyAction.SelectEraserTool), Glyph("Icon.Eraser"), true),
+        new(ToolKind.Line, shortcuts.Hint("Línea", HotkeyAction.SelectLineTool), Glyph("Icon.Line"), true),
+        new(ToolKind.Arrow, shortcuts.Hint("Flecha", HotkeyAction.SelectArrowTool), Glyph("Icon.Arrow"), true),
+        new(ToolKind.Rectangle, shortcuts.Hint("Rectángulo", HotkeyAction.SelectRectangleTool), Glyph("Icon.Rectangle"), true),
+        new(ToolKind.Text, shortcuts.Hint("Texto", HotkeyAction.SelectTextTool), Glyph("Icon.Text"), true),
     ];
 
     // Resuelve la geometría del icono desde los recursos (igual que las tintas).

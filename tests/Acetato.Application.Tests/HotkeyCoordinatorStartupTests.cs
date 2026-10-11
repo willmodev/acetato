@@ -60,6 +60,20 @@ public sealed class HotkeyCoordinatorStartupTests
     }
 
     [Fact]
+    public void Start_announces_the_loaded_map()
+    {
+        var saved = HotkeyMap.Defaults.With(HotkeyAction.Undo, new KeyChord(HotkeyModifiers.Alt, HotkeyKey.Z));
+        _store.Load().Returns(new HotkeySettingsLoad(saved, WasCorrupt: false));
+        using var coordinator = new HotkeyCoordinator(_hotkeys, _overlay, _store, _notifier);
+        HotkeyMap? seen = null;
+        coordinator.Changed += (_, _) => seen = coordinator.Map;
+
+        coordinator.Start();
+
+        Assert.Same(saved, seen);
+    }
+
+    [Fact]
     public void Failures_after_start_do_not_notify_again()
     {
         _hotkeys.IsAvailable(HotkeyCatalog.Of(HotkeyAction.Capture).Default).Returns(false);

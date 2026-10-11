@@ -170,6 +170,8 @@ public partial class App : System.Windows.Application
 
         // Barra flotante (HU-10): VM, ventana (DataContext se asigna fuera del
         // contenedor para evitar el ciclo) y su superficie.
+        services.AddSingleton<ToolbarShortcuts>();
+        services.AddSingleton<ToolbarChrome>();
         services.AddSingleton<ToolbarViewModel>();
         services.AddSingleton<ToolbarWindow>();
         services.AddSingleton<IToolbarSurface, ToolbarWindowSurface>();

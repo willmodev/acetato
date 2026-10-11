@@ -52,6 +52,8 @@ public sealed class HotkeyCoordinator : IDisposable
     /// de dibujo, que aún no se registran), aplica las activas, empieza a seguir
     /// el estado del overlay y avisa si algo falló. Solo aquí se avisa: lo que
     /// falle después se marca «No disponible» sin repetir la notificación.
+    /// Lanza <see cref="Changed"/> para que quien se creó antes (los tooltips de
+    /// la barra, HU-22) lea el mapa cargado.
     /// </summary>
     public void Start()
     {
@@ -66,6 +68,7 @@ public sealed class HotkeyCoordinator : IDisposable
         _ = _availability.Probe(Map, HotkeyCatalog.All.Select(definition => definition.Action));
         _overlay.StateChanged += OnOverlayStateChanged;
         _ = Refresh(force: true);
+        Changed?.Invoke(this, EventArgs.Empty);
         if (Unavailable.Count > 0 || load.WasCorrupt)
         {
             _notifier.NotifyStartupProblems(Unavailable.Count, load.WasCorrupt);
