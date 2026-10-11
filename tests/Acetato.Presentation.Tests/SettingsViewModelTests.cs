@@ -31,10 +31,10 @@ public sealed class SettingsViewModelTests : IDisposable
         _settings.AlwaysRows.Concat(_settings.DrawingRows).Single(row => row.Action == action);
 
     [Fact]
-    public void Lists_the_fifteen_actions_in_two_blocks()
+    public void Lists_the_twenty_two_actions_in_two_blocks()
     {
         _settings.AlwaysRows.Select(row => row.Label).Should().Equal("Mostrar/ocultar", "Modo dibujo");
-        _settings.DrawingRows.Should().HaveCount(13);
+        _settings.DrawingRows.Should().HaveCount(20);
     }
 
     [Fact]

@@ -94,6 +94,27 @@ public sealed class JsonHotkeySettingsStoreTests : IDisposable
     }
 
     [Fact]
+    public void A_file_from_HU_21_keeps_its_changes_and_gets_the_new_defaults_of_HU_22()
+    {
+        WriteSettings("""
+            {
+              "version": 1,
+              "hotkeys": {
+                "Undo": "Alt+Z",
+                "Capture": null
+              }
+            }
+            """);
+
+        var map = CreateStore().Load().Map;
+
+        map.ChordOf(HotkeyAction.Undo).Should().Be(AltZ);
+        map.ChordOf(HotkeyAction.Capture).Should().BeNull();
+        map.ChordOf(HotkeyAction.SelectRectangleTool).Should().Be(new KeyChord(HotkeyModifiers.Ctrl, HotkeyKey.R));
+        map.ChordOf(HotkeyAction.ThicknessUp).Should().Be(new KeyChord(HotkeyModifiers.Ctrl, HotkeyKey.PageUp));
+    }
+
+    [Fact]
     public void Only_the_differences_are_written()
     {
         var map = HotkeyMap.Defaults.With(HotkeyAction.Undo, AltZ).With(HotkeyAction.Capture, null);

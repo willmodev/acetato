@@ -52,4 +52,25 @@ public enum HotkeyAction
 
     /// <summary>Seleccionar la herramienta Láser (HU-15).</summary>
     SelectLaserTool,
+
+    /// <summary>Seleccionar la herramienta Lápiz (HU-22).</summary>
+    SelectPencilTool,
+
+    /// <summary>Seleccionar la herramienta Borrador (HU-22).</summary>
+    SelectEraserTool,
+
+    /// <summary>Seleccionar la herramienta Línea (HU-22).</summary>
+    SelectLineTool,
+
+    /// <summary>Seleccionar la herramienta Flecha (HU-22).</summary>
+    SelectArrowTool,
+
+    /// <summary>Seleccionar la herramienta Rectángulo (HU-22).</summary>
+    SelectRectangleTool,
+
+    /// <summary>Subir el grosor un paso, con tope en el más grueso (HU-22).</summary>
+    ThicknessUp,
+
+    /// <summary>Bajar el grosor un paso, con tope en el más fino (HU-22).</summary>
+    ThicknessDown,
 }

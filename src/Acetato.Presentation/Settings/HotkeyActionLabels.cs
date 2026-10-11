@@ -22,8 +22,15 @@ internal static class HotkeyActionLabels
         [HotkeyAction.Undo] = "Deshacer",
         [HotkeyAction.Clear] = "Limpiar todo",
         [HotkeyAction.CycleTool] = "Siguiente herramienta",
-        [HotkeyAction.SelectTextTool] = "Texto",
+        [HotkeyAction.SelectPencilTool] = "Lápiz",
         [HotkeyAction.SelectLaserTool] = "Láser",
+        [HotkeyAction.SelectEraserTool] = "Borrador",
+        [HotkeyAction.SelectLineTool] = "Línea",
+        [HotkeyAction.SelectArrowTool] = "Flecha",
+        [HotkeyAction.SelectRectangleTool] = "Rectángulo",
+        [HotkeyAction.SelectTextTool] = "Texto",
+        [HotkeyAction.ThicknessUp] = "Más grueso",
+        [HotkeyAction.ThicknessDown] = "Más fino",
         [HotkeyAction.Capture] = "Captura",
     };
 

@@ -38,7 +38,7 @@ public sealed class HotkeyCatalogTests
     }
 
     [Fact]
-    public void Defaults_are_the_short_table_of_HU_21()
+    public void Defaults_are_the_short_tables_of_HU_21_and_HU_22()
     {
         HotkeyCatalog.All.Select(definition => (definition.Action, definition.Default.ToString()))
             .Should().Equal(
@@ -54,9 +54,29 @@ public sealed class HotkeyCatalogTests
                 (HotkeyAction.Undo, "Ctrl+Z"),
                 (HotkeyAction.Clear, "Ctrl+Back"),
                 (HotkeyAction.CycleTool, "Ctrl+Space"),
-                (HotkeyAction.SelectTextTool, "Ctrl+T"),
+                (HotkeyAction.SelectPencilTool, "Ctrl+P"),
                 (HotkeyAction.SelectLaserTool, "Ctrl+L"),
+                (HotkeyAction.SelectEraserTool, "Ctrl+B"),
+                (HotkeyAction.SelectLineTool, "Ctrl+I"),
+                (HotkeyAction.SelectArrowTool, "Ctrl+F"),
+                (HotkeyAction.SelectRectangleTool, "Ctrl+R"),
+                (HotkeyAction.SelectTextTool, "Ctrl+T"),
+                (HotkeyAction.ThicknessUp, "Ctrl+PageUp"),
+                (HotkeyAction.ThicknessDown, "Ctrl+PageDown"),
                 (HotkeyAction.Capture, "Ctrl+S"));
+    }
+
+    [Theory]
+    [InlineData(HotkeyAction.SelectPencilTool)]
+    [InlineData(HotkeyAction.SelectEraserTool)]
+    [InlineData(HotkeyAction.SelectLineTool)]
+    [InlineData(HotkeyAction.SelectArrowTool)]
+    [InlineData(HotkeyAction.SelectRectangleTool)]
+    [InlineData(HotkeyAction.ThicknessUp)]
+    [InlineData(HotkeyAction.ThicknessDown)]
+    public void The_actions_of_HU_22_are_only_active_while_drawing(HotkeyAction action)
+    {
+        HotkeyCatalog.Of(action).Scope.Should().Be(HotkeyScope.DrawingMode);
     }
 
     [Fact]
