@@ -10,6 +10,7 @@ using Acetato.Infrastructure.Capture;
 using Acetato.Infrastructure.Hotkeys;
 using Acetato.Infrastructure.Monitors;
 using Acetato.Infrastructure.Overlay;
+using Acetato.Infrastructure.Settings;
 using Acetato.Presentation.Overlay;
 using Acetato.Presentation.ViewModels;
 using Acetato.Presentation.Views;
@@ -136,6 +137,7 @@ public partial class App : System.Windows.Application
         services.AddSingleton<IToolbarWindowStyler, Win32ToolbarWindowStyler>();
         services.AddSingleton<IWindowDragHandler, Win32WindowDragHandler>();
         services.AddSingleton<IGlobalHotkeyService, Win32GlobalHotkeyService>();
+        services.AddSingleton<IHotkeySettingsStore>(_ => new JsonHotkeySettingsStore());
         services.AddSingleton<IMonitorService, Win32MonitorService>();
         services.AddSingleton<ICursorPositionProvider, Win32CursorPositionProvider>();
     }

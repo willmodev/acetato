@@ -1,5 +1,6 @@
 using Acetato.Application.Abstractions;
 using Acetato.Application.Hotkeys;
+using Acetato.Domain;
 using FluentAssertions;
 using NSubstitute;
 using Xunit;
@@ -12,11 +13,13 @@ public sealed class HotkeyCoordinatorTests
 
     private readonly IGlobalHotkeyService _hotkeys = Substitute.For<IGlobalHotkeyService>();
     private readonly IOverlayController _overlay = Substitute.For<IOverlayController>();
+    private readonly IHotkeySettingsStore _store = Substitute.For<IHotkeySettingsStore>();
     private readonly List<IReadOnlyList<HotkeyAssignment>> _applied = [];
 
     public HotkeyCoordinatorTests()
     {
         _hotkeys.Apply(Arg.Do<IReadOnlyList<HotkeyAssignment>>(_applied.Add)).Returns([]);
+        _store.Load().Returns(new HotkeySettingsLoad(HotkeyMap.Defaults, WasCorrupt: false));
     }
 
     private IReadOnlyList<HotkeyAction> LastAppliedActions => [.. _applied[^1].Select(assignment => assignment.Action)];
@@ -24,7 +27,7 @@ public sealed class HotkeyCoordinatorTests
     private HotkeyCoordinator CreateStarted(bool visible, bool drawing)
     {
         SetOverlay(visible, drawing);
-        var coordinator = new HotkeyCoordinator(_hotkeys, _overlay);
+        var coordinator = new HotkeyCoordinator(_hotkeys, _overlay, _store);
         coordinator.Start();
         return coordinator;
     }
@@ -89,6 +92,28 @@ public sealed class HotkeyCoordinatorTests
 
         _applied[^1].Should().Contain(new HotkeyAssignment(
             HotkeyAction.Toggle, HotkeyCatalog.Of(HotkeyAction.Toggle).Default));
+    }
+
+    [Fact]
+    public void Start_loads_the_saved_map_and_applies_it()
+    {
+        var saved = HotkeyMap.Defaults.With(HotkeyAction.Toggle, new KeyChord(HotkeyModifiers.Alt, HotkeyKey.F9));
+        _store.Load().Returns(new HotkeySettingsLoad(saved, WasCorrupt: false));
+
+        using var coordinator = CreateStarted(visible: false, drawing: false);
+
+        coordinator.Map.Should().BeSameAs(saved);
+        _applied[^1].Should().Contain(new HotkeyAssignment(HotkeyAction.Toggle, new KeyChord(HotkeyModifiers.Alt, HotkeyKey.F9)));
+    }
+
+    [Fact]
+    public void An_action_without_chord_is_not_applied()
+    {
+        _store.Load().Returns(new HotkeySettingsLoad(HotkeyMap.Defaults.With(HotkeyAction.Undo, null), WasCorrupt: false));
+
+        using var coordinator = CreateStarted(visible: true, drawing: true);
+
+        LastAppliedActions.Should().NotContain(HotkeyAction.Undo).And.HaveCount(HotkeyCatalog.All.Count - 1);
     }
 
     [Fact]
