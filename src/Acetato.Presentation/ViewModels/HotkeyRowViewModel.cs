@@ -75,9 +75,6 @@ internal sealed partial class HotkeyRowViewModel : ObservableObject
     /// <summary>Se muestra «No disponible» (un mensaje en curso tiene prioridad).</summary>
     public bool ShowsUnavailable => IsUnavailable && !HasMessage;
 
-    /// <summary>Texto de la marca de atajo no disponible.</summary>
-    public static string UnavailableText => HotkeyMessages.Unavailable;
-
     /// <summary>Relee el estado del coordinador.</summary>
     public void Refresh()
     {

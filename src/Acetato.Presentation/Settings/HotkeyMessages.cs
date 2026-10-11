@@ -21,9 +21,6 @@ internal static class HotkeyMessages
     /// <summary>La combinación la tiene otra app o Windows.</summary>
     public const string TakenByOtherApp = "En uso por otra aplicación";
 
-    /// <summary>El atajo guardado no se pudo registrar.</summary>
-    public const string Unavailable = "No disponible";
-
     /// <summary>Motivo por el que la combinación no cumple las reglas.</summary>
     public static string Of(KeyChordError error) => error switch
     {

@@ -5,6 +5,8 @@
     <TargetFramework>net9.0-windows10.0.19041.0</TargetFramework>
     <RootNamespace>Acetato.Presentation.Tests</RootNamespace>
     <UseWPF>true</UseWPF>
+    <!-- Como en la app: el layout de WPF necesita globalización real. -->
+    <InvariantGlobalization>false</InvariantGlobalization>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>

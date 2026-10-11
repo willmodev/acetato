@@ -9,7 +9,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:b="clr-namespace:Acetato.Presentation.Behaviors"
         Title="Ajustes"
-        Icon="pack://application:,,,/Resources/acetato.ico"
+        Icon="pack://application:,,,/Acetato;component/Resources/acetato.ico"
         Width="480" Height="600"
         WindowStyle="None"
         ResizeMode="NoResize"
