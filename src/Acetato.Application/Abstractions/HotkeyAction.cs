@@ -4,7 +4,7 @@ namespace Acetato.Application.Abstractions;
 /// Acciones disparables por atajos globales. El servicio de atajos
 /// (Infrastructure) traduce cada combinación de teclas a una de estas
 /// acciones; el enrutador (Presentation) la mapea a su comando. Añadir una
-/// herramienta nueva = añadir un valor aquí y su fila en la tabla de bindings.
+/// herramienta nueva = añadir un valor aquí y su definición en HotkeyCatalog.
 /// </summary>
 public enum HotkeyAction
 {

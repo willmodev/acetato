@@ -38,6 +38,28 @@ public sealed class HotkeyCatalogTests
     }
 
     [Fact]
+    public void Defaults_are_the_short_table_of_HU_21()
+    {
+        HotkeyCatalog.All.Select(definition => (definition.Action, definition.Default.ToString()))
+            .Should().Equal(
+                (HotkeyAction.Toggle, "Ctrl+Alt+D"),
+                (HotkeyAction.DrawingModeToggle, "Ctrl+Alt+E"),
+                (HotkeyAction.ColorRed, "Ctrl+D1"),
+                (HotkeyAction.ColorBlue, "Ctrl+D2"),
+                (HotkeyAction.ColorYellow, "Ctrl+D3"),
+                (HotkeyAction.ColorGreen, "Ctrl+D4"),
+                (HotkeyAction.ColorWhite, "Ctrl+D5"),
+                (HotkeyAction.ColorBlack, "Ctrl+D6"),
+                (HotkeyAction.ColorGradient, "Ctrl+D7"),
+                (HotkeyAction.Undo, "Ctrl+Z"),
+                (HotkeyAction.Clear, "Ctrl+Back"),
+                (HotkeyAction.CycleTool, "Ctrl+Space"),
+                (HotkeyAction.SelectTextTool, "Ctrl+T"),
+                (HotkeyAction.SelectLaserTool, "Ctrl+L"),
+                (HotkeyAction.Capture, "Ctrl+S"));
+    }
+
+    [Fact]
     public void Of_returns_the_definition_of_the_action()
     {
         HotkeyCatalog.Of(HotkeyAction.Undo).Action.Should().Be(HotkeyAction.Undo);

@@ -6,7 +6,8 @@ namespace Acetato.Application.Hotkeys;
 /// <summary>
 /// Las definiciones de los atajos (HU-21), una por <see cref="HotkeyAction"/>, en
 /// el orden en que se muestran en Ajustes. Es la única fuente de los
-/// predeterminados.
+/// predeterminados: Ctrl+Alt para los que están siempre activos y Ctrl+tecla
+/// para los de dibujo, que solo se registran en modo dibujo.
 /// </summary>
 public static class HotkeyCatalog
 {
@@ -42,5 +43,5 @@ public static class HotkeyCatalog
         new(action, HotkeyScope.Always, new KeyChord(CtrlAlt, key));
 
     private static HotkeyDefinition Drawing(HotkeyAction action, HotkeyKey key) =>
-        new(action, HotkeyScope.DrawingMode, new KeyChord(CtrlAlt, key));
+        new(action, HotkeyScope.DrawingMode, new KeyChord(HotkeyModifiers.Ctrl, key));
 }
