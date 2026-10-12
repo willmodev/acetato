@@ -138,6 +138,7 @@ public partial class App : System.Windows.Application
         services.AddSingleton<IScreenCaptureService, GdiScreenCaptureService>();
         services.AddSingleton<ICaptureDirectoryProvider, PicturesCaptureDirectoryProvider>();
         services.AddSingleton<ICaptureNotifier, ToastCaptureNotifier>();
+        services.AddSingleton<IScreenClipLauncher, WindowsScreenClipLauncher>();
     }
 
     // Adaptadores de Infrastructure (interop Win32) — solo en el root.

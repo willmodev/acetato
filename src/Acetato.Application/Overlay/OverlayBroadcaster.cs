@@ -1,6 +1,5 @@
 using System.Runtime.InteropServices;
 using Acetato.Application.Abstractions;
-using Acetato.Application.Capture;
 using Acetato.Application.Drawing;
 using Acetato.Domain;
 
@@ -10,8 +9,8 @@ namespace Acetato.Application.Overlay;
 /// Reparte las acciones de dibujo entre los lienzos del overlay (uno por
 /// monitor, HU-09). Las acciones globales (color, herramienta, grosor) van por el estado
 /// compartido <see cref="IDrawingSettings"/>; "limpiar" afecta a cada lienzo;
-/// "deshacer" solo al del monitor activo (bajo el cursor); la captura abarca el
-/// escritorio virtual completo. Lo usan tanto los atajos como los botones de la
+/// "deshacer" solo al del monitor activo (bajo el cursor); el recorte abre la
+/// herramienta del sistema, que cubre todos los monitores. Lo usan tanto los atajos como los botones de la
 /// barra. Agnóstico de plataforma: depende solo de puertos.
 /// </summary>
 public sealed class OverlayBroadcaster
@@ -19,18 +18,18 @@ public sealed class OverlayBroadcaster
     private readonly IOverlayCanvasProvider _canvases;
     private readonly ICursorPositionProvider _cursor;
     private readonly IDrawingSettings _settings;
-    private readonly ICaptureService _capture;
+    private readonly IScreenClipLauncher _screenClip;
 
     public OverlayBroadcaster(
         IOverlayCanvasProvider canvases,
         ICursorPositionProvider cursor,
         IDrawingSettings settings,
-        ICaptureService capture)
+        IScreenClipLauncher screenClip)
     {
         _canvases = canvases;
         _cursor = cursor;
         _settings = settings;
-        _capture = capture;
+        _screenClip = screenClip;
     }
 
     /// <summary>Borra los trazos de todas las pantallas (HU-04/HU-09).</summary>
@@ -64,18 +63,19 @@ public sealed class OverlayBroadcaster
     public void DecreaseThickness() => _settings.DecreaseThickness();
 
     /// <summary>
-    /// Guarda el escritorio virtual anotado como PNG (HU-12). Se tragan fallas
-    /// raras de E/S o GDI para no dejar la tarea sin observar.
+    /// Abre el recorte de pantalla del sistema (HU-23). Si no se puede abrir
+    /// (protocolo ausente o bloqueado por política) la falla se traga y la app
+    /// sigue como estaba.
     /// </summary>
-    public async Task CaptureAsync()
+    public void LaunchScreenClip()
     {
         try
         {
-            await _capture.CaptureAsync().ConfigureAwait(false);
+            _screenClip.Launch();
         }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ExternalException)
+        catch (ExternalException)
         {
-            // Falla rara de E/S o GDI: la captura no se realiza.
+            // El sistema no pudo abrir el recorte: el atajo no hace nada.
         }
     }
 

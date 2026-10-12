@@ -156,9 +156,9 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void Clear() => _broadcaster.Clear();
 
-    /// <summary>Guarda el escritorio virtual anotado como PNG (HU-12).</summary>
+    /// <summary>Abre el recorte de pantalla de Windows (HU-23).</summary>
     [RelayCommand]
-    private Task Capture() => _broadcaster.CaptureAsync();
+    private void Capture() => _broadcaster.LaunchScreenClip();
 
     /// <summary>Abre la ventana Ajustes (HU-21).</summary>
     [RelayCommand]
