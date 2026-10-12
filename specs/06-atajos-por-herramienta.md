@@ -1,6 +1,6 @@
 # SPEC 06 — Atajos por herramienta (HU-22)
 
-> **Estado:** Aprobado · **Depende de:** SPEC 05 (HU-21) — atajos configurables · **Fecha:** 2026-10-11
+> **Estado:** Implementado · **Depende de:** SPEC 05 (HU-21) — atajos configurables · **Fecha:** 2026-10-11
 > **Objetivo:** Que cada herramienta de dibujo y el grosor tengan su propio atajo configurable, y que la barra muestre el atajo de cada botón para descubrirlos sin abrir Ajustes.
 
 ---
@@ -75,15 +75,17 @@
 
 ## Criterios de aceptación
 
-- [ ] En modo dibujo, `Ctrl+P`, `Ctrl+B`, `Ctrl+I`, `Ctrl+F` y `Ctrl+R` eligen Lápiz, Borrador, Línea, Flecha y Rectángulo, y el botón activo de la barra lo refleja.
-- [ ] En modo dibujo, `Ctrl+RePág` y `Ctrl+AvPág` cambian el grosor un paso, con tope en los extremos.
-- [ ] Mientras se escribe un Texto, `Ctrl+↑/↓` siguen moviendo el cursor (no se tocan).
-- [ ] Con el overlay oculto o en click-through, `Ctrl+P`, `Ctrl+F` y `Ctrl+R` funcionan con normalidad en otras apps.
-- [ ] Las 7 acciones aparecen en Ajustes → Solo al dibujar y se pueden cambiar, quitar y restaurar.
-- [ ] Un `settings.json` existente del SPEC 05 sigue funcionando y recibe los atajos nuevos.
-- [ ] Cada botón de la barra con atajo lo muestra en su tooltip en monoespaciada; sin atajo, solo el nombre.
-- [ ] Cambiar un atajo en Ajustes actualiza su tooltip sin reiniciar.
-- [ ] `dotnet build -warnaserror` y `dotnet test` verdes; `BACKLOG.md` incluye HU-22.
+> **Cierre (2026-10-12):** verificados con tests automáticos: tabla de predeterminados y su ámbito «Solo al dibujar», textos en Ajustes, archivo del SPEC 05 que conserva sus cambios y recibe los atajos nuevos, grosor con tope, tooltips que siguen el atajo vigente (cambiar, quitar, cargar al arrancar) y carga de la barra con la plantilla en monoespaciada. Build `-warnaserror` y tests verdes. La prueba en la app real la dio por buena el usuario («funciona bien»). Pendiente fuera de alcance: si un `settings.json` antiguo ya usaba una combinación que ahora es predeterminada (p. ej. `Ctrl+R`), una de las dos acciones queda «No disponible».
+
+- [x] En modo dibujo, `Ctrl+P`, `Ctrl+B`, `Ctrl+I`, `Ctrl+F` y `Ctrl+R` eligen Lápiz, Borrador, Línea, Flecha y Rectángulo, y el botón activo de la barra lo refleja.
+- [x] En modo dibujo, `Ctrl+RePág` y `Ctrl+AvPág` cambian el grosor un paso, con tope en los extremos.
+- [x] Mientras se escribe un Texto, `Ctrl+↑/↓` siguen moviendo el cursor (no se tocan).
+- [x] Con el overlay oculto o en click-through, `Ctrl+P`, `Ctrl+F` y `Ctrl+R` funcionan con normalidad en otras apps.
+- [x] Las 7 acciones aparecen en Ajustes → Solo al dibujar y se pueden cambiar, quitar y restaurar.
+- [x] Un `settings.json` existente del SPEC 05 sigue funcionando y recibe los atajos nuevos.
+- [x] Cada botón de la barra con atajo lo muestra en su tooltip en monoespaciada; sin atajo, solo el nombre.
+- [x] Cambiar un atajo en Ajustes actualiza su tooltip sin reiniciar.
+- [x] `dotnet build -warnaserror` y `dotnet test` verdes; `BACKLOG.md` incluye HU-22.
 
 ---
 
