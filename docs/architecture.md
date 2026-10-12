@@ -35,14 +35,14 @@ Modelo del dominio, inmutable y sin dependencias externas.
 ### Acetato.Application
 Orquestación agnóstica de plataforma y **puertos** (`Abstractions/`):
 - `IGlobalHotkeyService` (HU-01) · `IOverlayController` (HU-01/02) · y a futuro
-  `IDrawingSession` (HU-03/04/07), `IScreenCaptureService` (HU-12), `ITrayService` (HU-08),
+  `IDrawingSession` (HU-03/04/07), `IScreenClipLauncher` (HU-23), `ITrayService` (HU-08),
   `ISettingsStore`.
 
 ### Acetato.Infrastructure
 Implementaciones concretas. **Único** sitio con P/Invoke:
 - Atajos globales (`RegisterHotKey`).
 - Interop del overlay: `WS_EX_LAYERED` / `WS_EX_TRANSPARENT` (click-through) / `WS_EX_TOOLWINDOW`.
-- Captura de pantalla a PNG, icono de bandeja, persistencia de ajustes (JSON).
+- Apertura del recorte de Windows (`ms-screenclip:`), icono de bandeja, persistencia de ajustes (JSON).
 
 ### Acetato.Presentation
 WPF. `OverlayWindow` (transparente, sin chrome, `Topmost`, maximizada), el toolbar flotante
@@ -62,7 +62,8 @@ iconos del design system).
 | HU-09 multi-monitor / DPI | Per-Monitor V2 (`app.manifest`) | Presentation + Infrastructure |
 | HU-10 toolbar flotante | barra + popovers | Presentation |
 | HU-11 formas (línea/flecha/rect) | render de formas | Presentation + Domain |
-| HU-12 guardar PNG | captura compuesta | Infrastructure |
+| HU-12 guardar PNG | reemplazada por HU-23 | — |
+| HU-23 recortar pantalla | abrir el recorte de Windows | Infrastructure + Application |
 
 ## Decisiones
 - **WPF** sobre WinForms: transparencia real, Acrylic/Mica, DPI Per-Monitor V2, render

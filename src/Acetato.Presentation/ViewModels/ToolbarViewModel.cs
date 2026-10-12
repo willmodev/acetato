@@ -12,7 +12,7 @@ namespace Acetato.Presentation.ViewModels;
 
 /// <summary>
 /// ViewModel de la barra flotante (HU-10). Las acciones de dibujo (limpiar,
-/// deshacer, captura) van por el <see cref="OverlayBroadcaster"/>, que las
+/// deshacer, recortar) van por el <see cref="OverlayBroadcaster"/>, que las
 /// reparte entre las panes de cada monitor (HU-09); color/grosor/herramienta van
 /// por el estado compartido. Refleja el estado activo (tinta/grosor) para
 /// resaltarlo con el acento. Gestiona los popovers y el cierre. Cada botón
@@ -59,7 +59,7 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
         ThicknessHint = shortcuts.Hint("Grosor");
         UndoHint = shortcuts.Hint("Deshacer", HotkeyAction.Undo);
         ClearHint = shortcuts.Hint("Limpiar todo", HotkeyAction.Clear);
-        CaptureHint = shortcuts.Hint("Captura", HotkeyAction.Capture);
+        CaptureHint = shortcuts.Hint("Recortar", HotkeyAction.Capture);
         SettingsHint = shortcuts.Hint("Ajustes");
         CloseHint = shortcuts.Hint("Cerrar", HotkeyAction.Toggle);
         _settings.Changed += OnSettingsChanged;
@@ -84,7 +84,7 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
     /// <summary>Tooltip del botón que borra todos los trazos, con su atajo.</summary>
     public ShortcutHint ClearHint { get; }
 
-    /// <summary>Tooltip de Captura, con su atajo.</summary>
+    /// <summary>Tooltip de Recortar, con su atajo.</summary>
     public ShortcutHint CaptureHint { get; }
 
     /// <summary>Tooltip de Ajustes.</summary>

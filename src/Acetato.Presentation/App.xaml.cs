@@ -1,7 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
 using Acetato.Application.Abstractions;
-using Acetato.Application.Capture;
 using Acetato.Application.Drawing;
 using Acetato.Application.Hotkeys;
 using Acetato.Application.Overlay;
@@ -121,23 +120,19 @@ public partial class App : System.Windows.Application
     private static ServiceProvider BuildServiceProvider()
     {
         var services = new ServiceCollection();
-        RegisterDrawingAndCapture(services);
+        RegisterDrawingAndScreenClip(services);
         RegisterInfrastructure(services);
         RegisterOverlay(services);
         services.AddSingleton<TrayViewModel>();
         return services.BuildServiceProvider();
     }
 
-    // Estado del trazo activo (HU-05/06) y captura de pantalla anotada (HU-12).
-    private static void RegisterDrawingAndCapture(IServiceCollection services)
+    // Estado del trazo activo (HU-05/06) y recorte de pantalla de Windows (HU-23).
+    private static void RegisterDrawingAndScreenClip(IServiceCollection services)
     {
         services.AddSingleton<IRandomSource>(SecureRandomSource.Instance);
         services.AddSingleton<IDrawingSettings, DrawingSettings>();
         services.AddSingleton(TimeProvider.System);
-        services.AddSingleton<ICaptureService, CaptureService>();
-        services.AddSingleton<IScreenCaptureService, GdiScreenCaptureService>();
-        services.AddSingleton<ICaptureDirectoryProvider, PicturesCaptureDirectoryProvider>();
-        services.AddSingleton<ICaptureNotifier, ToastCaptureNotifier>();
         services.AddSingleton<IScreenClipLauncher, WindowsScreenClipLauncher>();
     }
 
