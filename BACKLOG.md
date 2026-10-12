@@ -329,6 +329,7 @@ Escenario: Capturar pantalla anotada
   Cuando presiono el atajo de captura
   Entonces se guarda un archivo PNG que contiene el contenido de la pantalla más los trazos.
 ```
+> **Reemplazada por HU-23.** El atajo ya no guarda el escritorio completo: abre el recorte de Windows para elegir el área (ver [`specs/07-recorte-de-pantalla.md`](./specs/07-recorte-de-pantalla.md)).
 
 ---
 
@@ -727,6 +728,40 @@ Escenario: Atajo en el tooltip
 ```
 **Notas técnicas:** Spec en [`specs/06-atajos-por-herramienta.md`](./specs/06-atajos-por-herramienta.md). Reutiliza el catálogo, el coordinador y Ajustes de la HU-21: solo suma acciones y su presentación. Un `settings.json` existente recibe los atajos nuevos por defecto porque solo guarda diferencias. Fuera de alcance: atajos para Seleccionar y Elipse, atajos de una sola tecla, atajos en popovers y la captura de pantalla (SPEC 07).
 
+---
+
+#### HU-23 — Recortar la pantalla anotada
+- **Épica:** EP-04 · **Prioridad:** Could · **Estimación:** 3
+- **Narrativa:**
+  Como presentador, quiero elegir qué área de la pantalla anotada guardar, para no llevarme todos los monitores pegados en una sola imagen.
+
+**Criterios de aceptación**
+```
+Escenario: Recortar un área
+  Dado que estoy en modo dibujo con trazos en pantalla
+  Cuando pulso Ctrl+S
+  Entonces se abre la selección de área de Windows
+  Y puedo elegir un área de un solo monitor
+  Y la imagen incluye los trazos pero no la barra de Acetato.
+
+Escenario: Cancelar el recorte
+  Dado que abrí el recorte con Ctrl+S
+  Cuando presiono Esc
+  Entonces no se guarda nada
+  Y Acetato sigue en modo dibujo con los trazos.
+
+Escenario: Las otras apps conservan Ctrl+S
+  Dado que el overlay está oculto o en click-through
+  Cuando pulso Ctrl+S en otra aplicación
+  Entonces esa aplicación guarda con normalidad.
+
+Escenario: Configurable como los demás
+  Dado que abrí Ajustes
+  Cuando miro el grupo Solo al dibujar
+  Entonces la acción se llama "Recortar"
+  Y puedo cambiarla, quitarla y restaurarla.
+```
+**Notas técnicas:** Spec en [`specs/07-recorte-de-pantalla.md`](./specs/07-recorte-de-pantalla.md). Reemplaza a la HU-12: Acetato solo abre la herramienta Recortes de Windows (`ms-screenclip:`), que se encarga de la selección, el portapapeles y el aviso. Se elimina la captura propia (`Imágenes\Acetato` y el aviso «Captura guardada»). El valor interno `Capture` se conserva para que los `settings.json` existentes sigan valiendo. Fuera de alcance: recorte propio, guardar en una carpeta de Acetato, ítem en la bandeja y grabación de video.
 ---
 
 ## Definition of Done (global)

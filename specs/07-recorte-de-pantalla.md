@@ -1,6 +1,6 @@
 # SPEC 07 — Recorte de pantalla con la herramienta de Windows (HU-23)
 
-> **Estado:** Listo para implementar · **Depende de:** HU-12 (captura actual) y SPEC 05 (HU-21) — atajos configurables · **Fecha:** 2026-10-11
+> **Estado:** Aprobado · **Depende de:** HU-12 (captura actual) y SPEC 05 (HU-21) — atajos configurables · **Fecha:** 2026-10-11
 > **Objetivo:** Que el atajo de captura deje elegir el área a guardar, en vez de copiar todos los monitores juntos, usando el recorte nativo de Windows.
 
 ---
