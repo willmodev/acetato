@@ -58,14 +58,6 @@ internal static partial class NativeMethods
     internal const int SmCxScreen = 0;
     internal const int SmCyScreen = 1;
 
-    // Métricas del escritorio virtual (HU-09): origen y tamaño que abarcan todos
-    // los monitores. El origen puede ser negativo si hay pantallas a la izquierda
-    // o arriba del primario.
-    internal const int SmXVirtualScreen = 76;
-    internal const int SmYVirtualScreen = 77;
-    internal const int SmCxVirtualScreen = 78;
-    internal const int SmCyVirtualScreen = 79;
-
     // Comando de presentación para SetWindowPlacement: maximizar (HU-09).
     internal const uint SwShowMaximized = 3;
 

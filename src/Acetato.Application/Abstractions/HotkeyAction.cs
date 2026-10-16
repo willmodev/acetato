@@ -44,7 +44,10 @@ public enum HotkeyAction
     /// <summary>Cambiar a la siguiente herramienta del anillo (HU-11).</summary>
     CycleTool,
 
-    /// <summary>Guardar la pantalla anotada como PNG (HU-12).</summary>
+    /// <summary>
+    /// Abrir el recorte de pantalla de Windows (HU-23). Conserva el nombre de la
+    /// captura de HU-12 para que los <c>settings.json</c> existentes sigan valiendo.
+    /// </summary>
     Capture,
 
     /// <summary>Seleccionar la herramienta Texto (HU-13).</summary>

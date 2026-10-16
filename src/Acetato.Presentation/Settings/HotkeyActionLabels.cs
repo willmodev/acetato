@@ -31,7 +31,7 @@ internal static class HotkeyActionLabels
         [HotkeyAction.SelectTextTool] = "Texto",
         [HotkeyAction.ThicknessUp] = "Más grueso",
         [HotkeyAction.ThicknessDown] = "Más fino",
-        [HotkeyAction.Capture] = "Captura",
+        [HotkeyAction.Capture] = "Recortar",
     };
 
     /// <summary>Nombre de la acción.</summary>

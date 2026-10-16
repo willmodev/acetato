@@ -46,7 +46,7 @@ internal sealed class HotkeyActionRouter
         [HotkeyAction.ColorGradient] = broadcaster.SelectGradient,
         [HotkeyAction.Undo] = broadcaster.Undo,
         [HotkeyAction.CycleTool] = broadcaster.CycleTool,
-        [HotkeyAction.Capture] = () => _ = broadcaster.CaptureAsync(),
+        [HotkeyAction.Capture] = broadcaster.LaunchScreenClip,
         [HotkeyAction.SelectTextTool] = () => broadcaster.SelectTool(ToolKind.Text),
         [HotkeyAction.SelectLaserTool] = () => broadcaster.SelectTool(ToolKind.Laser),
         [HotkeyAction.SelectPencilTool] = () => broadcaster.SelectTool(ToolKind.Pencil),

@@ -39,7 +39,7 @@
     <!-- trash-2 (Limpiar todo) -->
     <StreamGeometry x:Key="Icon.Clear">M10 11v6 M14 11v6 M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6 M3 6h18 M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2</StreamGeometry>
 
-    <!-- camera (Captura) -->
+    <!-- camera (Recortar) -->
     <StreamGeometry x:Key="Icon.Capture">M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z M9 13 A3 3 0 1 0 15 13 A3 3 0 1 0 9 13 Z</StreamGeometry>
 
     <!-- settings-2 (Ajustes) -->
