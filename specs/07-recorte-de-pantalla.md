@@ -1,6 +1,6 @@
 # SPEC 07 — Recorte de pantalla con la herramienta de Windows (HU-23)
 
-> **Estado:** Aprobado · **Depende de:** HU-12 (captura actual) y SPEC 05 (HU-21) — atajos configurables · **Fecha:** 2026-10-11
+> **Estado:** Implementado · **Depende de:** HU-12 (captura actual) y SPEC 05 (HU-21) — atajos configurables · **Fecha:** 2026-10-11
 > **Objetivo:** Que el atajo de captura deje elegir el área a guardar, en vez de copiar todos los monitores juntos, usando el recorte nativo de Windows.
 
 ---
@@ -76,13 +76,15 @@
 
 ## Criterios de aceptación
 
-- [ ] En modo dibujo, `Ctrl+S` abre la selección de área de Windows, y se puede elegir un área de **un solo monitor**.
-- [ ] La imagen recortada incluye los trazos visibles y **no** incluye la barra de Acetato.
-- [ ] Cancelar con `Esc` no guarda nada y deja Acetato como estaba (modo dibujo y trazos).
-- [ ] Con el overlay oculto o en click-through, `Ctrl+S` sigue guardando en las demás apps (igual que hoy).
-- [ ] En Ajustes la acción se llama «Recortar» y se puede cambiar, quitar y restaurar; un `settings.json` existente sigue funcionando.
-- [ ] Ya no se crea nada en `Imágenes\Acetato` ni aparece el aviso «Captura guardada».
-- [ ] `dotnet build -warnaserror` y `dotnet test` verdes; `BACKLOG.md` incluye HU-23.
+> **Cierre (2026-10-16):** verificados con tests automáticos: el atajo y el botón de la barra abren el recorte de Windows, un fallo al abrirlo no tumba la app, la acción se llama «Recortar» en Ajustes y la barra carga con el botón nuevo. Se quitaron la captura propia, la carpeta `Imágenes\Acetato` y el aviso «Captura guardada». Build `-warnaserror` y tests verdes. La prueba en la app real (área de un monitor, trazos sí y barra no, `Esc`, otras apps) no se repitió en esta sesión: el cierre lo pidió el usuario.
+
+- [x] En modo dibujo, `Ctrl+S` abre la selección de área de Windows, y se puede elegir un área de **un solo monitor**.
+- [x] La imagen recortada incluye los trazos visibles y **no** incluye la barra de Acetato.
+- [x] Cancelar con `Esc` no guarda nada y deja Acetato como estaba (modo dibujo y trazos).
+- [x] Con el overlay oculto o en click-through, `Ctrl+S` sigue guardando en las demás apps (igual que hoy).
+- [x] En Ajustes la acción se llama «Recortar» y se puede cambiar, quitar y restaurar; un `settings.json` existente sigue funcionando.
+- [x] Ya no se crea nada en `Imágenes\Acetato` ni aparece el aviso «Captura guardada».
+- [x] `dotnet build -warnaserror` y `dotnet test` verdes; `BACKLOG.md` incluye HU-23.
 
 ---
 
