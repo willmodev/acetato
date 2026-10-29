@@ -7,9 +7,8 @@ namespace Acetato.Infrastructure.Settings;
 
 /// <summary>
 /// Notificación de Windows con los problemas de atajos al arrancar (HU-21). Lleva
-/// el argumento <c>action=settings</c>: el aviso de captura (HU-12) comparte el
-/// evento global de activación de CommunityToolkit y cada uno atiende solo su
-/// argumento, así que abrir una captura nunca abre Ajustes ni al revés.
+/// el argumento <c>action=settings</c> y solo atiende ese argumento en el evento
+/// global de activación de CommunityToolkit.
 /// </summary>
 public sealed class ToastHotkeyNotifier : IHotkeyNotifier, IDisposable
 {

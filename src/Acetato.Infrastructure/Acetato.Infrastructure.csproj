@@ -16,11 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Captura de pantalla + encode PNG (HU-12): Graphics.CopyFromScreen evita
-         el P/Invoke BitBlt de 9 parámetros (rompería S107). -->
-    <PackageReference Include="System.Drawing.Common" />
-    <!-- Toast clickable al guardar (HU-12): registra la identidad de la app sin
-         acceso directo en Inicio; al activarlo abre el PNG. -->
+    <!-- Toast clickable de atajos no disponibles (HU-21): registra la identidad
+         de la app sin acceso directo en Inicio; al activarlo abre Ajustes. -->
     <PackageReference Include="CommunityToolkit.WinUI.Notifications" />
   </ItemGroup>
 

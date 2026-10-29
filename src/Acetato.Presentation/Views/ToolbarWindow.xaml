@@ -108,7 +108,7 @@
 
             <Rectangle Style="{StaticResource ToolDivider}" />
 
-            <!-- Captura (funcional, HU-12) / Ajustes (HU-21) -->
+            <!-- Recortar (HU-23) / Ajustes (HU-21) -->
             <Button Style="{StaticResource ToolButton}" Command="{Binding CaptureCommand}" ToolTip="{Binding CaptureHint}">
                 <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Capture}" />
             </Button>

@@ -1,10 +1,9 @@
+using System.ComponentModel;
 using Acetato.Application.Abstractions;
-using Acetato.Application.Capture;
 using Acetato.Application.Drawing;
 using Acetato.Application.Overlay;
 using Acetato.Domain;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
 using Xunit;
 
 namespace Acetato.Application.Tests;
@@ -13,10 +12,10 @@ public sealed class OverlayBroadcasterTests
 {
     private readonly ICursorPositionProvider _cursor = Substitute.For<ICursorPositionProvider>();
     private readonly IDrawingSettings _settings = Substitute.For<IDrawingSettings>();
-    private readonly ICaptureService _capture = Substitute.For<ICaptureService>();
+    private readonly IScreenClipLauncher _screenClip = Substitute.For<IScreenClipLauncher>();
     private readonly IOverlayCanvasProvider _provider = Substitute.For<IOverlayCanvasProvider>();
 
-    private OverlayBroadcaster CreateBroadcaster() => new(_provider, _cursor, _settings, _capture);
+    private OverlayBroadcaster CreateBroadcaster() => new(_provider, _cursor, _settings, _screenClip);
 
     private static IOverlayCanvas Canvas(MonitorInfo monitor)
     {
@@ -111,23 +110,21 @@ public sealed class OverlayBroadcasterTests
     }
 
     [Fact]
-    public async Task CaptureAsync_invokes_the_capture_service()
+    public void LaunchScreenClip_opens_the_system_screen_clip()
     {
-        _capture.CaptureAsync().Returns(new CaptureResult("ruta.png"));
+        CreateBroadcaster().LaunchScreenClip();
 
-        await CreateBroadcaster().CaptureAsync();
-
-        _ = _capture.Received(1).CaptureAsync();
+        _screenClip.Received(1).Launch();
     }
 
     [Fact]
-    public async Task CaptureAsync_swallows_io_failures()
+    public void LaunchScreenClip_swallows_launch_failures()
     {
-        _capture.CaptureAsync().ThrowsAsync(new IOException("disco lleno"));
+        _screenClip.When(launcher => launcher.Launch()).Do(_ => throw new Win32Exception("protocolo no registrado"));
 
-        // No debe propagar: el caso de uso traga la falla de E/S.
-        await CreateBroadcaster().CaptureAsync();
+        // No debe propagar: si Windows no abre el recorte, el atajo no hace nada.
+        CreateBroadcaster().LaunchScreenClip();
 
-        _ = _capture.Received(1).CaptureAsync();
+        _screenClip.Received(1).Launch();
     }
 }

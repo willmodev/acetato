@@ -26,4 +26,10 @@ public sealed class HotkeyActionLabelsTests
     {
         HotkeyActionLabels.Of(action).Should().Be(expected);
     }
+
+    [Fact]
+    public void Capture_is_labelled_as_screen_clip()
+    {
+        HotkeyActionLabels.Of(HotkeyAction.Capture).Should().Be("Recortar");
+    }
 }
