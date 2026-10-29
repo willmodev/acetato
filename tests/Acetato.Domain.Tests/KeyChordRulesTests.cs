@@ -26,6 +26,7 @@ public sealed class KeyChordRulesTests
     [InlineData(HotkeyKey.D1)]
     [InlineData(HotkeyKey.Space)]
     [InlineData(HotkeyKey.NumPad0)]
+    [InlineData(HotkeyKey.Escape)]
     public void A_key_without_modifier_fails_unless_it_is_a_function_key(HotkeyKey key)
     {
         KeyChordRules.Validate(new KeyChord(HotkeyModifiers.None, key)).Should().Be(KeyChordError.MissingModifier);

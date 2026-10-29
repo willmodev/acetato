@@ -50,6 +50,7 @@ internal static class KeyChordText
             [HotkeyKey.Up] = "↑",
             [HotkeyKey.Right] = "→",
             [HotkeyKey.Down] = "↓",
+            [HotkeyKey.Escape] = "Esc",
         };
         for (int digit = 0; digit <= 9; digit++)
         {

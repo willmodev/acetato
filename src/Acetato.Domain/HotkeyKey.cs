@@ -87,4 +87,10 @@ public enum HotkeyKey
     NumPad7,
     NumPad8,
     NumPad9,
+
+    /// <summary>
+    /// Esc. Solo para el atajo fijo del Puntero (HU-24): en Ajustes no se puede
+    /// asignar (la captura la usa para cancelar).
+    /// </summary>
+    Escape,
 }

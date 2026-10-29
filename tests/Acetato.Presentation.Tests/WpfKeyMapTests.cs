@@ -29,14 +29,20 @@ public sealed class WpfKeyMapTests
     }
 
     [Fact]
-    public void Every_domain_key_has_a_wpf_key()
+    public void Every_domain_key_but_esc_has_a_wpf_key()
     {
         var mapped = Enum.GetValues<Key>()
             .Select(WpfKeyMap.ToHotkeyKey)
             .OfType<HotkeyKey>()
             .Distinct();
 
-        mapped.Should().BeEquivalentTo(Enum.GetValues<HotkeyKey>());
+        mapped.Should().BeEquivalentTo(Enum.GetValues<HotkeyKey>().Where(key => key != HotkeyKey.Escape));
+    }
+
+    [Fact]
+    public void Esc_cannot_be_captured_as_a_shortcut()
+    {
+        WpfKeyMap.ToHotkeyKey(Key.Escape).Should().BeNull();
     }
 
     [Theory]

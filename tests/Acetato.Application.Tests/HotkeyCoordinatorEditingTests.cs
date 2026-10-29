@@ -99,7 +99,7 @@ public sealed class HotkeyCoordinatorEditingTests : IDisposable
         _applied[^1].Should().BeEmpty();
 
         _coordinator.EndCapture();
-        _applied[^1].Should().HaveCount(HotkeyCatalog.All.Count);
+        _applied[^1].Should().HaveCount(HotkeyCatalog.All.Count + FixedHotkeys.Drawing.Count);
     }
 
     [Fact]

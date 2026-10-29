@@ -28,6 +28,14 @@ public sealed class ToolbarShortcutsTests : IDisposable
     }
 
     [Fact]
+    public void The_pointer_hint_shows_its_fixed_esc()
+    {
+        var hint = _shortcuts.Hint("Puntero", HotkeyAction.EnterPointerMode);
+
+        hint.Shortcut.Should().Be("Esc");
+    }
+
+    [Fact]
     public void A_button_without_action_shows_only_the_name()
     {
         var hint = _shortcuts.Hint("Ajustes");

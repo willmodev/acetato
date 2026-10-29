@@ -60,7 +60,20 @@ public sealed class HotkeyCoordinatorTests
     {
         using var coordinator = CreateStarted(visible: true, drawing: true);
 
-        LastAppliedActions.Should().Equal(HotkeyCatalog.All.Select(definition => definition.Action));
+        LastAppliedActions.Should().Equal(HotkeyCatalog.All.Select(definition => definition.Action)
+            .Append(HotkeyAction.EnterPointerMode));
+    }
+
+    [Fact]
+    public void Esc_is_applied_only_in_drawing_mode()
+    {
+        using var coordinator = CreateStarted(visible: true, drawing: true);
+        _applied[^1].Should().ContainSingle(assignment => assignment.Action == HotkeyAction.EnterPointerMode)
+            .Which.Chord.Should().Be(new KeyChord(HotkeyModifiers.None, HotkeyKey.Escape));
+
+        RaiseStateChanged(visible: true, drawing: false);
+
+        LastAppliedActions.Should().NotContain(HotkeyAction.EnterPointerMode);
     }
 
     [Fact]
@@ -69,7 +82,7 @@ public sealed class HotkeyCoordinatorTests
         using var coordinator = CreateStarted(visible: false, drawing: false);
 
         RaiseStateChanged(visible: true, drawing: true);
-        LastAppliedActions.Should().HaveCount(HotkeyCatalog.All.Count);
+        LastAppliedActions.Should().HaveCount(HotkeyCatalog.All.Count + FixedHotkeys.Drawing.Count);
 
         RaiseStateChanged(visible: true, drawing: false);
         LastAppliedActions.Should().Equal(AlwaysActions);
@@ -113,7 +126,8 @@ public sealed class HotkeyCoordinatorTests
 
         using var coordinator = CreateStarted(visible: true, drawing: true);
 
-        LastAppliedActions.Should().NotContain(HotkeyAction.Undo).And.HaveCount(HotkeyCatalog.All.Count - 1);
+        LastAppliedActions.Should().NotContain(HotkeyAction.Undo)
+            .And.HaveCount(HotkeyCatalog.All.Count + FixedHotkeys.Drawing.Count - 1);
     }
 
     [Fact]

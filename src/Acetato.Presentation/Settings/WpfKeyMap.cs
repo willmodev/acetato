@@ -6,7 +6,8 @@ namespace Acetato.Presentation.Settings;
 /// <summary>
 /// Traduce las teclas de WPF a las del Domain (HU-21). Solo las de la lista
 /// blanca de <see cref="HotkeyKey"/>: una tecla de símbolo (<c>ñ</c>, <c>+</c>…)
-/// devuelve <c>null</c> y la UI la rechaza como «Tecla no admitida».
+/// devuelve <c>null</c> y la UI la rechaza como «Tecla no admitida». Esc no se
+/// traduce: en la captura cancela, y su único atajo es el fijo del Puntero (HU-24).
 /// </summary>
 internal static class WpfKeyMap
 {

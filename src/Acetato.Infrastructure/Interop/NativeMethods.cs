@@ -35,6 +35,7 @@ internal static partial class NativeMethods
     internal const uint VkF1 = 0x70;
     internal const uint VkNumPad0 = 0x60;
     internal const uint VkBack = 0x08; // Retroceso
+    internal const uint VkEscape = 0x1B; // Esc
     internal const uint VkSpace = 0x20; // Espacio
     internal const uint VkPrior = 0x21; // RePág
     internal const uint VkNext = 0x22; // AvPág

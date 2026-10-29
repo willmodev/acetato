@@ -56,5 +56,6 @@ internal sealed class HotkeyActionRouter
         [HotkeyAction.SelectRectangleTool] = () => broadcaster.SelectTool(ToolKind.Rectangle),
         [HotkeyAction.ThicknessUp] = broadcaster.IncreaseThickness,
         [HotkeyAction.ThicknessDown] = broadcaster.DecreaseThickness,
+        [HotkeyAction.EnterPointerMode] = () => controller.SetDrawingMode(false),
     };
 }

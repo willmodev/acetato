@@ -9,11 +9,21 @@ namespace Acetato.Application.Tests;
 public sealed class HotkeyCatalogTests
 {
     [Fact]
-    public void Every_action_has_exactly_one_definition()
+    public void Every_action_has_exactly_one_definition_or_a_fixed_chord()
     {
         HotkeyCatalog.All.Select(definition => definition.Action)
+            .Concat(FixedHotkeys.Drawing.Select(assignment => assignment.Action))
             .Should().BeEquivalentTo(Enum.GetValues<HotkeyAction>())
             .And.OnlyHaveUniqueItems();
+    }
+
+    [Fact]
+    public void The_pointer_uses_esc_and_stays_out_of_the_catalog()
+    {
+        FixedHotkeys.ChordOf(HotkeyAction.EnterPointerMode)
+            .Should().Be(new KeyChord(HotkeyModifiers.None, HotkeyKey.Escape));
+        HotkeyCatalog.All.Should().NotContain(definition => definition.Action == HotkeyAction.EnterPointerMode);
+        FixedHotkeys.ChordOf(HotkeyAction.Undo).Should().BeNull();
     }
 
     [Fact]

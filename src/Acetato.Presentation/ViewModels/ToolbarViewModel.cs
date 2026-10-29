@@ -60,7 +60,7 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
         Thicknesses = BuildThicknesses();
         var shortcuts = chrome.Shortcuts;
         Tools = BuildTools(shortcuts);
-        PointerHint = shortcuts.Hint("Puntero");
+        PointerHint = shortcuts.Hint("Puntero", HotkeyAction.EnterPointerMode);
         MoveHint = shortcuts.Hint("Mover");
         ColorHint = shortcuts.Hint("Color");
         ThicknessHint = shortcuts.Hint("Grosor");
