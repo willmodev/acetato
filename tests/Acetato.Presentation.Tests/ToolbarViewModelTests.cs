@@ -105,6 +105,19 @@ public sealed class ToolbarViewModelTests
     }
 
     [Fact]
+    public void Recortar_from_the_bar_leaves_drawing_mode()
+    {
+        var (drawing, pointer) = WpfTestHost.Run(() => WithToolbar((controller, viewModel) =>
+        {
+            viewModel.CaptureCommand.Execute(null);
+            return (controller.IsDrawingMode, viewModel.IsPointerMode);
+        }));
+
+        drawing.Should().BeFalse();
+        pointer.Should().BeTrue();
+    }
+
+    [Fact]
     public void The_pointer_is_not_a_drawing_tool_of_the_bar()
     {
         var kinds = WpfTestHost.Run(() => WithToolbar((_, viewModel) =>
@@ -131,7 +144,8 @@ public sealed class ToolbarViewModelTests
             Substitute.For<IOverlayCanvasProvider>(),
             Substitute.For<ICursorPositionProvider>(),
             settings,
-            Substitute.For<IScreenClipLauncher>());
+            Substitute.For<IScreenClipLauncher>(),
+            controller);
         var chrome = new ToolbarChrome(dragHandler, new SettingsWindowLauncher(controller, coordinator, dragHandler), shortcuts);
         using var viewModel = new ToolbarViewModel(broadcaster, settings, controller, chrome);
         return work(controller, viewModel);

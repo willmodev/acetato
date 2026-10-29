@@ -9,8 +9,9 @@ namespace Acetato.Application.Overlay;
 /// Reparte las acciones de dibujo entre los lienzos del overlay (uno por
 /// monitor, HU-09). Las acciones globales (color, herramienta, grosor) van por el estado
 /// compartido <see cref="IDrawingSettings"/>; "limpiar" afecta a cada lienzo;
-/// "deshacer" solo al del monitor activo (bajo el cursor); el recorte abre la
-/// herramienta del sistema, que cubre todos los monitores. Lo usan tanto los atajos como los botones de la
+/// "deshacer" solo al del monitor activo (bajo el cursor); el recorte pasa a
+/// modo puntero (HU-24) y abre la herramienta del sistema, que cubre todos los
+/// monitores. Lo usan tanto los atajos como los botones de la
 /// barra. Agnóstico de plataforma: depende solo de puertos.
 /// </summary>
 public sealed class OverlayBroadcaster
@@ -19,17 +20,20 @@ public sealed class OverlayBroadcaster
     private readonly ICursorPositionProvider _cursor;
     private readonly IDrawingSettings _settings;
     private readonly IScreenClipLauncher _screenClip;
+    private readonly IOverlayController _overlay;
 
     public OverlayBroadcaster(
         IOverlayCanvasProvider canvases,
         ICursorPositionProvider cursor,
         IDrawingSettings settings,
-        IScreenClipLauncher screenClip)
+        IScreenClipLauncher screenClip,
+        IOverlayController overlay)
     {
         _canvases = canvases;
         _cursor = cursor;
         _settings = settings;
         _screenClip = screenClip;
+        _overlay = overlay;
     }
 
     /// <summary>Borra los trazos de todas las pantallas (HU-04/HU-09).</summary>
@@ -78,12 +82,17 @@ public sealed class OverlayBroadcaster
     public void DecreaseThickness() => _settings.DecreaseThickness();
 
     /// <summary>
-    /// Abre el recorte de pantalla del sistema (HU-23). Si no se puede abrir
-    /// (protocolo ausente o bloqueado por política) la falla se traga y la app
-    /// sigue como estaba.
+    /// Abre el recorte de pantalla del sistema (HU-23). Antes pasa a modo puntero
+    /// (HU-24): así Acetato suelta Esc y un solo Esc cancela el recorte. Si no se
+    /// puede abrir (protocolo ausente o bloqueado por política) la falla se traga.
     /// </summary>
     public void LaunchScreenClip()
     {
+        if (_overlay.IsDrawingMode)
+        {
+            _overlay.SetDrawingMode(false);
+        }
+
         try
         {
             _screenClip.Launch();

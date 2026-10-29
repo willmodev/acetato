@@ -71,7 +71,8 @@ public sealed class HotkeyActionRouterTests
             canvases ?? Substitute.For<IOverlayCanvasProvider>(),
             Substitute.For<ICursorPositionProvider>(),
             Substitute.For<IDrawingSettings>(),
-            screenClip);
+            screenClip,
+            controller);
         var dispatcher = Dispatcher.CurrentDispatcher;
         var router = new HotkeyActionRouter(controller, broadcaster, dispatcher);
 
