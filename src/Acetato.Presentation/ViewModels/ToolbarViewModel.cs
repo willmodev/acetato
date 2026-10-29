@@ -17,7 +17,9 @@ namespace Acetato.Presentation.ViewModels;
 /// por el estado compartido. Refleja el estado activo (tinta/grosor) para
 /// resaltarlo con el acento. Gestiona los popovers y el cierre. Cada botón
 /// tiene un tooltip con su nombre y, si su acción tiene atajo, la combinación
-/// vigente (HU-22). El code-behind solo llama a InitializeComponent.
+/// vigente (HU-22). El botón Puntero (HU-24) sale del modo dibujo sin ocultar
+/// nada; elegir una herramienta vuelve a él. El code-behind solo llama a
+/// InitializeComponent.
 /// </summary>
 public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
 {
@@ -38,6 +40,10 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private bool _isThicknessPopoverOpen;
 
+    /// <summary>Indica si la capa deja pasar los clics (modo puntero, HU-24).</summary>
+    [ObservableProperty]
+    private bool _isPointerMode;
+
     public ToolbarViewModel(
         OverlayBroadcaster broadcaster,
         IDrawingSettings settings,
@@ -54,6 +60,7 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
         Thicknesses = BuildThicknesses();
         var shortcuts = chrome.Shortcuts;
         Tools = BuildTools(shortcuts);
+        PointerHint = shortcuts.Hint("Puntero");
         MoveHint = shortcuts.Hint("Mover");
         ColorHint = shortcuts.Hint("Color");
         ThicknessHint = shortcuts.Hint("Grosor");
@@ -63,7 +70,8 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
         SettingsHint = shortcuts.Hint("Ajustes");
         CloseHint = shortcuts.Hint("Cerrar", HotkeyAction.Toggle);
         _settings.Changed += OnSettingsChanged;
-        SyncActiveState();
+        _controller.StateChanged += OnOverlayStateChanged;
+        SyncMode();
     }
 
     /// <summary>Inicia el arrastre nativo de la ventana desde el grip.</summary>
@@ -71,6 +79,9 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
 
     /// <summary>Tooltip del grip de arrastre.</summary>
     public ShortcutHint MoveHint { get; }
+
+    /// <summary>Tooltip del botón Puntero (HU-24).</summary>
+    public ShortcutHint PointerHint { get; }
 
     /// <summary>Tooltip del botón de tinta.</summary>
     public ShortcutHint ColorHint { get; }
@@ -144,9 +155,32 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
         IsThicknessPopoverOpen = false;
     }
 
-    /// <summary>Selecciona la herramienta activa (HU-11).</summary>
+    /// <summary>
+    /// Selecciona la herramienta activa (HU-11). Desde el modo puntero vuelve
+    /// además al modo dibujo (HU-24).
+    /// </summary>
     [RelayCommand]
-    private void PickTool(ToolKind tool) => _settings.SelectTool(tool);
+    private void PickTool(ToolKind tool)
+    {
+        _settings.SelectTool(tool);
+        if (!_controller.IsDrawingMode)
+        {
+            _controller.SetDrawingMode(true);
+        }
+    }
+
+    /// <summary>
+    /// Sale del modo dibujo: los clics pasan a las ventanas de abajo y la barra
+    /// y los trazos siguen visibles (HU-24). En modo puntero no hace nada.
+    /// </summary>
+    [RelayCommand]
+    private void EnterPointerMode()
+    {
+        if (_controller.IsDrawingMode)
+        {
+            _controller.SetDrawingMode(false);
+        }
+    }
 
     /// <summary>Deshace el último trazo de la pantalla bajo el cursor (HU-07/HU-09).</summary>
     [RelayCommand]
@@ -179,11 +213,10 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
         return items;
     }
 
-    // Herramientas de la barra con el atajo que las elige (HU-22); las no
-    // implementadas van deshabilitadas (placeholder) y sin atajo.
+    // Herramientas de dibujo de la barra con el atajo que las elige (HU-22). El
+    // Puntero no es una herramienta (HU-24): es un botón aparte, antes de estas.
     private static List<ToolItem> BuildTools(ToolbarShortcuts shortcuts) =>
     [
-        new(ToolKind.Select, shortcuts.Hint("Seleccionar"), Glyph("Icon.Select"), false),
         new(ToolKind.Pencil, shortcuts.Hint("Lápiz", HotkeyAction.SelectPencilTool), Glyph("Icon.Pencil"), true),
         new(ToolKind.Laser, shortcuts.Hint("Láser", HotkeyAction.SelectLaserTool), Glyph("Icon.Laser"), true),
         new(ToolKind.Eraser, shortcuts.Hint("Borrador", HotkeyAction.SelectEraserTool), Glyph("Icon.Eraser"), true),
@@ -198,6 +231,21 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
         (Geometry)System.Windows.Application.Current.Resources[key];
 
     private void OnSettingsChanged(object? sender, EventArgs e) => SyncActiveState();
+
+    private void OnOverlayStateChanged(object? sender, EventArgs e) => SyncMode();
+
+    // Refleja el modo de la capa; al pasar a puntero se cierran los popovers.
+    private void SyncMode()
+    {
+        IsPointerMode = !_controller.IsDrawingMode;
+        if (IsPointerMode)
+        {
+            IsInkPopoverOpen = false;
+            IsThicknessPopoverOpen = false;
+        }
+
+        SyncActiveState();
+    }
 
     private void SyncActiveState()
     {
@@ -216,7 +264,8 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
 
         foreach (var tool in Tools)
         {
-            tool.IsSelected = tool.Kind == _settings.SelectedTool;
+            // En modo puntero no se resalta ninguna herramienta (HU-24).
+            tool.IsSelected = !IsPointerMode && tool.Kind == _settings.SelectedTool;
         }
     }
 
@@ -224,5 +273,9 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
     private bool IsActive(InkSwatchItem swatch) =>
         swatch.IsGradient ? _settings.IsGradient : !_settings.IsGradient && swatch.Color == _settings.Color;
 
-    public void Dispose() => _settings.Changed -= OnSettingsChanged;
+    public void Dispose()
+    {
+        _settings.Changed -= OnSettingsChanged;
+        _controller.StateChanged -= OnOverlayStateChanged;
+    }
 }
