@@ -44,6 +44,21 @@ public sealed class OverlayBroadcaster
     /// <summary>Deshace el último trazo de la pantalla bajo el cursor (HU-07/HU-09).</summary>
     public void Undo() => ActiveCanvas()?.Undo();
 
+    /// <summary>
+    /// Confirma el texto en edición de cualquier pantalla (HU-24). Devuelve si
+    /// había alguno: así Esc confirma primero y solo después sale del dibujo.
+    /// </summary>
+    public bool TryCommitText()
+    {
+        var committed = false;
+        foreach (var canvas in _canvases.Canvases)
+        {
+            committed |= canvas.TryCommitText();
+        }
+
+        return committed;
+    }
+
     /// <summary>Cambia la tinta activa; afecta a todas las pantallas (HU-05).</summary>
     public void SelectColor(TintaColor color) => _settings.SelectColor(color);
 

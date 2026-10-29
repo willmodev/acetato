@@ -56,6 +56,15 @@ internal sealed class HotkeyActionRouter
         [HotkeyAction.SelectRectangleTool] = () => broadcaster.SelectTool(ToolKind.Rectangle),
         [HotkeyAction.ThicknessUp] = broadcaster.IncreaseThickness,
         [HotkeyAction.ThicknessDown] = broadcaster.DecreaseThickness,
-        [HotkeyAction.EnterPointerMode] = () => controller.SetDrawingMode(false),
+        [HotkeyAction.EnterPointerMode] = () => EnterPointerMode(controller, broadcaster),
     };
+
+    // Esc (HU-24): con un texto en edición solo lo confirma; si no, sale del dibujo.
+    private static void EnterPointerMode(IOverlayController controller, OverlayBroadcaster broadcaster)
+    {
+        if (!broadcaster.TryCommitText())
+        {
+            controller.SetDrawingMode(false);
+        }
+    }
 }

@@ -1,8 +1,11 @@
+using System.Windows.Controls;
 using System.Windows.Threading;
 using Acetato.Application.Abstractions;
 using Acetato.Application.Drawing;
 using Acetato.Application.Overlay;
+using Acetato.Presentation.Behaviors;
 using Acetato.Presentation.Overlay;
+using FluentAssertions;
 using NSubstitute;
 using Xunit;
 
@@ -34,11 +37,38 @@ public sealed class HotkeyActionRouterTests
         controller.Received(1).SetDrawingMode(false);
     }
 
+    [Fact]
+    public void Esc_while_editing_a_text_only_commits_it()
+    {
+        var controller = Substitute.For<IOverlayController>();
+        var canvas = Substitute.For<IOverlayCanvas>();
+        canvas.TryCommitText().Returns(true);
+        var canvases = Substitute.For<IOverlayCanvasProvider>();
+        canvases.Canvases.Returns([canvas]);
+
+        WpfTestHost.Run(() => Route(HotkeyAction.EnterPointerMode, Substitute.For<IScreenClipLauncher>(), controller, canvases));
+
+        canvas.Received(1).TryCommitText();
+        controller.DidNotReceive().SetDrawingMode(Arg.Any<bool>());
+    }
+
+    [Fact]
+    public void Committing_on_a_canvas_without_text_does_nothing()
+    {
+        var committed = WpfTestHost.Run(() => TextAnnotationBehavior.TryCommit(new InkCanvas()));
+
+        committed.Should().BeFalse();
+    }
+
     // Enruta la acción y vacía la cola del dispatcher para que corra el manejador.
-    private static bool Route(HotkeyAction action, IScreenClipLauncher screenClip, IOverlayController controller)
+    private static bool Route(
+        HotkeyAction action,
+        IScreenClipLauncher screenClip,
+        IOverlayController controller,
+        IOverlayCanvasProvider? canvases = null)
     {
         var broadcaster = new OverlayBroadcaster(
-            Substitute.For<IOverlayCanvasProvider>(),
+            canvases ?? Substitute.For<IOverlayCanvasProvider>(),
             Substitute.For<ICursorPositionProvider>(),
             Substitute.For<IDrawingSettings>(),
             screenClip);

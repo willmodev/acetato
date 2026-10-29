@@ -52,6 +52,30 @@ public sealed class OverlayBroadcasterTests
     }
 
     [Fact]
+    public void TryCommitText_commits_on_every_canvas_and_reports_if_any_was_editing()
+    {
+        var idle = Canvas(new MonitorInfo(0, 0, 1920, 1080, true));
+        var editing = Canvas(new MonitorInfo(1920, 0, 1280, 1024, false));
+        editing.TryCommitText().Returns(true);
+        _provider.Canvases.Returns([idle, editing]);
+
+        var committed = CreateBroadcaster().TryCommitText();
+
+        Assert.True(committed);
+        idle.Received(1).TryCommitText();
+        editing.Received(1).TryCommitText();
+    }
+
+    [Fact]
+    public void TryCommitText_is_false_when_no_text_is_being_edited()
+    {
+        var idle = Canvas(new MonitorInfo(0, 0, 1920, 1080, true));
+        _provider.Canvases.Returns([idle]);
+
+        Assert.False(CreateBroadcaster().TryCommitText());
+    }
+
+    [Fact]
     public void Undo_does_nothing_when_there_are_no_canvases()
     {
         _provider.Canvases.Returns([]);
