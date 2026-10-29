@@ -1,0 +1,40 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="preview.css">
+<link rel="stylesheet" href="toolbar.css">
+<style>
+  .stage { flex-direction: column; justify-content: center; align-items: flex-start; gap: var(--s-5); padding-left: 96px; }
+  .case { display: flex; align-items: center; gap: var(--s-4); }
+  .case-label { font-size: 11px; font-weight: 500; color: var(--fg-1); background: var(--chrome-glass-strong); padding: 2px var(--s-2); border-radius: var(--r-tight); }
+  .tip { display: inline-flex; padding: 6px 9px; background: var(--chrome-glass-strong); border: 1px solid var(--stroke-1);
+          border-radius: var(--r-swatch); box-shadow: var(--shadow-tip); font-size: var(--text-tooltip); font-weight: 500; color: var(--fg-1); }
+</style>
+</head>
+<body>
+<div class="stage backdrop-split">
+  <div class="case">
+    <div class="bar" aria-label="Barra recogida">
+      <div class="grip" title="Mover"><svg viewBox="6 3 12 18" aria-hidden="true"><path d="M8 5 A1 1 0 1 0 10 5 A1 1 0 1 0 8 5 Z M8 12 A1 1 0 1 0 10 12 A1 1 0 1 0 8 12 Z M8 19 A1 1 0 1 0 10 19 A1 1 0 1 0 8 19 Z M14 5 A1 1 0 1 0 16 5 A1 1 0 1 0 14 5 Z M14 12 A1 1 0 1 0 16 12 A1 1 0 1 0 14 12 Z M14 19 A1 1 0 1 0 16 19 A1 1 0 1 0 14 19 Z"/></svg></div>
+      <div class="divider"></div>
+      <button class="tool" title="Mostrar barra"><i data-lucide="eye-off"></i></button>
+    </div>
+    <span class="tip">Mostrar barra</span>
+    <span class="case-label">Recogida</span>
+  </div>
+  <div class="case">
+    <div class="bar" aria-label="Barra recogida, hover">
+      <div class="grip" title="Mover"><svg viewBox="6 3 12 18" aria-hidden="true"><path d="M8 5 A1 1 0 1 0 10 5 A1 1 0 1 0 8 5 Z M8 12 A1 1 0 1 0 10 12 A1 1 0 1 0 8 12 Z M8 19 A1 1 0 1 0 10 19 A1 1 0 1 0 8 19 Z M14 5 A1 1 0 1 0 16 5 A1 1 0 1 0 14 5 Z M14 12 A1 1 0 1 0 16 12 A1 1 0 1 0 14 12 Z M14 19 A1 1 0 1 0 16 19 A1 1 0 1 0 14 19 Z"/></svg></div>
+      <div class="divider"></div>
+      <button class="tool" style="background:var(--hover);color:var(--fg-1)" title="Mostrar barra"><i data-lucide="eye-off"></i></button>
+    </div>
+    <span class="case-label">Hover</span>
+  </div>
+</div>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

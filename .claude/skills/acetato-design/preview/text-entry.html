@@ -5,28 +5,20 @@
 <meta charset="utf-8">
 <link rel="stylesheet" href="../colors_and_type.css">
 <link rel="stylesheet" href="preview.css">
+<link rel="stylesheet" href="toolbar.css">
 <style>
   .stage { justify-content: center; }
-  .scene { position: relative; width: 80%; height: 60%; min-height: 120px; }
-  /* committed text + live draft */
-  .committed { position: absolute; left: 8%; top: 18%; font-weight: 600; font-size: 26px; color: var(--ink-red);
-               font-family: var(--font-ui); }
-  .draft { position: absolute; left: 8%; top: 52%; }
-  .draft input, .draft .fake {
-    font-family: var(--font-ui); font-weight: 600; font-size: 26px; color: var(--ink-blue);
-    background: transparent; border: none; border-bottom: 1.5px dashed rgba(255,255,255,0.55);
-    outline: none; padding: 0 2px; min-width: 40px;
-  }
-  .caret { display: inline-block; width: 2px; height: 26px; background: var(--ink-blue); margin-left: 1px;
-           vertical-align: -4px; animation: blink 1s step-end infinite; }
-  @keyframes blink { 50% { opacity: 0; } }
+  .scene { position: relative; width: 80%; min-height: 160px; }
+  .committed { position: absolute; left: 8%; top: 10%; font-weight: 600; font-size: var(--annot-3); color: var(--ink-red); font-family: var(--font-ui); line-height: 1.2; }
+  .draft { position: absolute; left: 8%; top: 58%; font-family: var(--font-ui); font-weight: 600; font-size: var(--annot-3); line-height: 1.2; color: var(--fg-3); }
+  .caret { display: inline-block; width: 2px; height: var(--annot-3); background: var(--ink-blue); vertical-align: -5px; margin-right: 2px; }
 </style>
 </head>
 <body>
 <div class="stage backdrop-split">
   <div class="scene">
     <div class="committed">Punto clave</div>
-    <div class="draft"><span class="fake">Escribe aquí<span class="caret"></span></span></div>
+    <div class="draft"><span class="caret"></span>Texto</div>
   </div>
 </div>
 </body>

@@ -7,39 +7,33 @@
 <link rel="stylesheet" href="preview.css">
 <link rel="stylesheet" href="toolbar.css">
 <style>
-  .stage { justify-content: center; align-items: flex-start; padding-top: 40px; }
-  .demo { display: flex; flex-direction: column; align-items: center; gap: 0; }
+  .stage { justify-content: center; gap: var(--s-6); }
+  .demo { display: flex; flex-direction: column; align-items: center; gap: 10px; }
   .tooltip {
-    display: inline-flex; align-items: center; gap: 8px;
+    display: inline-flex; align-items: center; gap: var(--s-2);
     background: var(--chrome-glass-strong);
-    -webkit-backdrop-filter: blur(20px) saturate(150%);
-    backdrop-filter: blur(20px) saturate(150%);
     border: 1px solid var(--stroke-1);
-    border-radius: 8px;
-    box-shadow: var(--shadow-pop);
+    border-radius: var(--r-swatch);
+    box-shadow: var(--shadow-tip);
     padding: 6px 9px;
-    font-size: var(--text-tooltip);
-    font-weight: 500;
-    color: var(--fg-1);
-    white-space: nowrap;
+    font-size: var(--text-tooltip); font-weight: 500; line-height: var(--lh-tight);
+    color: var(--fg-1); white-space: nowrap;
   }
-  .tip-arrow {
-    width: 8px; height: 8px; margin-top: -5px;
-    background: var(--chrome-glass-strong);
-    border-right: 1px solid var(--stroke-1);
-    border-bottom: 1px solid var(--stroke-1);
-    transform: rotate(45deg);
-  }
-  .gap { height: 8px; }
 </style>
 </head>
 <body>
-<div class="stage">
+<div class="stage backdrop-split">
   <div class="demo">
-    <div class="tooltip">Lápiz <span class="kbd">P</span></div>
-    <div class="tip-arrow"></div>
-    <div class="gap"></div>
     <div class="bar"><button class="tool tool--active"><i data-lucide="pencil"></i></button></div>
+    <div class="tooltip">Lápiz <span class="kbd">Ctrl+P</span></div>
+  </div>
+  <div class="demo">
+    <div class="bar"><button class="tool" style="background:var(--hover);color:var(--fg-1)"><i data-lucide="trash-2"></i></button></div>
+    <div class="tooltip">Limpiar todo <span class="kbd">Ctrl+Retroceso</span></div>
+  </div>
+  <div class="demo">
+    <div class="bar"><div class="grip"><svg viewBox="6 3 12 18" aria-hidden="true"><path d="M8 5 A1 1 0 1 0 10 5 A1 1 0 1 0 8 5 Z M8 12 A1 1 0 1 0 10 12 A1 1 0 1 0 8 12 Z M8 19 A1 1 0 1 0 10 19 A1 1 0 1 0 8 19 Z M14 5 A1 1 0 1 0 16 5 A1 1 0 1 0 14 5 Z M14 12 A1 1 0 1 0 16 12 A1 1 0 1 0 14 12 Z M14 19 A1 1 0 1 0 16 19 A1 1 0 1 0 14 19 Z"/></svg></div></div>
+    <div class="tooltip">Mover</div>
   </div>
 </div>
 <script src="https://unpkg.com/lucide@latest"></script>

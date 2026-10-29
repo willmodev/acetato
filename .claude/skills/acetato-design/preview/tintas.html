@@ -6,7 +6,8 @@
 <link rel="stylesheet" href="../colors_and_type.css">
 <link rel="stylesheet" href="preview.css">
 <style>
-  .stage { gap: 14px; justify-content: center; }
+  .stage { gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .chip--grad { height: 40px; }
   .sw { width: 120px; display: flex; flex-direction: column; gap: 8px; align-items: center; }
   .chip { width: 100%; height: 80px; border-radius: 12px; }
   .chip--white { box-shadow: inset 0 0 0 1px rgba(0,0,0,0.14); }
@@ -24,6 +25,12 @@
   <div class="sw"><div class="chip" style="background:var(--ink-green)"></div><div class="meta"><div class="n">verde</div><div class="v">#30D158</div></div></div>
   <div class="sw"><div class="chip chip--white" style="background:var(--ink-white)"></div><div class="meta"><div class="n">blanco</div><div class="v">#FFFFFF</div></div></div>
   <div class="sw"><div class="chip chip--black" style="background:var(--ink-black)"></div><div class="meta"><div class="n">negro</div><div class="v">#0A0A0A</div></div></div>
+  <div class="sw"><div class="chip chip--grad" style="background:linear-gradient(90deg,var(--ink-grad-bluecyan-start),var(--ink-grad-bluecyan-end))"></div><div class="meta"><div class="n">azul → cian</div><div class="v">#2D6BFF → #00E5FF</div></div></div>
+  <div class="sw"><div class="chip chip--grad" style="background:linear-gradient(90deg,var(--ink-grad-yellowlime-start),var(--ink-grad-yellowlime-end))"></div><div class="meta"><div class="n">amarillo → lima</div><div class="v">#FFE600 → #B6FF00</div></div></div>
+  <div class="sw"><div class="chip chip--grad" style="background:linear-gradient(90deg,var(--ink-grad-pinkred-start),var(--ink-grad-pinkred-end))"></div><div class="meta"><div class="n">rosa → rojo</div><div class="v">#FF2DAA → #FF2D2D</div></div></div>
+  <div class="sw"><div class="chip chip--grad" style="background:linear-gradient(90deg,var(--ink-grad-violetpink-start),var(--ink-grad-violetpink-end))"></div><div class="meta"><div class="n">violeta → rosa</div><div class="v">#9B3DFF → #FF3DCB</div></div></div>
+  <div class="sw"><div class="chip chip--grad" style="background:linear-gradient(90deg,var(--ink-grad-greencyan-start),var(--ink-grad-greencyan-end))"></div><div class="meta"><div class="n">verde → cian</div><div class="v">#22FF7A → #00E5FF</div></div></div>
+  <div class="sw"><div class="chip chip--grad" style="background:linear-gradient(90deg,var(--ink-grad-orangepink-start),var(--ink-grad-orangepink-end))"></div><div class="meta"><div class="n">naranja → rosa</div><div class="v">#FF8A00 → #FF3D9A</div></div></div>
 </div>
 </body>
 </html>
