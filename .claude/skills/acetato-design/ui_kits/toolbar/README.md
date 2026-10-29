@@ -11,8 +11,10 @@ product's core use case). Reconciled with the WPF app on 2026-10-29.
 Serve the skill folder over HTTP (Babel loads the `.jsx` files with XHR, so
 `file://` does not work), e.g. `python -m http.server --directory .claude/skills/acetato-design`,
 then open `ui_kits/toolbar/index.html`. Everything is fake but live:
-- **Tools** in bar order: Seleccionar (disabled, as in the app), Lápiz, Láser,
+- **Tools** in bar order: Seleccionar (disabled here), Lápiz, Láser,
   Borrador, Línea, Flecha, Rectángulo, Texto. `Ctrl+Espacio` cycles them.
+  In the app the first button is now **Puntero** (leaves drawing mode, also
+  with `Esc`; see the root README, HU-24). This mock is not updated yet.
 - **Color** — 6 inks and the round **Degradado** swatch. In Gradient mode each
   stroke takes a random neon pair (never the previous one).
 - **Grosor** — 5 steps (3, 5, 8, 12, 18 px); text size follows the step.

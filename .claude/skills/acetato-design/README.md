@@ -57,7 +57,7 @@ There is almost no copy in Acetato — that is the point. Text appears only in
 **tooltips and the Settings window.** Rules:
 
 - **Language: Spanish (es-ES).** Toolbar labels, in bar order: *Mover,
-  Ocultar barra (Mostrar barra when collapsed), Seleccionar, Lápiz, Láser, Borrador, Línea, Flecha, Rectángulo, Texto, Color,
+  Ocultar barra (Mostrar barra when collapsed), Puntero, Lápiz, Láser, Borrador, Línea, Flecha, Rectángulo, Texto, Color,
   Grosor, Deshacer, Limpiar todo, Recortar, Ajustes, Cerrar.*
 - **Voice: none.** The product does not "speak". No first or second person, no
   marketing voice, no encouragement. Labels *name* a thing; they never narrate.
@@ -69,8 +69,8 @@ There is almost no copy in Acetato — that is the point. Text appears only in
 - **No emoji.** Not in UI, not in docs-facing strings. Icons carry meaning.
 - **Keyboard hints** are monospace key caps next to the label, written in
   Spanish and joined with `+`: `Lápiz  Ctrl+P`, `Limpiar todo  Ctrl+Retroceso`,
-  `Cerrar  Ctrl+Alt+D`. Key names: `Ctrl`, `Alt`, `Mayús`, `Win`, `Espacio`,
-  `Retroceso`, `Supr`, `RePág`, `AvPág`, `Inicio`, `Fin`. Actions without a
+  `Cerrar  Ctrl+Alt+D`, `Puntero  Esc`. Key names: `Ctrl`, `Alt`, `Mayús`, `Win`,
+  `Espacio`, `Retroceso`, `Supr`, `RePág`, `AvPág`, `Inicio`, `Fin`, `Esc`. Actions without a
   shortcut (Mover, Ocultar barra, Mostrar barra, Color, Grosor, Ajustes) show
   the name only.
 - **Settings messages** are short and concrete: *Ya la usa Lápiz*, *En uso por
@@ -140,8 +140,9 @@ light/dark stage in the cards) exist only to prove legibility.
 - *Press:* bg → `--press`. No scale transform.
 - *Active (selected tool, thickness):* `--accent-fill` background + `--accent`
   glyph. **No glow and no ring** (`--accent-glow` / `--shadow-active` unused).
+  In pointer mode the lit button is *Puntero* and no drawing tool is lit.
 - *Selected ink:* 2px `--accent-ring` around the swatch.
-- *Disabled:* icon drops to `--fg-3`, no hover (today: *Seleccionar*, until HU-14).
+- *Disabled:* icon drops to `--fg-3`, no hover (no button uses it today).
 
 **Motion.** Restrained. Popovers use the system's short fade. No bounces, no
 infinite loops, no decorative animation. The only custom motion is the laser
@@ -149,6 +150,19 @@ trail fading out over `--laser-life` (2 s).
 
 **Layout rules.** The bar is a single floating element, draggable by the grip at
 its lead edge, always on top, never in the taskbar, never stealing focus.
+
+**Drawing mode and pointer mode (HU-24).** The app opens with the layer and the
+bar visible, in drawing mode with *Lápiz*; the tray icon stays.
+- *Puntero* (first button after the grip, `mouse-pointer-2`) leaves drawing
+  mode: clicks reach the windows below while the bar and the strokes stay on
+  screen. It closes any open popover. Clicking it again does nothing.
+- `Esc` does the same, but only in drawing mode; in pointer mode `Esc` reaches
+  the app in focus. While typing a *Texto*, the first `Esc` confirms the text.
+  `Esc` is fixed: it is not listed in Settings.
+- Back to drawing: click any drawing tool (it becomes the active one) or press
+  `Ctrl+Alt+E`. Picking an ink or a thickness keeps pointer mode.
+- *Recortar* switches to pointer mode before opening Windows' snipping, so one
+  `Esc` cancels it.
 
 **Collapsed bar (eye button — designed, pending in the app).** Right after the
 grip and its divider sits an eye button that collapses the bar:
@@ -209,7 +223,7 @@ footer with inline confirmation — never a system dialog).
   | Mover | `Icon.Grip` | `grip-vertical` (filled) |
   | Ocultar barra (bar expanded) | `Icon.Eye` *(pending)* | `eye` |
   | Mostrar barra (bar collapsed) | `Icon.EyeOff` *(pending)* | `eye-off` |
-  | Seleccionar | `Icon.Select` | `mouse-pointer-2` |
+  | Puntero | `Icon.Select` | `mouse-pointer-2` |
   | Lápiz | `Icon.Pencil` | `pencil` |
   | Láser | `Icon.Laser` | `locate` |
   | Borrador | `Icon.Eraser` | `eraser` |
@@ -228,6 +242,8 @@ footer with inline confirmation — never a system dialog).
   the other icons):
   - `Icon.Eye`: `M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0 M9 12 A3 3 0 1 0 15 12 A3 3 0 1 0 9 12 Z`
   - `Icon.EyeOff`: `M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49 M14.084 14.158a3 3 0 0 1-4.242-4.242 M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143 M2 2 l20 20`
+- *Seleccionar* (HU-14, select and move strokes) will need its own icon: the
+  `mouse-pointer-2` glyph now belongs to *Puntero*.
 - **Reserved** (SVGs ready, no feature yet — keep them off the bar): `circle`
   (Elipse, HU-16), `redo-2` (Rehacer, HU-17), `highlighter`, `palette`, `pin`,
   `pipette`.
