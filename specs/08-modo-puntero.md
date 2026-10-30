@@ -1,6 +1,6 @@
 # SPEC 08 — Modo puntero y arranque en modo dibujo (HU-24)
 
-> **Estado:** Aprobado · **Depende de:** HU-02 (click-through), SPEC 05 (HU-21) — atajos configurables, SPEC 07 (HU-23) — recorte de Windows · **Fecha:** 2026-10-29
+> **Estado:** Implementado · **Depende de:** HU-02 (click-through), SPEC 05 (HU-21) — atajos configurables, SPEC 07 (HU-23) — recorte de Windows · **Fecha:** 2026-10-29
 > **Objetivo:** Que la app arranque lista para dibujar y que el botón Puntero o la tecla `Esc` dejen usar el computador con normalidad sin ocultar la barra ni los trazos.
 
 ---
@@ -96,21 +96,23 @@ No hay datos nuevos que se guarden. El modo (dibujo o puntero) ya existe en `IOv
 
 ## Criterios de aceptación
 
-- [ ] Al abrir la app aparecen la capa y la barra en modo dibujo, con el Lápiz activo, sin pulsar nada; el icono de la bandeja está.
-- [ ] El primer botón de la barra está habilitado, se llama «Puntero» y su tooltip muestra `Esc` en monoespaciada.
-- [ ] Clic en Puntero: los clics llegan a las ventanas de abajo; la barra y los trazos siguen visibles.
-- [ ] En modo puntero el botón Puntero lleva el acento teal y ninguna herramienta de dibujo está resaltada.
-- [ ] Con el popover de tinta o de grosor abierto, pasar a puntero (botón o `Esc`) lo cierra.
+> **Cierre (2026-10-30):** verificados con tests automáticos: tooltip «Puntero  Esc», resaltado en cada modo, cierre de popovers, vuelta al dibujo al elegir herramienta, tinta y grosor sin cambio de modo, Esc registrado solo en modo dibujo y fuera de Ajustes, Esc con texto en edición que solo confirma, y Recortar que pasa a puntero antes de abrir. Build `-warnaserror` y tests verdes. En la app real el usuario probó el arranque en modo dibujo, el Puntero y la vuelta al Lápiz en los dos monitores. Durante esa prueba salió un fallo previo (HU-09/HU-10): la barra arrastrada a otro monitor quedaba tapada por su lienzo. Se corrigió en esta rama reamarrando la barra a la pane del monitor donde queda. Quedan sin probar en la app real los criterios sin marcar.
+
+- [x] Al abrir la app aparecen la capa y la barra en modo dibujo, con el Lápiz activo, sin pulsar nada; el icono de la bandeja está.
+- [x] El primer botón de la barra está habilitado, se llama «Puntero» y su tooltip muestra `Esc` en monoespaciada.
+- [x] Clic en Puntero: los clics llegan a las ventanas de abajo; la barra y los trazos siguen visibles.
+- [x] En modo puntero el botón Puntero lleva el acento teal y ninguna herramienta de dibujo está resaltada.
+- [x] Con el popover de tinta o de grosor abierto, pasar a puntero (botón o `Esc`) lo cierra.
 - [ ] Pulsar `Esc` a mitad de un trazo deja el trazo tal como iba y pasa a puntero.
-- [ ] En modo puntero, clic en una herramienta de la barra vuelve al modo dibujo con esa herramienta.
+- [x] En modo puntero, clic en una herramienta de la barra vuelve al modo dibujo con esa herramienta.
 - [ ] En modo puntero, `Ctrl+Alt+E` vuelve al modo dibujo con la última herramienta.
-- [ ] En modo puntero, elegir tinta o grosor en la barra no cambia el modo.
-- [ ] En modo dibujo, `Esc` hace lo mismo que el botón Puntero.
-- [ ] En modo puntero, con la capa oculta o con Ajustes abierto, `Esc` llega a la app en foco (p. ej. termina una presentación de PowerPoint).
+- [x] En modo puntero, elegir tinta o grosor en la barra no cambia el modo.
+- [x] En modo dibujo, `Esc` hace lo mismo que el botón Puntero.
+- [x] En modo puntero, con la capa oculta o con Ajustes abierto, `Esc` llega a la app en foco (p. ej. termina una presentación de PowerPoint).
 - [ ] Escribiendo un Texto, el primer `Esc` lo confirma y se sigue en modo dibujo; el segundo pasa a puntero.
 - [ ] Recortar (botón o `Ctrl+S`) deja Acetato en modo puntero, y un solo `Esc` cancela el recorte de Windows.
-- [ ] `Esc` no aparece en Ajustes; un `settings.json` existente sigue funcionando sin cambios.
-- [ ] `dotnet build -warnaserror` y `dotnet test` verdes; `BACKLOG.md` incluye HU-24 y las notas en HU-08 y HU-14.
+- [x] `Esc` no aparece en Ajustes; un `settings.json` existente sigue funcionando sin cambios.
+- [x] `dotnet build -warnaserror` y `dotnet test` verdes; `BACKLOG.md` incluye HU-24 y las notas en HU-08 y HU-14.
 
 ---
 
