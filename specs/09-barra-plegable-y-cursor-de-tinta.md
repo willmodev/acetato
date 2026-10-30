@@ -1,6 +1,6 @@
 # SPEC 09 — Barra plegable con el ojo y cursor de tinta (HU-25, HU-26)
 
-> **Estado:** aprobado · **Depende de:** HU-06 (grosor), HU-10 (barra flotante), SPEC 03 (HU-19) — tintas y degradado, SPEC 05 (HU-21) — atajos configurables, SPEC 08 (HU-24) — modo puntero · **Fecha:** 2026-10-30
+> **Estado:** Implementado · **Depende de:** HU-06 (grosor), HU-10 (barra flotante), SPEC 03 (HU-19) — tintas y degradado, SPEC 05 (HU-21) — atajos configurables, SPEC 08 (HU-24) — modo puntero · **Fecha:** 2026-10-30
 > **Objetivo:** Que el botón del ojo (o `Ctrl+Alt+H`) pliegue y despliegue la barra, y que al dibujar el cursor sea un círculo relleno del color y el grosor elegidos en lugar de la cruz.
 
 ---
@@ -138,38 +138,40 @@ No se guarda nada nuevo. El único valor que puede aparecer en `settings.json` e
 
 ## Criterios de aceptación
 
+> **Cierre (2026-10-30):** verificados con tests automáticos: estado plegado compartido entre el ojo y `Ctrl+Alt+H`, tooltip e icono según el estado, cierre de popovers al plegar, ancho de la barra plegada, atajo en el grupo «Siempre» y cesión del predeterminado si el usuario ya lo usa, tamaño del círculo, aros de contraste, archivo de cursor, par del degradado y cursor por herramienta. Build `-warnaserror` y tests verdes. En la app real el usuario probó todos los criterios, incluidos los dos monitores, y todo funcionó.
+
 **HU-25 — Barra plegable**
 
-- [ ] Hay un botón con icono de ojo justo después del asa y su separador; su tooltip es «Ocultar barra» con `Ctrl+Alt+H` en monoespaciada.
-- [ ] Clic en el ojo: la barra queda en asa · separador · ojo tachado, con la misma superficie glass; el tooltip pasa a «Mostrar barra».
-- [ ] Clic en el ojo tachado: vuelve la barra completa.
-- [ ] Al plegar y desplegar, el asa y el ojo se quedan en el mismo sitio de la pantalla.
-- [ ] La barra plegada se arrastra por el asa, también a otro monitor.
-- [ ] Con la barra plegada se sigue dibujando con la misma herramienta, tinta y grosor, y los atajos (incluido `Esc`) funcionan.
-- [ ] Con un popover de tinta o grosor abierto, plegar lo cierra.
-- [ ] El ojo nunca lleva el acento teal, plegada o desplegada.
-- [ ] `Ctrl+Alt+H` pliega y despliega la barra en modo dibujo y en modo puntero.
-- [ ] Con la capa oculta, `Ctrl+Alt+H` no hace nada; al mostrar la capa, la barra está como estaba.
-- [ ] Ocultar la capa con la barra plegada y volver a mostrarla: sigue plegada.
-- [ ] Al reiniciar la app, la barra arranca desplegada.
-- [ ] «Plegar barra» aparece en Ajustes, grupo «Siempre», con `Ctrl+Alt+H`, y se puede reasignar.
-- [ ] Un `settings.json` existente sigue funcionando; si ya tenía `Ctrl+Alt+H` en otra acción, esa asignación se mantiene y «Plegar barra» queda sin atajo.
+- [x] Hay un botón con icono de ojo justo después del asa y su separador; su tooltip es «Ocultar barra» con `Ctrl+Alt+H` en monoespaciada.
+- [x] Clic en el ojo: la barra queda en asa · separador · ojo tachado, con la misma superficie glass; el tooltip pasa a «Mostrar barra».
+- [x] Clic en el ojo tachado: vuelve la barra completa.
+- [x] Al plegar y desplegar, el asa y el ojo se quedan en el mismo sitio de la pantalla.
+- [x] La barra plegada se arrastra por el asa, también a otro monitor.
+- [x] Con la barra plegada se sigue dibujando con la misma herramienta, tinta y grosor, y los atajos (incluido `Esc`) funcionan.
+- [x] Con un popover de tinta o grosor abierto, plegar lo cierra.
+- [x] El ojo nunca lleva el acento teal, plegada o desplegada.
+- [x] `Ctrl+Alt+H` pliega y despliega la barra en modo dibujo y en modo puntero.
+- [x] Con la capa oculta, `Ctrl+Alt+H` no hace nada; al mostrar la capa, la barra está como estaba.
+- [x] Ocultar la capa con la barra plegada y volver a mostrarla: sigue plegada.
+- [x] Al reiniciar la app, la barra arranca desplegada.
+- [x] «Plegar barra» aparece en Ajustes, grupo «Siempre», con `Ctrl+Alt+H`, y se puede reasignar.
+- [x] Un `settings.json` existente sigue funcionando; si ya tenía `Ctrl+Alt+H` en otra acción, esa asignación se mantiene y «Plegar barra» queda sin atajo.
 
 **HU-26 — Cursor de tinta**
 
-- [ ] Con Lápiz, Línea, Flecha o Rectángulo en modo dibujo, el cursor es un círculo relleno de la tinta activa con aro de contraste; no aparece la cruz.
-- [ ] Con grosor 8 el círculo y el trazo tienen el mismo ancho; con grosor 3 el círculo mide 6 DIP.
-- [ ] El trazo empieza en el centro del círculo.
-- [ ] Un círculo de tinta negra se ve sobre fondo negro y uno de tinta blanca sobre fondo blanco.
-- [ ] Al cambiar tinta o grosor con atajo, rueda del mouse o barra, el círculo cambia sin mover el mouse.
-- [ ] En modo degradado el círculo muestra el par del próximo trazo y cambia después de cada trazo.
-- [ ] El círculo se ve mientras se arrastra para dibujar.
-- [ ] Con monitores a escalas distintas, el círculo coincide con el ancho del trazo en cada uno.
-- [ ] Texto, Láser y Borrador mantienen su cursor actual; en modo puntero el cursor es el normal de Windows.
+- [x] Con Lápiz, Línea, Flecha o Rectángulo en modo dibujo, el cursor es un círculo relleno de la tinta activa con aro de contraste; no aparece la cruz.
+- [x] Con grosor 8 el círculo y el trazo tienen el mismo ancho; con grosor 3 el círculo mide 6 DIP.
+- [x] El trazo empieza en el centro del círculo.
+- [x] Un círculo de tinta negra se ve sobre fondo negro y uno de tinta blanca sobre fondo blanco.
+- [x] Al cambiar tinta o grosor con atajo, rueda del mouse o barra, el círculo cambia sin mover el mouse.
+- [x] En modo degradado el círculo muestra el par del próximo trazo y cambia después de cada trazo.
+- [x] El círculo se ve mientras se arrastra para dibujar.
+- [x] Con monitores a escalas distintas, el círculo coincide con el ancho del trazo en cada uno.
+- [x] Texto, Láser y Borrador mantienen su cursor actual; en modo puntero el cursor es el normal de Windows.
 
 **General**
 
-- [ ] `dotnet build -warnaserror` y `dotnet test` verdes; `BACKLOG.md` incluye HU-25 y HU-26; el design system describe el ojo y el cursor de tinta.
+- [x] `dotnet build -warnaserror` y `dotnet test` verdes; `BACKLOG.md` incluye HU-25 y HU-26; el design system describe el ojo y el cursor de tinta.
 
 ---
 
