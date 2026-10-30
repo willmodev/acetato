@@ -70,8 +70,8 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
         Tools = BuildTools(shortcuts);
         PointerHint = shortcuts.Hint("Puntero", HotkeyAction.EnterPointerMode);
         MoveHint = shortcuts.Hint("Mover");
-        HideBarHint = shortcuts.Hint("Ocultar barra");
-        ShowBarHint = shortcuts.Hint("Mostrar barra");
+        HideBarHint = shortcuts.Hint("Ocultar barra", HotkeyAction.ToggleToolbarCollapsed);
+        ShowBarHint = shortcuts.Hint("Mostrar barra", HotkeyAction.ToggleToolbarCollapsed);
         ColorHint = shortcuts.Hint("Color");
         ThicknessHint = shortcuts.Hint("Grosor");
         UndoHint = shortcuts.Hint("Deshacer", HotkeyAction.Undo);

@@ -17,10 +17,15 @@ internal sealed class HotkeyActionRouter
     private readonly Dispatcher _dispatcher;
     private readonly Dictionary<HotkeyAction, Action> _handlers;
 
-    public HotkeyActionRouter(IOverlayController controller, OverlayBroadcaster broadcaster, Dispatcher dispatcher)
+    public HotkeyActionRouter(
+        IOverlayController controller,
+        OverlayBroadcaster broadcaster,
+        IToolbarLayout toolbarLayout,
+        Dispatcher dispatcher)
     {
         _dispatcher = dispatcher;
         _handlers = BuildHandlers(controller, broadcaster);
+        _handlers[HotkeyAction.ToggleToolbarCollapsed] = () => ToggleToolbar(controller, toolbarLayout);
     }
 
     /// <summary>Manejador del evento <c>ActionRequested</c> del servicio de atajos.</summary>
@@ -58,6 +63,15 @@ internal sealed class HotkeyActionRouter
         [HotkeyAction.ThicknessDown] = broadcaster.DecreaseThickness,
         [HotkeyAction.EnterPointerMode] = () => EnterPointerMode(controller, broadcaster),
     };
+
+    // Plegar barra (HU-25): con la capa oculta la barra no se ve, así que no hace nada.
+    private static void ToggleToolbar(IOverlayController controller, IToolbarLayout toolbarLayout)
+    {
+        if (controller.IsVisible)
+        {
+            toolbarLayout.ToggleCollapsed();
+        }
+    }
 
     // Esc (HU-24): con un texto en edición solo lo confirma; si no, sale del dibujo.
     private static void EnterPointerMode(IOverlayController controller, OverlayBroadcaster broadcaster)

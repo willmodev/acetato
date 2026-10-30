@@ -17,11 +17,11 @@ public sealed class ToolbarCollapseTests
     [Fact]
     public void The_bar_starts_expanded_with_the_open_eye()
     {
-        var (collapsed, label, eye) = WpfTestHost.Run(() => ToolbarHost.With(toolbar =>
-            (toolbar.ViewModel.IsCollapsed, toolbar.ViewModel.CollapseHint.Label, toolbar.ViewModel.EyeGlyph)));
+        var (collapsed, hint, eye) = WpfTestHost.Run(() => ToolbarHost.With(toolbar =>
+            (toolbar.ViewModel.IsCollapsed, toolbar.ViewModel.CollapseHint.ToString(), toolbar.ViewModel.EyeGlyph)));
 
         collapsed.Should().BeFalse();
-        label.Should().Be("Ocultar barra");
+        hint.Should().Be("Ocultar barra  Ctrl+Alt+H");
         eye.Should().BeSameAs(WpfTestHost.Run(() => Glyph("Icon.Eye")));
     }
 

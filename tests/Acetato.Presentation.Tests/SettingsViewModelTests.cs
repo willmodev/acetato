@@ -33,7 +33,7 @@ public sealed class SettingsViewModelTests : IDisposable
     [Fact]
     public void Lists_the_twenty_two_actions_in_two_blocks()
     {
-        _settings.AlwaysRows.Select(row => row.Label).Should().Equal("Mostrar/ocultar", "Modo dibujo");
+        _settings.AlwaysRows.Select(row => row.Label).Should().Equal("Mostrar/ocultar", "Modo dibujo", "Plegar barra");
         _settings.DrawingRows.Should().HaveCount(20);
     }
 

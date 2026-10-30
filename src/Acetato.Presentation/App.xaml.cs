@@ -71,7 +71,8 @@ public partial class App : System.Windows.Application
         var services = _services!;
         var controller = services.GetRequiredService<IOverlayController>();
         var broadcaster = services.GetRequiredService<OverlayBroadcaster>();
-        _router = new HotkeyActionRouter(controller, broadcaster, Dispatcher);
+        var toolbarLayout = services.GetRequiredService<IToolbarLayout>();
+        _router = new HotkeyActionRouter(controller, broadcaster, toolbarLayout, Dispatcher);
 
         _hotkeys = services.GetRequiredService<IGlobalHotkeyService>();
         _hotkeys.ActionRequested += _router.Handle;

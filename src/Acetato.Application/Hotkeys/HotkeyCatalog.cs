@@ -14,13 +14,14 @@ public static class HotkeyCatalog
     private const HotkeyModifiers CtrlAlt = HotkeyModifiers.Ctrl | HotkeyModifiers.Alt;
 
     /// <summary>
-    /// Las 22 definiciones, en orden de presentación. Las de elegir herramienta
+    /// Las 23 definiciones, en orden de presentación. Las de elegir herramienta
     /// siguen el orden de la barra (HU-22), seguidas del grosor.
     /// </summary>
     public static IReadOnlyList<HotkeyDefinition> All { get; } =
     [
         Always(HotkeyAction.Toggle, HotkeyKey.D),
         Always(HotkeyAction.DrawingModeToggle, HotkeyKey.E),
+        Always(HotkeyAction.ToggleToolbarCollapsed, HotkeyKey.H),
         Drawing(HotkeyAction.ColorRed, HotkeyKey.D1),
         Drawing(HotkeyAction.ColorBlue, HotkeyKey.D2),
         Drawing(HotkeyAction.ColorYellow, HotkeyKey.D3),
