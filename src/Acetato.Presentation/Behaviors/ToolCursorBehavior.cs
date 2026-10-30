@@ -14,7 +14,8 @@ namespace Acetato.Presentation.Behaviors;
 /// InkCanvas para el resto (borrador). Antes cada behavior fijaba su cursor y se
 /// pisaban entre sí según el orden de enlace. ForceCursor es necesario porque el
 /// InkCanvas ignora Cursor a secas. El círculo se rehace al cambiar la tinta o el
-/// grosor, y al entrar el mouse por si la pane cambió de escala.
+/// grosor. También al cargar la pane y al entrar el mouse: el enlace llega antes de
+/// que la pane esté en su monitor, cuando la escala aún es la del monitor principal.
 /// </summary>
 public static class ToolCursorBehavior
 {
@@ -78,13 +79,16 @@ public static class ToolCursorBehavior
             return;
         }
 
-        // Quitar antes de añadir: el manejador queda una sola vez aunque cambien ambas propiedades.
-        canvas.MouseEnter -= OnMouseEnter;
-        canvas.MouseEnter += OnMouseEnter;
+        // Quitar antes de añadir: cada manejador queda una sola vez aunque cambien ambas propiedades.
+        canvas.Loaded -= OnRefresh;
+        canvas.Loaded += OnRefresh;
+        canvas.MouseEnter -= OnRefresh;
+        canvas.MouseEnter += OnRefresh;
         Apply(canvas);
     }
 
-    private static void OnMouseEnter(object sender, MouseEventArgs e) => Apply((InkCanvas)sender);
+    // Recalcula con la escala del monitor donde ya está la pane (HU-09/HU-26).
+    private static void OnRefresh(object sender, RoutedEventArgs e) => Apply((InkCanvas)sender);
 
     private static void Apply(InkCanvas canvas)
     {
