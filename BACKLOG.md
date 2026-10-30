@@ -810,7 +810,81 @@ Escenario: Recortar con un solo Esc para cancelar
   Entonces Acetato pasa a modo puntero y se abre el recorte de Windows
   Y un solo Esc cancela el recorte.
 ```
-**Notas técnicas:** Spec en [`specs/08-modo-puntero.md`](./specs/08-modo-puntero.md). El Puntero no es una `ToolKind`: es el modo click-through de HU-02 llevado a la barra. `Esc` es un atajo fijo que solo se registra en modo dibujo y no aparece en Ajustes. Fuera de alcance: herramienta Seleccionar (HU-14), botón de ojo, `Esc` configurable y arranque con Windows.
+**Notas técnicas:** Spec en [`specs/08-modo-puntero.md`](./specs/08-modo-puntero.md). El Puntero no es una `ToolKind`: es el modo click-through de HU-02 llevado a la barra. `Esc` es un atajo fijo que solo se registra en modo dibujo y no aparece en Ajustes. Fuera de alcance: herramienta Seleccionar (HU-14), `Esc` configurable y arranque con Windows. El botón de ojo llegó después con la HU-25.
+
+---
+
+#### HU-25 — Plegar la barra con el ojo
+- **Épica:** EP-02 · **Prioridad:** Should · **Estimación:** 3
+- **Narrativa:**
+  Como presentador, quiero plegar la barra a un solo botón y desplegarla cuando la necesite, para que no tape lo que presento mientras sigo dibujando.
+
+**Criterios de aceptación**
+```
+Escenario: Plegar con el ojo
+  Dado que la barra está desplegada
+  Cuando hago clic en el ojo
+  Entonces la barra queda en asa, separador y ojo tachado
+  Y el asa y el ojo no se mueven de sitio
+  Y se cierran los popovers abiertos.
+
+Escenario: Desplegar con el ojo
+  Dado que la barra está plegada
+  Cuando hago clic en el ojo tachado
+  Entonces vuelve la barra completa.
+
+Escenario: Dibujar con la barra plegada
+  Dado que la barra está plegada
+  Cuando dibujo o uso un atajo
+  Entonces funciona igual que con la barra desplegada.
+
+Escenario: Atajo Ctrl+Alt+H
+  Dado que la capa está visible, en modo dibujo o en modo puntero
+  Cuando pulso Ctrl+Alt+H
+  Entonces la barra se pliega o se despliega
+  Y con la capa oculta el atajo no hace nada.
+
+Escenario: Memoria de la sesión
+  Dado que plegué la barra
+  Cuando oculto la capa y la vuelvo a mostrar
+  Entonces la barra sigue plegada
+  Y al reiniciar la app arranca desplegada.
+```
+**Notas técnicas:** Spec en [`specs/09-barra-plegable-y-cursor-de-tinta.md`](./specs/09-barra-plegable-y-cursor-de-tinta.md). El estado vive en el puerto `IToolbarLayout` (Application), compartido por la barra y el atajo. El atajo se llama «Plegar barra» en Ajustes (grupo Siempre); si el usuario ya tenía `Ctrl+Alt+H` en otra acción, gana la suya. Fuera de alcance: recordar el estado entre sesiones y animar el pliegue.
+
+---
+
+#### HU-26 — Cursor de tinta
+- **Épica:** EP-02 · **Prioridad:** Should · **Estimación:** 3
+- **Narrativa:**
+  Como presentador, quiero que el cursor muestre el color y el grosor con que voy a pintar, para no enterarme al soltar el primer trazo.
+
+**Criterios de aceptación**
+```
+Escenario: Círculo de tinta
+  Dado que tengo Lápiz, Línea, Flecha o Rectángulo en modo dibujo
+  Cuando muevo el mouse sobre la capa
+  Entonces el cursor es un círculo relleno de la tinta activa con aro de contraste
+  Y mide lo mismo que el trazo, con un mínimo de 6 DIP
+  Y el trazo empieza en su centro.
+
+Escenario: Cambio al instante
+  Dado que veo el círculo de tinta
+  Cuando cambio la tinta o el grosor con un atajo, la rueda o la barra
+  Entonces el círculo cambia sin mover el mouse.
+
+Escenario: Modo degradado
+  Dado que elegí el degradado
+  Cuando miro el cursor
+  Entonces muestra el par del próximo trazo
+  Y cambia después de cada trazo.
+
+Escenario: Otras herramientas
+  Dado que elijo Texto, Láser o Borrador, o paso a modo puntero
+  Cuando miro el cursor
+  Entonces es el mismo de antes.
+```
+**Notas técnicas:** Spec en [`specs/09-barra-plegable-y-cursor-de-tinta.md`](./specs/09-barra-plegable-y-cursor-de-tinta.md). Es un cursor real de Windows (`.cur` de 32 bits creado en memoria y cacheado), no un dibujo en la capa, para que no se quede atrás del mouse. Cada monitor lo genera a su escala. Fuera de alcance: círculo para el Borrador y previsualizar la forma antes de hacer clic.
 
 ---
 
