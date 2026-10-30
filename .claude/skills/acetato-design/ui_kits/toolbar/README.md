@@ -30,7 +30,8 @@ then open `ui_kits/toolbar/index.html`. Everything is fake but live:
   (clicks pass through to the slide).
 - **Ocultar barra** (eye, right after the grip) folds the bar to grip + eye;
   the eye turns into `eye-off` (*Mostrar barra*) and brings it back. Drawing and
-  shortcuts keep working while collapsed. Designed here; pending in the app.
+  shortcuts keep working while collapsed. In the app it also folds with
+  `Ctrl+Alt+H` (HU-25); this mock has no such shortcut.
 - **Drag** the grip to move the bar (also when collapsed).
 - Browsers keep some combos for themselves (`Ctrl+1…7` switch tabs in most), so
   a few default shortcuts may not reach the page; remap them in Ajustes.

@@ -13,7 +13,8 @@ namespace Acetato.Presentation.Tests;
 
 /// <summary>
 /// Enrutado de atajos: el router marshala la acción al hilo de UI. El recorte
-/// abre la herramienta del sistema (HU-23) y Esc sale del modo dibujo (HU-24).
+/// abre la herramienta del sistema (HU-23), Esc sale del modo dibujo (HU-24) y
+/// «Plegar barra» pliega la barra solo con la capa visible (HU-25).
 /// </summary>
 public sealed class HotkeyActionRouterTests
 {
@@ -53,6 +54,30 @@ public sealed class HotkeyActionRouterTests
     }
 
     [Fact]
+    public void Fold_bar_toggles_the_bar_while_the_layer_is_visible()
+    {
+        var controller = Substitute.For<IOverlayController>();
+        controller.IsVisible.Returns(true);
+        var layout = Substitute.For<IToolbarLayout>();
+
+        WpfTestHost.Run(() => Route(HotkeyAction.ToggleToolbarCollapsed, Substitute.For<IScreenClipLauncher>(), controller, layout: layout));
+
+        layout.Received(1).ToggleCollapsed();
+    }
+
+    [Fact]
+    public void Fold_bar_does_nothing_while_the_layer_is_hidden()
+    {
+        var controller = Substitute.For<IOverlayController>();
+        controller.IsVisible.Returns(false);
+        var layout = Substitute.For<IToolbarLayout>();
+
+        WpfTestHost.Run(() => Route(HotkeyAction.ToggleToolbarCollapsed, Substitute.For<IScreenClipLauncher>(), controller, layout: layout));
+
+        layout.DidNotReceive().ToggleCollapsed();
+    }
+
+    [Fact]
     public void Committing_on_a_canvas_without_text_does_nothing()
     {
         var committed = WpfTestHost.Run(() => TextAnnotationBehavior.TryCommit(new InkCanvas()));
@@ -65,7 +90,8 @@ public sealed class HotkeyActionRouterTests
         HotkeyAction action,
         IScreenClipLauncher screenClip,
         IOverlayController controller,
-        IOverlayCanvasProvider? canvases = null)
+        IOverlayCanvasProvider? canvases = null,
+        IToolbarLayout? layout = null)
     {
         var broadcaster = new OverlayBroadcaster(
             canvases ?? Substitute.For<IOverlayCanvasProvider>(),
@@ -74,7 +100,7 @@ public sealed class HotkeyActionRouterTests
             screenClip,
             controller);
         var dispatcher = Dispatcher.CurrentDispatcher;
-        var router = new HotkeyActionRouter(controller, broadcaster, dispatcher);
+        var router = new HotkeyActionRouter(controller, broadcaster, layout ?? Substitute.For<IToolbarLayout>(), dispatcher);
 
         router.Handle(null, new HotkeyActionEventArgs(action));
         dispatcher.Invoke(static () => { }, DispatcherPriority.ContextIdle);

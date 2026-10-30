@@ -33,6 +33,18 @@ public sealed class HotkeyMapTests
     }
 
     [Fact]
+    public void A_default_already_given_by_the_user_to_another_action_yields_to_it()
+    {
+        var ctrlAltH = DefaultOf(HotkeyAction.ToggleToolbarCollapsed);
+
+        var map = HotkeyMap.Defaults.With(HotkeyAction.ColorRed, ctrlAltH);
+
+        map.ChordOf(HotkeyAction.ColorRed).Should().Be(ctrlAltH);
+        map.ChordOf(HotkeyAction.ToggleToolbarCollapsed).Should().BeNull();
+        map.OwnerOf(ctrlAltH).Should().Be(HotkeyAction.ColorRed);
+    }
+
+    [Fact]
     public void With_null_leaves_the_action_without_chord()
     {
         var map = HotkeyMap.Defaults.With(HotkeyAction.Capture, null);

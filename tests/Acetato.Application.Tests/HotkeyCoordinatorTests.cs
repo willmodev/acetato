@@ -9,7 +9,7 @@ namespace Acetato.Application.Tests;
 
 public sealed class HotkeyCoordinatorTests
 {
-    private static readonly HotkeyAction[] AlwaysActions = [HotkeyAction.Toggle, HotkeyAction.DrawingModeToggle];
+    private static readonly HotkeyAction[] AlwaysActions = [HotkeyAction.Toggle, HotkeyAction.DrawingModeToggle, HotkeyAction.ToggleToolbarCollapsed];
 
     private readonly IGlobalHotkeyService _hotkeys = Substitute.For<IGlobalHotkeyService>();
     private readonly IOverlayController _overlay = Substitute.For<IOverlayController>();

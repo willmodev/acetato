@@ -71,7 +71,8 @@ public partial class App : System.Windows.Application
         var services = _services!;
         var controller = services.GetRequiredService<IOverlayController>();
         var broadcaster = services.GetRequiredService<OverlayBroadcaster>();
-        _router = new HotkeyActionRouter(controller, broadcaster, Dispatcher);
+        var toolbarLayout = services.GetRequiredService<IToolbarLayout>();
+        _router = new HotkeyActionRouter(controller, broadcaster, toolbarLayout, Dispatcher);
 
         _hotkeys = services.GetRequiredService<IGlobalHotkeyService>();
         _hotkeys.ActionRequested += _router.Handle;
@@ -177,7 +178,9 @@ public partial class App : System.Windows.Application
         services.AddSingleton<SettingsWindowLauncher>();
 
         // Barra flotante (HU-10): VM, ventana (DataContext se asigna fuera del
-        // contenedor para evitar el ciclo) y su superficie.
+        // contenedor para evitar el ciclo) y su superficie. El estado plegado
+        // (HU-25) es único: lo comparten la barra y el atajo.
+        services.AddSingleton<IToolbarLayout, ToolbarLayout>();
         services.AddSingleton<ToolbarShortcuts>();
         services.AddSingleton<ToolbarChrome>();
         services.AddSingleton<ToolbarViewModel>();

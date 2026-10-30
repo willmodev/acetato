@@ -69,10 +69,9 @@ There is almost no copy in Acetato — that is the point. Text appears only in
 - **No emoji.** Not in UI, not in docs-facing strings. Icons carry meaning.
 - **Keyboard hints** are monospace key caps next to the label, written in
   Spanish and joined with `+`: `Lápiz  Ctrl+P`, `Limpiar todo  Ctrl+Retroceso`,
-  `Cerrar  Ctrl+Alt+D`, `Puntero  Esc`. Key names: `Ctrl`, `Alt`, `Mayús`, `Win`,
+  `Cerrar  Ctrl+Alt+D`, `Puntero  Esc`, `Ocultar barra  Ctrl+Alt+H`. Key names: `Ctrl`, `Alt`, `Mayús`, `Win`,
   `Espacio`, `Retroceso`, `Supr`, `RePág`, `AvPág`, `Inicio`, `Fin`, `Esc`. Actions without a
-  shortcut (Mover, Ocultar barra, Mostrar barra, Color, Grosor, Ajustes) show
-  the name only.
+  shortcut (Mover, Color, Grosor, Ajustes) show the name only.
 - **Settings messages** are short and concrete: *Ya la usa Lápiz*, *En uso por
   otra aplicación*, *Tecla no admitida*, *Usa Ctrl, Alt o Win*, *Mayús necesita
   otro modificador*, *Reservado por Windows*, *No disponible*, *Sin atajo*,
@@ -164,8 +163,8 @@ bar visible, in drawing mode with *Lápiz*; the tray icon stays.
 - *Recortar* switches to pointer mode before opening Windows' snipping, so one
   `Esc` cancels it.
 
-**Collapsed bar (eye button — designed, pending in the app).** Right after the
-grip and its divider sits an eye button that collapses the bar:
+**Collapsed bar (eye button, HU-25).** Right after the grip and its divider sits
+an eye button that collapses the bar:
 - *Expanded:* `eye` icon, tooltip **Ocultar barra**. Click → the bar shrinks to
   **grip · divider · eye** (one 36px button), keeping the same surface
   (`--chrome-glass`, `--stroke-1`, `--r-toolbar`, `--bar-pad`, `--shadow-bar`).
@@ -177,7 +176,11 @@ grip and its divider sits an eye button that collapses the bar:
   active tool, ink, thickness, strokes and every shortcut keep working.
 - The eye is a regular ToolButton (`--fg-2` resting, `--hover` on hover). It
   **never** uses the accent: collapsed is not a "selected" state.
-- No shortcut and no memory between sessions: the bar always starts expanded.
+- Shortcut `Ctrl+Alt+H` (*Plegar barra* in Settings, group *Siempre activos*):
+  works in drawing and pointer mode, does nothing while the layer is hidden. If
+  the user already gave `Ctrl+Alt+H` to another action, that one keeps it.
+- Memory only for the session: hiding and showing the layer keeps the bar as it
+  was; a restart always brings it back expanded.
 - No animation beyond the instant resize.
 Popovers open directly below their trigger; tooltips too. Settings is the only
 other window (480 × 600, own draggable title, *Cerrar* button, *Restaurar todo*
@@ -205,6 +208,15 @@ footer with inline confirmation — never a system dialog).
 - **Eraser** removes whole strokes. **Undo** (`Ctrl+Z`) and **Clear**
   (`Ctrl+Retroceso`) work on whole strokes too. There is no Redo yet (HU-17).
 - `--ink-halo-*` are defined but the app does not paint halos yet.
+- **Ink cursor (HU-26).** With Lápiz, Línea, Flecha or Rectángulo the pointer is
+  a filled circle: the active ink (in gradient mode, the pair of the next stroke,
+  diagonal start → end), as wide as the thickness with a 6 DIP minimum, and the
+  stroke starts at its center. Two 1px rings keep it visible on any background:
+  dark inside (`Cursor.Ring.Dark.Color`, black 60 %), light outside
+  (`Cursor.Ring.Light.Color`, white 80 %). It is a real Windows cursor, rebuilt
+  at once when ink or thickness change and at each monitor's scale. Texto keeps
+  the I-beam, Láser hides the pointer, Borrador and pointer mode use the normal
+  one.
 
 ---
 
@@ -221,8 +233,8 @@ footer with inline confirmation — never a system dialog).
   | Action | XAML key | Lucide |
   |--------|----------|--------|
   | Mover | `Icon.Grip` | `grip-vertical` (filled) |
-  | Ocultar barra (bar expanded) | `Icon.Eye` *(pending)* | `eye` |
-  | Mostrar barra (bar collapsed) | `Icon.EyeOff` *(pending)* | `eye-off` |
+  | Ocultar barra (bar expanded) | `Icon.Eye` | `eye` |
+  | Mostrar barra (bar collapsed) | `Icon.EyeOff` | `eye-off` |
   | Puntero | `Icon.Select` | `mouse-pointer-2` |
   | Lápiz | `Icon.Pencil` | `pencil` |
   | Láser | `Icon.Laser` | `locate` |
@@ -238,10 +250,6 @@ footer with inline confirmation — never a system dialog).
   | Cerrar, Quitar | `Icon.Close` | `x` |
   | Restaurar | `Icon.Reset` | `rotate-ccw` |
 
-- **`Icon.Eye` / `Icon.EyeOff` for `Icons.xaml`** (circle turned into arcs, as
-  the other icons):
-  - `Icon.Eye`: `M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0 M9 12 A3 3 0 1 0 15 12 A3 3 0 1 0 9 12 Z`
-  - `Icon.EyeOff`: `M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49 M14.084 14.158a3 3 0 0 1-4.242-4.242 M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143 M2 2 l20 20`
 - *Seleccionar* (HU-14, select and move strokes) will need its own icon: the
   `mouse-pointer-2` glyph now belongs to *Puntero*.
 - **Reserved** (SVGs ready, no feature yet — keep them off the bar): `circle`

@@ -40,20 +40,21 @@ public sealed class HotkeyCatalogTests
     }
 
     [Fact]
-    public void Show_and_drawing_mode_are_always_active_and_the_rest_only_while_drawing()
+    public void Show_drawing_mode_and_fold_bar_are_always_active_and_the_rest_only_while_drawing()
     {
         HotkeyCatalog.All.Where(definition => definition.Scope == HotkeyScope.Always)
             .Select(definition => definition.Action)
-            .Should().Equal(HotkeyAction.Toggle, HotkeyAction.DrawingModeToggle);
+            .Should().Equal(HotkeyAction.Toggle, HotkeyAction.DrawingModeToggle, HotkeyAction.ToggleToolbarCollapsed);
     }
 
     [Fact]
-    public void Defaults_are_the_short_tables_of_HU_21_and_HU_22()
+    public void Defaults_are_the_short_tables_of_HU_21_HU_22_and_HU_25()
     {
         HotkeyCatalog.All.Select(definition => (definition.Action, definition.Default.ToString()))
             .Should().Equal(
                 (HotkeyAction.Toggle, "Ctrl+Alt+D"),
                 (HotkeyAction.DrawingModeToggle, "Ctrl+Alt+E"),
+                (HotkeyAction.ToggleToolbarCollapsed, "Ctrl+Alt+H"),
                 (HotkeyAction.ColorRed, "Ctrl+D1"),
                 (HotkeyAction.ColorBlue, "Ctrl+D2"),
                 (HotkeyAction.ColorYellow, "Ctrl+D3"),

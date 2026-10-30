@@ -51,6 +51,12 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
     /// </summary>
     public TintaGradiente? ActiveGradient => _settings.IsGradient ? _settings.NextGradient : null;
 
+    /// <summary>
+    /// Tinta, par del próximo trazo y grosor que pinta el cursor de tinta (HU-26).
+    /// Enlazado a <c>ToolCursorBehavior.Tip</c>.
+    /// </summary>
+    public InkCursorTip CursorTip => new(SolidInkColor, ActiveGradient, _settings.Thickness);
+
     /// <summary>Tamaño de fuente del texto, derivado del grosor activo (HU-13).</summary>
     public double ActiveFontSize => FontScale.FromThicknessIndex(_settings.ThicknessIndex);
 
@@ -100,6 +106,7 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
     private void OnSettingsChanged(object? sender, EventArgs e)
     {
         OnPropertyChanged(nameof(ActiveGradient));
+        OnPropertyChanged(nameof(CursorTip));
         SyncAttributes();
         SyncTool();
     }

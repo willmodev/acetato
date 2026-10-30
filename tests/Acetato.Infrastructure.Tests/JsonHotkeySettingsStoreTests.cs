@@ -115,6 +115,42 @@ public sealed class JsonHotkeySettingsStoreTests : IDisposable
     }
 
     [Fact]
+    public void A_file_without_fold_bar_gets_ctrl_alt_h()
+    {
+        WriteSettings("""
+            {
+              "version": 1,
+              "hotkeys": {
+                "Undo": "Alt+Z"
+              }
+            }
+            """);
+
+        var map = CreateStore().Load().Map;
+
+        map.ChordOf(HotkeyAction.ToggleToolbarCollapsed)
+            .Should().Be(new KeyChord(HotkeyModifiers.Ctrl | HotkeyModifiers.Alt, HotkeyKey.H));
+    }
+
+    [Fact]
+    public void A_file_that_already_used_ctrl_alt_h_keeps_it_and_fold_bar_stays_without_chord()
+    {
+        WriteSettings("""
+            {
+              "version": 1,
+              "hotkeys": {
+                "ColorRed": "Ctrl+Alt+H"
+              }
+            }
+            """);
+
+        var map = CreateStore().Load().Map;
+
+        map.ChordOf(HotkeyAction.ColorRed).Should().Be(new KeyChord(HotkeyModifiers.Ctrl | HotkeyModifiers.Alt, HotkeyKey.H));
+        map.ChordOf(HotkeyAction.ToggleToolbarCollapsed).Should().BeNull();
+    }
+
+    [Fact]
     public void Only_the_differences_are_written()
     {
         var map = HotkeyMap.Defaults.With(HotkeyAction.Undo, AltZ).With(HotkeyAction.Capture, null);

@@ -18,7 +18,8 @@ namespace Acetato.Presentation.ViewModels;
 /// resaltarlo con el acento. Gestiona los popovers y el cierre. Cada botón
 /// tiene un tooltip con su nombre y, si su acción tiene atajo, la combinación
 /// vigente (HU-22). El botón Puntero (HU-24) sale del modo dibujo sin ocultar
-/// nada; elegir una herramienta vuelve a él. El code-behind solo llama a
+/// nada; elegir una herramienta vuelve a él. El ojo (HU-25) pliega la barra a
+/// asa, separador y ojo sin tocar el dibujo. El code-behind solo llama a
 /// InitializeComponent.
 /// </summary>
 public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
@@ -27,6 +28,7 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
     private readonly IOverlayController _controller;
     private readonly OverlayBroadcaster _broadcaster;
     private readonly SettingsWindowLauncher _settingsLauncher;
+    private readonly IToolbarLayout _layout;
 
     /// <summary>Pincel de la tinta activa, o el degradado de muestra (para el botón de color de la barra).</summary>
     [ObservableProperty]
@@ -44,6 +46,11 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private bool _isPointerMode;
 
+    /// <summary>Indica si la barra está plegada a asa, separador y ojo (HU-25).</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CollapseHint), nameof(EyeGlyph))]
+    private bool _isCollapsed;
+
     public ToolbarViewModel(
         OverlayBroadcaster broadcaster,
         IDrawingSettings settings,
@@ -53,6 +60,7 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
         ArgumentNullException.ThrowIfNull(chrome);
         _broadcaster = broadcaster;
         _settingsLauncher = chrome.SettingsLauncher;
+        _layout = chrome.Layout;
         _settings = settings;
         _controller = controller;
         DragHandler = chrome.DragHandler;
@@ -62,6 +70,8 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
         Tools = BuildTools(shortcuts);
         PointerHint = shortcuts.Hint("Puntero", HotkeyAction.EnterPointerMode);
         MoveHint = shortcuts.Hint("Mover");
+        HideBarHint = shortcuts.Hint("Ocultar barra", HotkeyAction.ToggleToolbarCollapsed);
+        ShowBarHint = shortcuts.Hint("Mostrar barra", HotkeyAction.ToggleToolbarCollapsed);
         ColorHint = shortcuts.Hint("Color");
         ThicknessHint = shortcuts.Hint("Grosor");
         UndoHint = shortcuts.Hint("Deshacer", HotkeyAction.Undo);
@@ -71,7 +81,9 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
         CloseHint = shortcuts.Hint("Cerrar", HotkeyAction.Toggle);
         _settings.Changed += OnSettingsChanged;
         _controller.StateChanged += OnOverlayStateChanged;
+        _layout.Changed += OnLayoutChanged;
         SyncMode();
+        SyncCollapsed();
     }
 
     /// <summary>Inicia el arrastre nativo de la ventana desde el grip.</summary>
@@ -79,6 +91,18 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
 
     /// <summary>Tooltip del grip de arrastre.</summary>
     public ShortcutHint MoveHint { get; }
+
+    /// <summary>Tooltip del ojo con la barra desplegada (HU-25).</summary>
+    public ShortcutHint HideBarHint { get; }
+
+    /// <summary>Tooltip del ojo con la barra plegada (HU-25).</summary>
+    public ShortcutHint ShowBarHint { get; }
+
+    /// <summary>Tooltip vigente del ojo: nombra la acción que hará el clic.</summary>
+    public ShortcutHint CollapseHint => IsCollapsed ? ShowBarHint : HideBarHint;
+
+    /// <summary>Icono del ojo: muestra el estado de la barra (abierto o tachado).</summary>
+    public Geometry EyeGlyph => Glyph(IsCollapsed ? "Icon.EyeOff" : "Icon.Eye");
 
     /// <summary>Tooltip del botón Puntero (HU-24).</summary>
     public ShortcutHint PointerHint { get; }
@@ -182,6 +206,10 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
         }
     }
 
+    /// <summary>Pliega o despliega la barra (HU-25). No cambia el modo ni la herramienta.</summary>
+    [RelayCommand]
+    private void ToggleCollapsed() => _layout.ToggleCollapsed();
+
     /// <summary>Deshace el último trazo de la pantalla bajo el cursor (HU-07/HU-09).</summary>
     [RelayCommand]
     private void Undo() => _broadcaster.Undo();
@@ -234,17 +262,34 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
 
     private void OnOverlayStateChanged(object? sender, EventArgs e) => SyncMode();
 
+    private void OnLayoutChanged(object? sender, EventArgs e) => SyncCollapsed();
+
     // Refleja el modo de la capa; al pasar a puntero se cierran los popovers.
     private void SyncMode()
     {
         IsPointerMode = !_controller.IsDrawingMode;
         if (IsPointerMode)
         {
-            IsInkPopoverOpen = false;
-            IsThicknessPopoverOpen = false;
+            ClosePopovers();
         }
 
         SyncActiveState();
+    }
+
+    // Refleja el estado plegado (HU-25); al plegar se cierran los popovers.
+    private void SyncCollapsed()
+    {
+        IsCollapsed = _layout.IsCollapsed;
+        if (IsCollapsed)
+        {
+            ClosePopovers();
+        }
+    }
+
+    private void ClosePopovers()
+    {
+        IsInkPopoverOpen = false;
+        IsThicknessPopoverOpen = false;
     }
 
     private void SyncActiveState()
@@ -277,5 +322,6 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
     {
         _settings.Changed -= OnSettingsChanged;
         _controller.StateChanged -= OnOverlayStateChanged;
+        _layout.Changed -= OnLayoutChanged;
     }
 }

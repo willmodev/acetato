@@ -82,4 +82,7 @@ public enum HotkeyAction
     /// (<see cref="Hotkeys.FixedHotkeys"/>): no está en el catálogo ni en Ajustes.
     /// </summary>
     EnterPointerMode,
+
+    /// <summary>Plegar o desplegar la barra con el ojo (HU-25).</summary>
+    ToggleToolbarCollapsed,
 }

@@ -12,6 +12,7 @@ internal static class HotkeyActionLabels
     {
         [HotkeyAction.Toggle] = "Mostrar/ocultar",
         [HotkeyAction.DrawingModeToggle] = "Modo dibujo",
+        [HotkeyAction.ToggleToolbarCollapsed] = "Plegar barra",
         [HotkeyAction.ColorRed] = "Tinta roja",
         [HotkeyAction.ColorBlue] = "Tinta azul",
         [HotkeyAction.ColorYellow] = "Tinta amarilla",

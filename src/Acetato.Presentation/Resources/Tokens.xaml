@@ -33,6 +33,12 @@
     <SolidColorBrush x:Key="Fill.Hover" Color="#14FFFFFF" />
     <SolidColorBrush x:Key="Fill.Press" Color="#0AFFFFFF" />
 
+    <!-- ===================== CHROME — cursor de tinta (HU-26) ================ -->
+    <!-- Aros de 1 px alrededor del círculo: claro fuera, oscuro dentro. Así el
+         cursor se ve aunque la tinta sea del mismo color que el fondo. -->
+    <Color x:Key="Cursor.Ring.Light.Color">#CCFFFFFF</Color>
+    <Color x:Key="Cursor.Ring.Dark.Color">#99000000</Color>
+
     <!-- ===================== CHROME — acento (teal) ====================== -->
     <!-- Marca ÚNICAMENTE la herramienta activa. -->
     <Color x:Key="Accent.Color">#FF2FD9C4</Color>

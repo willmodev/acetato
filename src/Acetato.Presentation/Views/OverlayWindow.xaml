@@ -55,6 +55,7 @@
                    behaviors:FreehandStrokeBehavior.Tool="{Binding ActiveTool}"
                    behaviors:FreehandStrokeBehavior.Layer="{Binding ElementName=LiveLayer}"
                    behaviors:ToolCursorBehavior.Tool="{Binding ActiveTool}"
+                   behaviors:ToolCursorBehavior.Tip="{Binding CursorTip}"
                    behaviors:InkGradient.Pair="{Binding ActiveGradient}"
                    behaviors:InkGradient.UsedCommand="{Binding GradientUsedCommand}"
                    behaviors:TextAnnotationBehavior.Tool="{Binding ActiveTool}"
