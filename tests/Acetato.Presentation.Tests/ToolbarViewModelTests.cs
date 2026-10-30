@@ -1,11 +1,7 @@
-using Acetato.Application.Abstractions;
-using Acetato.Application.Drawing;
 using Acetato.Application.Overlay;
 using Acetato.Domain;
-using Acetato.Presentation.Settings;
 using Acetato.Presentation.ViewModels;
 using FluentAssertions;
-using NSubstitute;
 using Xunit;
 
 namespace Acetato.Presentation.Tests;
@@ -127,29 +123,8 @@ public sealed class ToolbarViewModelTests
     }
 
     // Barra con el overlay ya visible en modo dibujo, como al arrancar la app.
-    private static T WithToolbar<T>(Func<OverlayController, ToolbarViewModel, T> work)
-    {
-        using var coordinator = TestCoordinators.Started();
-        using var shortcuts = new ToolbarShortcuts(coordinator);
-        var settings = new DrawingSettings();
-        var surface = Substitute.For<IOverlaySurface>();
-        var controller = new OverlayController(
-            surface,
-            Substitute.For<IToolbarSurface>(),
-            Substitute.For<IToolbarWindowStyler>());
-        controller.Toggle(); // oculta → visible y en modo dibujo
-        surface.IsVisible.Returns(true);
-        var dragHandler = Substitute.For<IWindowDragHandler>();
-        var broadcaster = new OverlayBroadcaster(
-            Substitute.For<IOverlayCanvasProvider>(),
-            Substitute.For<ICursorPositionProvider>(),
-            settings,
-            Substitute.For<IScreenClipLauncher>(),
-            controller);
-        var chrome = new ToolbarChrome(dragHandler, new SettingsWindowLauncher(controller, coordinator, dragHandler), shortcuts);
-        using var viewModel = new ToolbarViewModel(broadcaster, settings, controller, chrome);
-        return work(controller, viewModel);
-    }
+    private static T WithToolbar<T>(Func<OverlayController, ToolbarViewModel, T> work) =>
+        ToolbarHost.With(toolbar => work(toolbar.Controller, toolbar.ViewModel));
 
     private static List<ToolKind> SelectedTools(ToolbarViewModel viewModel) =>
         [.. viewModel.Tools.Where(tool => tool.IsSelected).Select(tool => tool.Kind)];

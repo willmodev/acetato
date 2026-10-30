@@ -177,7 +177,9 @@ public partial class App : System.Windows.Application
         services.AddSingleton<SettingsWindowLauncher>();
 
         // Barra flotante (HU-10): VM, ventana (DataContext se asigna fuera del
-        // contenedor para evitar el ciclo) y su superficie.
+        // contenedor para evitar el ciclo) y su superficie. El estado plegado
+        // (HU-25) es único: lo comparten la barra y el atajo.
+        services.AddSingleton<IToolbarLayout, ToolbarLayout>();
         services.AddSingleton<ToolbarShortcuts>();
         services.AddSingleton<ToolbarChrome>();
         services.AddSingleton<ToolbarViewModel>();

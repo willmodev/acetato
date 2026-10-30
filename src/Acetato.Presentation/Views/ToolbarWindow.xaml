@@ -47,106 +47,128 @@
 
             <Rectangle Style="{StaticResource ToolDivider}" />
 
-            <!-- Puntero (HU-24): sale del modo dibujo sin ocultar la barra ni los
-                 trazos. En modo puntero lleva el acento, como la herramienta activa. -->
-            <Button Command="{Binding EnterPointerModeCommand}" ToolTip="{Binding PointerHint}">
-                <Button.Style>
-                    <Style TargetType="Button" BasedOn="{StaticResource ToolButton}">
+            <!-- Ojo (HU-25): pliega la barra a asa · separador · ojo. El icono muestra
+                 el estado y el tooltip nombra la acción. Nunca lleva el acento. -->
+            <Button Style="{StaticResource ToolButton}"
+                    Command="{Binding ToggleCollapsedCommand}" ToolTip="{Binding CollapseHint}">
+                <Path Style="{StaticResource ToolGlyph}" Data="{Binding EyeGlyph}" />
+            </Button>
+
+            <!-- Resto de la barra: se oculta al plegar. La ventana ajusta su tamaño al
+                 contenido y conserva su borde izquierdo, así que el asa y el ojo no se mueven. -->
+            <StackPanel Orientation="Horizontal">
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsPointerMode}" Value="True">
-                                <Setter Property="Background" Value="{StaticResource Accent.Fill}" />
+                            <DataTrigger Binding="{Binding IsCollapsed}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
-                </Button.Style>
-                <Path Data="{StaticResource Icon.Select}">
-                    <Path.Style>
-                        <Style TargetType="Path" BasedOn="{StaticResource ToolGlyph}">
+                </StackPanel.Style>
+
+                <!-- Puntero (HU-24): sale del modo dibujo sin ocultar la barra ni los
+                     trazos. En modo puntero lleva el acento, como la herramienta activa. -->
+                <Button Command="{Binding EnterPointerModeCommand}" ToolTip="{Binding PointerHint}">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource ToolButton}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding IsPointerMode}" Value="True">
-                                    <Setter Property="Stroke" Value="{StaticResource Accent}" />
+                                    <Setter Property="Background" Value="{StaticResource Accent.Fill}" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
-                    </Path.Style>
-                </Path>
-            </Button>
+                    </Button.Style>
+                    <Path Data="{StaticResource Icon.Select}">
+                        <Path.Style>
+                            <Style TargetType="Path" BasedOn="{StaticResource ToolGlyph}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPointerMode}" Value="True">
+                                        <Setter Property="Stroke" Value="{StaticResource Accent}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Path.Style>
+                    </Path>
+                </Button>
 
-            <!-- Herramientas de dibujo (HU-11): la activa se resalta con el acento,
-                 salvo en modo puntero (HU-24). -->
-            <ItemsControl ItemsSource="{Binding Tools}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="{x:Type vm:ToolItem}">
-                        <Button x:Name="ToolBtn" Style="{StaticResource ToolButton}"
-                                IsEnabled="{Binding IsEnabled}" ToolTip="{Binding Hint}"
-                                Command="{Binding DataContext.PickToolCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                CommandParameter="{Binding Kind}">
-                            <Path x:Name="ToolIcon" Style="{StaticResource ToolGlyph}" Data="{Binding Icon}" />
-                        </Button>
-                        <DataTemplate.Triggers>
-                            <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                                <Setter TargetName="ToolBtn" Property="Background" Value="{StaticResource Accent.Fill}" />
-                                <Setter TargetName="ToolIcon" Property="Stroke" Value="{StaticResource Accent}" />
-                            </DataTrigger>
-                        </DataTemplate.Triggers>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                <!-- Herramientas de dibujo (HU-11): la activa se resalta con el acento,
+                     salvo en modo puntero (HU-24). -->
+                <ItemsControl ItemsSource="{Binding Tools}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type vm:ToolItem}">
+                            <Button x:Name="ToolBtn" Style="{StaticResource ToolButton}"
+                                    IsEnabled="{Binding IsEnabled}" ToolTip="{Binding Hint}"
+                                    Command="{Binding DataContext.PickToolCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                    CommandParameter="{Binding Kind}">
+                                <Path x:Name="ToolIcon" Style="{StaticResource ToolGlyph}" Data="{Binding Icon}" />
+                            </Button>
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                    <Setter TargetName="ToolBtn" Property="Background" Value="{StaticResource Accent.Fill}" />
+                                    <Setter TargetName="ToolIcon" Property="Stroke" Value="{StaticResource Accent}" />
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
 
-            <Rectangle Style="{StaticResource ToolDivider}" />
+                <Rectangle Style="{StaticResource ToolDivider}" />
 
-            <!-- Color (funcional): abre el popover de tintas -->
-            <Button x:Name="ColorButton" Style="{StaticResource ToolButton}"
-                    Command="{Binding ToggleInkPopoverCommand}" ToolTip="{Binding ColorHint}">
-                <Ellipse Width="18" Height="18"
-                         Fill="{Binding ActiveInkBrush}"
-                         Stroke="{StaticResource Stroke.Highlight}" StrokeThickness="1.5" />
-            </Button>
+                <!-- Color (funcional): abre el popover de tintas -->
+                <Button x:Name="ColorButton" Style="{StaticResource ToolButton}"
+                        Command="{Binding ToggleInkPopoverCommand}" ToolTip="{Binding ColorHint}">
+                    <Ellipse Width="18" Height="18"
+                             Fill="{Binding ActiveInkBrush}"
+                             Stroke="{StaticResource Stroke.Highlight}" StrokeThickness="1.5" />
+                </Button>
 
-            <!-- Grosor (funcional): abre el popover de grosor -->
-            <Button x:Name="ThicknessButton" Style="{StaticResource ToolButton}"
-                    Command="{Binding ToggleThicknessPopoverCommand}" ToolTip="{Binding ThicknessHint}">
-                <StackPanel Width="16" VerticalAlignment="Center">
-                    <Rectangle Height="1.5" Margin="0,1.5" RadiusX="1" RadiusY="1"
-                               Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
-                    <Rectangle Height="2.5" Margin="0,1.5" RadiusX="1" RadiusY="1"
-                               Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
-                    <Rectangle Height="4" Margin="0,1.5" RadiusX="1" RadiusY="1"
-                               Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
-                </StackPanel>
-            </Button>
+                <!-- Grosor (funcional): abre el popover de grosor -->
+                <Button x:Name="ThicknessButton" Style="{StaticResource ToolButton}"
+                        Command="{Binding ToggleThicknessPopoverCommand}" ToolTip="{Binding ThicknessHint}">
+                    <StackPanel Width="16" VerticalAlignment="Center">
+                        <Rectangle Height="1.5" Margin="0,1.5" RadiusX="1" RadiusY="1"
+                                   Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
+                        <Rectangle Height="2.5" Margin="0,1.5" RadiusX="1" RadiusY="1"
+                                   Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
+                        <Rectangle Height="4" Margin="0,1.5" RadiusX="1" RadiusY="1"
+                                   Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
+                    </StackPanel>
+                </Button>
 
-            <Rectangle Style="{StaticResource ToolDivider}" />
+                <Rectangle Style="{StaticResource ToolDivider}" />
 
-            <!-- Deshacer / Limpiar (funcionales) -->
-            <Button Style="{StaticResource ToolButton}" Command="{Binding UndoCommand}" ToolTip="{Binding UndoHint}">
-                <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Undo}" />
-            </Button>
-            <Button Style="{StaticResource ToolButton}" Command="{Binding ClearCommand}" ToolTip="{Binding ClearHint}">
-                <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Clear}" />
-            </Button>
+                <!-- Deshacer / Limpiar (funcionales) -->
+                <Button Style="{StaticResource ToolButton}" Command="{Binding UndoCommand}" ToolTip="{Binding UndoHint}">
+                    <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Undo}" />
+                </Button>
+                <Button Style="{StaticResource ToolButton}" Command="{Binding ClearCommand}" ToolTip="{Binding ClearHint}">
+                    <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Clear}" />
+                </Button>
 
-            <Rectangle Style="{StaticResource ToolDivider}" />
+                <Rectangle Style="{StaticResource ToolDivider}" />
 
-            <!-- Recortar (HU-23) / Ajustes (HU-21) -->
-            <Button Style="{StaticResource ToolButton}" Command="{Binding CaptureCommand}" ToolTip="{Binding CaptureHint}">
-                <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Capture}" />
-            </Button>
-            <Button Style="{StaticResource ToolButton}" Command="{Binding OpenSettingsCommand}" ToolTip="{Binding SettingsHint}">
-                <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Settings}" />
-            </Button>
+                <!-- Recortar (HU-23) / Ajustes (HU-21) -->
+                <Button Style="{StaticResource ToolButton}" Command="{Binding CaptureCommand}" ToolTip="{Binding CaptureHint}">
+                    <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Capture}" />
+                </Button>
+                <Button Style="{StaticResource ToolButton}" Command="{Binding OpenSettingsCommand}" ToolTip="{Binding SettingsHint}">
+                    <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Settings}" />
+                </Button>
 
-            <Rectangle Style="{StaticResource ToolDivider}" />
+                <Rectangle Style="{StaticResource ToolDivider}" />
 
-            <!-- Cerrar (funcional): oculta overlay y barra -->
-            <Button Style="{StaticResource ToolButton}" Command="{Binding CloseCommand}" ToolTip="{Binding CloseHint}">
-                <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Close}" />
-            </Button>
+                <!-- Cerrar (funcional): oculta overlay y barra -->
+                <Button Style="{StaticResource ToolButton}" Command="{Binding CloseCommand}" ToolTip="{Binding CloseHint}">
+                    <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Close}" />
+                </Button>
+
+            </StackPanel>
 
             <!-- Popover de tintas -->
             <Popup PlacementTarget="{Binding ElementName=ColorButton}" Placement="Bottom"
