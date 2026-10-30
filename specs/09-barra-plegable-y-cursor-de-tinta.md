@@ -38,7 +38,7 @@
 - Con **Lápiz, Línea, Flecha y Rectángulo** en modo dibujo, el cursor pasa a ser un **círculo relleno**:
   - **Relleno:** la tinta activa (roja, azul, amarilla, verde, blanca o negra).
   - **En modo degradado:** el relleno es el degradado del par que va a salir en el **próximo** trazo; tras cada trazo el círculo cambia al par siguiente.
-  - **Diámetro:** el del grosor activo (3, 5, 8, 12 o 18 DIP), con un mínimo visible de **6 DIP**. Con grosor 3 el círculo mide 6; con los demás coincide con el trazo.
+  - **Diámetro:** el del grosor activo (3, 5, 8, 12 o 18 DIP), con un mínimo visible de **6 DIP**. Con grosor 3 y 5 el círculo mide 6; con 8, 12 y 18 coincide con el trazo.
   - **Aro de contraste:** un aro exterior claro (blanco al 80 %) y uno interior oscuro (negro al 60 %), de 1 px cada uno, para que el círculo se vea sobre cualquier fondo.
   - **Punto activo en el centro** del círculo: el trazo empieza justo ahí.
 - El círculo **sigue visible mientras se dibuja** (botón del mouse apretado).
@@ -124,7 +124,7 @@ No se guarda nada nuevo. El único valor que puede aparecer en `settings.json` e
 4. **Atajo `Ctrl+Alt+H`.** `HotkeyKey.H` y su tecla virtual, la acción, la entrada en el catálogo, la etiqueta y el enrutado.
    - Tests: la acción está en el catálogo en «Siempre»; un `settings.json` sin la acción toma `Ctrl+Alt+H`; si el usuario ya tenía `Ctrl+Alt+H` en otra acción, la suya gana y «Plegar barra» queda sin atajo; con la capa oculta el atajo no cambia el estado.
    - **Manual:** `Ctrl+Alt+H` en modo dibujo y en modo puntero; ocultar la capa con la barra plegada y volver a mostrarla: sigue plegada.
-5. **Tamaño del círculo.** `CursorTipSize` en Domain. Tests: grosor 3 → 6; grosores 5, 8, 12 y 18 → su mismo valor.
+5. **Tamaño del círculo.** `CursorTipSize` en Domain. Tests: grosores 3 y 5 → 6; grosores 8, 12 y 18 → su mismo valor.
 6. **Cursor de tinta sólida.** `InkCursorFactory` (relleno sólido y aro), tokens del aro y `ToolCursorBehavior` enlazado a tinta y grosor.
    - Tests: la fábrica devuelve el mismo cursor para la misma combinación; Texto, Láser y Borrador mantienen su cursor.
    - **Manual:** círculo rojo de grosor 8 del mismo ancho que el trazo; `Ctrl+2` o la rueda del mouse lo actualizan sin moverlo.
