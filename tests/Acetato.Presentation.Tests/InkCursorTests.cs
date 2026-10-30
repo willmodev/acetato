@@ -1,7 +1,9 @@
 using System.Windows.Input;
 using System.Windows.Media;
+using Acetato.Application.Drawing;
 using Acetato.Domain;
 using Acetato.Presentation.Behaviors;
+using Acetato.Presentation.Resources;
 using Acetato.Presentation.ViewModels;
 using FluentAssertions;
 using Xunit;
@@ -41,6 +43,54 @@ public sealed class InkCursorTests
         var ring = Pixel(pixels, size, (size / 2) + (Diameter / 2), size / 2);
         ring[2].Should().BeLessThan(0x40);
         ring[3].Should().BeGreaterThan(0);
+    }
+
+    [Fact]
+    public void In_gradient_mode_the_circle_shows_the_pair_of_the_next_stroke()
+    {
+        var (solid, gradient, otherPair, start, end) = WpfTestHost.Run(() =>
+        {
+            var tip = new InkCursorTip(Red, TintaGradiente.BlueCyan, 18d);
+            var colors = TintaGradienteMap.Resolve(TintaGradiente.BlueCyan);
+            return (InkCursorFactory.For(tip with { Gradient = null }, 1d), InkCursorFactory.For(tip, 1d),
+                InkCursorFactory.For(tip with { Gradient = TintaGradiente.PinkRed }, 1d), colors.Start, colors.End);
+        });
+
+        gradient.Should().NotBeSameAs(solid);
+        otherPair.Should().NotBeSameAs(gradient);
+
+        // Arriba a la izquierda domina el inicio del par y abajo a la derecha, el fin.
+        const int Diameter = 18;
+        var pixels = WpfTestHost.Run(() => InkCursorRenderer.Render(
+            InkCursorFactory.FillOf(new InkCursorTip(Red, TintaGradiente.BlueCyan, Diameter)), Diameter, Light, Dark));
+        int size = InkCursorRenderer.SizeFor(Diameter);
+        var topLeft = Pixel(pixels, size, (size / 2) - 4, (size / 2) - 4);
+        var bottomRight = Pixel(pixels, size, (size / 2) + 4, (size / 2) + 4);
+        Distance(topLeft, start).Should().BeLessThan(Distance(topLeft, end));
+        Distance(bottomRight, end).Should().BeLessThan(Distance(bottomRight, start));
+    }
+
+    [Fact]
+    public void After_each_gradient_stroke_the_tip_moves_to_the_next_pair()
+    {
+        var (before, after, notified, thicknessTip) = WpfTestHost.Run(() =>
+        {
+            var settings = new DrawingSettings();
+            using var overlay = new OverlayViewModel(settings);
+            settings.SelectGradient();
+            var first = overlay.CursorTip;
+            var changes = 0;
+            overlay.PropertyChanged += (_, e) => changes += string.Equals(e.PropertyName, nameof(OverlayViewModel.CursorTip), StringComparison.Ordinal) ? 1 : 0;
+            overlay.GradientUsedCommand.Execute(null);
+            var second = overlay.CursorTip;
+            settings.IncreaseThickness();
+            return (first, second, changes, overlay.CursorTip);
+        });
+
+        before.Gradient.Should().NotBeNull();
+        after.Gradient.Should().NotBeNull().And.NotBe(before.Gradient);
+        notified.Should().BeGreaterThan(0);
+        thicknessTip.Thickness.Should().Be(ThicknessScale.Steps[1]);
     }
 
     [Fact]
@@ -104,6 +154,9 @@ public sealed class InkCursorTests
         laser.Should().BeSameAs(Cursors.None);
         eraser.Should().BeNull();
     }
+
+    private static int Distance(byte[] bgra, Color color) =>
+        Math.Abs(bgra[0] - color.B) + Math.Abs(bgra[1] - color.G) + Math.Abs(bgra[2] - color.R);
 
     private static byte[] Pixel(byte[] pixels, int size, int x, int y) =>
         pixels.AsSpan(((y * size) + x) * 4, 4).ToArray();

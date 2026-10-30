@@ -1,7 +1,9 @@
 using System.IO;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using Acetato.Domain;
+using Acetato.Presentation.Resources;
 using Acetato.Presentation.ViewModels;
 
 namespace Acetato.Presentation.Behaviors;
@@ -35,11 +37,24 @@ internal static class InkCursorFactory
     {
         var light = Token("Cursor.Ring.Light.Color");
         var dark = Token("Cursor.Ring.Dark.Color");
-        var bgra = InkCursorRenderer.Render(new SolidColorBrush(tip.Solid), pixels, light, dark);
+        var bgra = InkCursorRenderer.Render(FillOf(tip), pixels, light, dark);
         int size = InkCursorRenderer.SizeFor(pixels);
         var bytes = CursorFile.Write(bgra, size, size / 2);
         using var stream = new MemoryStream(bytes);
         return new Cursor(stream);
+    }
+
+    // En modo degradado, el par del próximo trazo en diagonal (inicio arriba a la
+    // izquierda), como se ve en las figuras cerradas (HU-19).
+    internal static Brush FillOf(InkCursorTip tip)
+    {
+        if (tip.Gradient is not { } pair)
+        {
+            return new SolidColorBrush(tip.Solid);
+        }
+
+        var (start, end) = TintaGradienteMap.Resolve(pair);
+        return new LinearGradientBrush(start, end, new Point(0d, 0d), new Point(1d, 1d));
     }
 
     private static Color Token(string key) => (Color)System.Windows.Application.Current.Resources[key];
