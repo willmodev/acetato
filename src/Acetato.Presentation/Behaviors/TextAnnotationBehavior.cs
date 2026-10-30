@@ -15,6 +15,8 @@ namespace Acetato.Presentation.Behaviors;
 /// (clic fuera o Esc) lo reemplaza por un <see cref="TextBlock"/> fijo y lo
 /// registra en el historial unificado, salvo que esté vacío (se descarta). Color
 /// (última tinta sólida) y tamaño (derivado del grosor) salen del ViewModel.
+/// El Esc global del Puntero (HU-24) no llega al TextBox: confirma vía
+/// <see cref="TryCommit"/>.
 /// </summary>
 public static class TextAnnotationBehavior
 {
@@ -36,6 +38,30 @@ public static class TextAnnotationBehavior
     {
         ArgumentNullException.ThrowIfNull(element);
         return (ToolKind)element.GetValue(ToolProperty);
+    }
+
+    // Texto en edición del lienzo (editor y placeholder), para confirmarlo desde fuera.
+    private static readonly DependencyProperty ActiveEditProperty =
+        DependencyProperty.RegisterAttached(
+            "ActiveEdit",
+            typeof(TextEdit),
+            typeof(TextAnnotationBehavior),
+            new PropertyMetadata(null));
+
+    /// <summary>
+    /// Confirma el texto que se está escribiendo en <paramref name="canvas"/>,
+    /// como lo haría Esc dentro del editor (HU-24). Devuelve si había uno.
+    /// </summary>
+    public static bool TryCommit(InkCanvas canvas)
+    {
+        ArgumentNullException.ThrowIfNull(canvas);
+        if (canvas.GetValue(ActiveEditProperty) is not TextEdit edit)
+        {
+            return false;
+        }
+
+        Fix(canvas, edit.Editor, edit.Placeholder);
+        return true;
     }
 
     private static void OnToolChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -73,6 +99,7 @@ public static class TextAnnotationBehavior
             placeholder.Visibility = editor.Text.Length == 0 ? Visibility.Visible : Visibility.Collapsed;
         editor.PreviewKeyDown += (_, args) => OnEditorKeyDown(canvas, editor, placeholder, args);
         editor.LostKeyboardFocus += (_, _) => Fix(canvas, editor, placeholder);
+        canvas.SetValue(ActiveEditProperty, new TextEdit(editor, placeholder));
         _ = editor.Focus();
     }
 
@@ -130,6 +157,12 @@ public static class TextAnnotationBehavior
 
         canvas.Children.Remove(editor);
         canvas.Children.Remove(placeholder);
+        // Solo si sigue siendo el activo: al abrir otro texto, el anterior se fija después.
+        if (canvas.GetValue(ActiveEditProperty) is TextEdit active && active.Editor == editor)
+        {
+            canvas.ClearValue(ActiveEditProperty);
+        }
+
         if (string.IsNullOrWhiteSpace(editor.Text))
         {
             return;
@@ -141,6 +174,8 @@ public static class TextAnnotationBehavior
         canvas.Children.Add(label);
         (canvas.DataContext as OverlayViewModel)?.RecordText(canvas, label);
     }
+
+    private sealed record TextEdit(TextBox Editor, UIElement Placeholder);
 
     private static TextBlock CreateLabel(TextBox editor) => new()
     {

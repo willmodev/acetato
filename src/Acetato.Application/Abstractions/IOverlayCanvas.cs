@@ -24,4 +24,10 @@ public interface IOverlayCanvas
 
     /// <summary>Deshace el último trazo de este lienzo (HU-07).</summary>
     public void Undo();
+
+    /// <summary>
+    /// Confirma el texto que se está escribiendo en este lienzo (HU-13/HU-24).
+    /// Devuelve si había uno en edición.
+    /// </summary>
+    public bool TryCommitText();
 }

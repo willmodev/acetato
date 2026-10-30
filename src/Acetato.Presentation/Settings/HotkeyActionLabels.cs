@@ -32,6 +32,7 @@ internal static class HotkeyActionLabels
         [HotkeyAction.ThicknessUp] = "Más grueso",
         [HotkeyAction.ThicknessDown] = "Más fino",
         [HotkeyAction.Capture] = "Recortar",
+        [HotkeyAction.EnterPointerMode] = "Puntero",
     };
 
     /// <summary>Nombre de la acción.</summary>

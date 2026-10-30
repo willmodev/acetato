@@ -5,7 +5,8 @@ namespace Acetato.Application.Hotkeys;
 /// <summary>
 /// Calcula qué atajos deben estar registrados (HU-21): siempre los del grupo
 /// <see cref="HotkeyScope.Always"/>, y los de <see cref="HotkeyScope.DrawingMode"/>
-/// solo si se piden. Las acciones sin atajo se omiten.
+/// solo si se piden, junto con los fijos de dibujo (HU-24). Las acciones sin
+/// atajo se omiten.
 /// </summary>
 internal static class ActiveHotkeys
 {
@@ -17,5 +18,6 @@ internal static class ActiveHotkeys
             .Select(definition => (definition.Action, Chord: map.ChordOf(definition.Action)))
             .Where(entry => entry.Chord.HasValue)
             .Select(entry => new HotkeyAssignment(entry.Action, entry.Chord!.Value)),
+        .. includeDrawing ? FixedHotkeys.Drawing : [],
     ];
 }

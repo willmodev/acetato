@@ -76,4 +76,10 @@ public enum HotkeyAction
 
     /// <summary>Bajar el grosor un paso, con tope en el más fino (HU-22).</summary>
     ThicknessDown,
+
+    /// <summary>
+    /// Salir del modo dibujo sin ocultar nada (HU-24). Su atajo es fijo
+    /// (<see cref="Hotkeys.FixedHotkeys"/>): no está en el catálogo ni en Ajustes.
+    /// </summary>
+    EnterPointerMode,
 }

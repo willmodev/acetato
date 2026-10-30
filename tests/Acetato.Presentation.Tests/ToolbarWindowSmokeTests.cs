@@ -26,7 +26,7 @@ public sealed class ToolbarWindowSmokeTests
         var (labels, hasTooltipStyle) = WpfTestHost.Run(LoadToolbar);
 
         hasTooltipStyle.Should().BeTrue();
-        labels.Should().Contain(["Lápiz", "Rectángulo", "Deshacer", "Limpiar todo", "Recortar", "Cerrar", "Mover"]);
+        labels.Should().Contain(["Puntero", "Lápiz", "Rectángulo", "Deshacer", "Limpiar todo", "Recortar", "Cerrar", "Mover"]);
     }
 
     [Fact]
@@ -57,7 +57,8 @@ public sealed class ToolbarWindowSmokeTests
             Substitute.For<IOverlayCanvasProvider>(),
             Substitute.For<ICursorPositionProvider>(),
             settings,
-            Substitute.For<IScreenClipLauncher>());
+            Substitute.For<IScreenClipLauncher>(),
+            controller);
         var chrome = new ToolbarChrome(dragHandler, new SettingsWindowLauncher(controller, coordinator, dragHandler), shortcuts);
         using var viewModel = new ToolbarViewModel(broadcaster, settings, controller, chrome);
         var window = new ToolbarWindow();

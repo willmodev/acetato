@@ -42,6 +42,7 @@ internal static class HotkeyKeyMap
             [HotkeyKey.Up] = NativeMethods.VkUp,
             [HotkeyKey.Right] = NativeMethods.VkRight,
             [HotkeyKey.Down] = NativeMethods.VkDown,
+            [HotkeyKey.Escape] = NativeMethods.VkEscape,
         };
         AddRange(keys, HotkeyKey.A, HotkeyKey.Z, NativeMethods.VkA);
         AddRange(keys, HotkeyKey.D0, HotkeyKey.D9, NativeMethods.Vk0);

@@ -21,8 +21,8 @@ namespace Acetato.Presentation;
 
 /// <summary>
 /// Composition root de la aplicación. Construye el contenedor de DI y registra
-/// el atajo global (HU-01). La app arranca en segundo plano (sin ventana
-/// visible); el overlay aparece al pulsar el atajo.
+/// el atajo global (HU-01). La app arranca con el overlay visible y en modo
+/// dibujo (HU-24); el icono de bandeja sigue disponible.
 /// </summary>
 public partial class App : System.Windows.Application
 {
@@ -39,6 +39,18 @@ public partial class App : System.Windows.Application
         InitializeToolbar();
         WireHotkeys();
         InitializeTrayIcon();
+        ShowOverlay();
+    }
+
+    // Arranque listo para dibujar (HU-24). Va al final: el coordinador ya sigue
+    // el estado del overlay y registra los atajos de dibujo al mostrarse.
+    private void ShowOverlay()
+    {
+        var controller = _services!.GetRequiredService<IOverlayController>();
+        if (!controller.IsVisible)
+        {
+            controller.Toggle(); // muestra el overlay y entra en modo dibujo
+        }
     }
 
     // Asigna el DataContext de la barra (HU-10) fuera del contenedor para romper

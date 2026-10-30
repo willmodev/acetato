@@ -14,8 +14,9 @@ public sealed class OverlayBroadcasterTests
     private readonly IDrawingSettings _settings = Substitute.For<IDrawingSettings>();
     private readonly IScreenClipLauncher _screenClip = Substitute.For<IScreenClipLauncher>();
     private readonly IOverlayCanvasProvider _provider = Substitute.For<IOverlayCanvasProvider>();
+    private readonly IOverlayController _overlay = Substitute.For<IOverlayController>();
 
-    private OverlayBroadcaster CreateBroadcaster() => new(_provider, _cursor, _settings, _screenClip);
+    private OverlayBroadcaster CreateBroadcaster() => new(_provider, _cursor, _settings, _screenClip, _overlay);
 
     private static IOverlayCanvas Canvas(MonitorInfo monitor)
     {
@@ -49,6 +50,30 @@ public sealed class OverlayBroadcasterTests
 
         secondary.Received(1).Undo();
         primary.DidNotReceive().Undo();
+    }
+
+    [Fact]
+    public void TryCommitText_commits_on_every_canvas_and_reports_if_any_was_editing()
+    {
+        var idle = Canvas(new MonitorInfo(0, 0, 1920, 1080, true));
+        var editing = Canvas(new MonitorInfo(1920, 0, 1280, 1024, false));
+        editing.TryCommitText().Returns(true);
+        _provider.Canvases.Returns([idle, editing]);
+
+        var committed = CreateBroadcaster().TryCommitText();
+
+        Assert.True(committed);
+        idle.Received(1).TryCommitText();
+        editing.Received(1).TryCommitText();
+    }
+
+    [Fact]
+    public void TryCommitText_is_false_when_no_text_is_being_edited()
+    {
+        var idle = Canvas(new MonitorInfo(0, 0, 1920, 1080, true));
+        _provider.Canvases.Returns([idle]);
+
+        Assert.False(CreateBroadcaster().TryCommitText());
     }
 
     [Fact]
@@ -114,6 +139,31 @@ public sealed class OverlayBroadcasterTests
     {
         CreateBroadcaster().LaunchScreenClip();
 
+        _screenClip.Received(1).Launch();
+    }
+
+    [Fact]
+    public void LaunchScreenClip_leaves_drawing_mode_before_opening()
+    {
+        _overlay.IsDrawingMode.Returns(true);
+
+        CreateBroadcaster().LaunchScreenClip();
+
+        Received.InOrder(() =>
+        {
+            _overlay.SetDrawingMode(false);
+            _screenClip.Launch();
+        });
+    }
+
+    [Fact]
+    public void LaunchScreenClip_in_pointer_mode_does_not_touch_the_mode()
+    {
+        _overlay.IsDrawingMode.Returns(false);
+
+        CreateBroadcaster().LaunchScreenClip();
+
+        _overlay.DidNotReceive().SetDrawingMode(Arg.Any<bool>());
         _screenClip.Received(1).Launch();
     }
 

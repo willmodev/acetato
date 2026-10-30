@@ -5,43 +5,47 @@
 <meta charset="utf-8">
 <link rel="stylesheet" href="../colors_and_type.css">
 <link rel="stylesheet" href="preview.css">
+<link rel="stylesheet" href="toolbar.css">
 <style>
-  .stage { align-items: stretch; }
-  .grid {
-    width: 100%;
-    display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    gap: 4px 8px;
-  }
-  .cell { display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 6px 0; }
-  .cell i { color: var(--fg-1); }
-  .cell [data-lucide] { width: 22px; height: 22px; stroke-width: 1.75; }
-  .cell .nm { font-size: 10px; color: var(--fg-3); letter-spacing: .01em; }
+  .stage { flex-direction: column; align-items: stretch; gap: var(--s-3); }
+  .cap { font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--fg-3); }
+  .grid { width: 100%; display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px 8px; }
+  .cell { display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 6px 0; color: var(--fg-1); }
+  .cell svg { width: 20px; height: 20px; stroke-width: 2; }
+  .cell .nm { font-size: 10px; color: var(--fg-3); letter-spacing: .01em; text-align: center; }
+  .cell--res { color: var(--fg-3); }
 </style>
 </head>
 <body>
 <div class="stage">
+  <div class="cap">En la app</div>
   <div class="grid">
+    <div class="cell"><i data-lucide="grip-vertical"></i><span class="nm">mover</span></div>
+    <div class="cell"><i data-lucide="eye"></i><span class="nm">ocultar barra</span></div>
+    <div class="cell"><i data-lucide="eye-off"></i><span class="nm">mostrar barra</span></div>
     <div class="cell"><i data-lucide="mouse-pointer-2"></i><span class="nm">seleccionar</span></div>
     <div class="cell"><i data-lucide="pencil"></i><span class="nm">lápiz</span></div>
-    <div class="cell"><i data-lucide="highlighter"></i><span class="nm">marcador</span></div>
+    <div class="cell"><i data-lucide="locate"></i><span class="nm">láser</span></div>
     <div class="cell"><i data-lucide="eraser"></i><span class="nm">borrador</span></div>
-    <div class="cell"><i data-lucide="arrow-up-right"></i><span class="nm">flecha</span></div>
     <div class="cell"><i data-lucide="minus"></i><span class="nm">línea</span></div>
+    <div class="cell"><i data-lucide="arrow-up-right"></i><span class="nm">flecha</span></div>
     <div class="cell"><i data-lucide="square"></i><span class="nm">rectángulo</span></div>
-    <div class="cell"><i data-lucide="circle"></i><span class="nm">elipse</span></div>
     <div class="cell"><i data-lucide="type"></i><span class="nm">texto</span></div>
-    <div class="cell"><i data-lucide="pipette"></i><span class="nm">cuentagotas</span></div>
-    <div class="cell"><i data-lucide="palette"></i><span class="nm">color</span></div>
-    <div class="cell"><i data-lucide="spline"></i><span class="nm">grosor</span></div>
     <div class="cell"><i data-lucide="undo-2"></i><span class="nm">deshacer</span></div>
-    <div class="cell"><i data-lucide="redo-2"></i><span class="nm">rehacer</span></div>
-    <div class="cell"><i data-lucide="trash-2"></i><span class="nm">limpiar</span></div>
-    <div class="cell"><i data-lucide="camera"></i><span class="nm">captura</span></div>
+    <div class="cell"><i data-lucide="trash-2"></i><span class="nm">limpiar todo</span></div>
+    <div class="cell"><i data-lucide="camera"></i><span class="nm">recortar</span></div>
     <div class="cell"><i data-lucide="settings-2"></i><span class="nm">ajustes</span></div>
-    <div class="cell"><i data-lucide="grip-vertical"></i><span class="nm">mover</span></div>
-    <div class="cell"><i data-lucide="pin"></i><span class="nm">fijar</span></div>
-    <div class="cell"><i data-lucide="x"></i><span class="nm">cerrar</span></div>
+    <div class="cell"><i data-lucide="x"></i><span class="nm">cerrar · quitar</span></div>
+    <div class="cell"><i data-lucide="rotate-ccw"></i><span class="nm">restaurar</span></div>
+  </div>
+  <div class="cap">Reservados (sin función todavía)</div>
+  <div class="grid">
+    <div class="cell cell--res"><i data-lucide="circle"></i><span class="nm">elipse</span></div>
+    <div class="cell cell--res"><i data-lucide="redo-2"></i><span class="nm">rehacer</span></div>
+    <div class="cell cell--res"><i data-lucide="highlighter"></i><span class="nm">resaltador</span></div>
+    <div class="cell cell--res"><i data-lucide="palette"></i><span class="nm">paleta</span></div>
+    <div class="cell cell--res"><i data-lucide="pin"></i><span class="nm">fijar</span></div>
+    <div class="cell cell--res"><i data-lucide="pipette"></i><span class="nm">cuentagotas</span></div>
   </div>
 </div>
 <script src="https://unpkg.com/lucide@latest"></script>

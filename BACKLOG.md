@@ -244,6 +244,7 @@ Escenario: Salir de la aplicación
   Entonces la app se cierra
   Y libera los atajos globales registrados.
 ```
+> **Cambio por HU-24.** Al iniciar ya no queda solo en segundo plano: se muestran la capa y la barra en modo dibujo. El icono de la bandeja y su menú se mantienen (ver [`specs/08-modo-puntero.md`](./specs/08-modo-puntero.md)).
 
 ---
 
@@ -389,6 +390,8 @@ Escenario: Borrar la selección
   Entonces solo se elimina lo seleccionado
   Y el resto permanece.
 ```
+> **Cambio por HU-24.** El botón con el icono `mouse-pointer-2` pasó a ser **Puntero** (salir del modo dibujo). Seleccionar tendrá su propio botón e icono cuando se implemente; `ToolKind.Select` sigue reservado.
+
 **Notas técnicas:** `ToolKind.Select` e `Icon.Select` ya existen (placeholder). Encaja con el modo nativo `InkCanvasEditingMode.Select` de WPF (lazo + mover + redimensionar + borrar selección), mapeable en `OverlayViewModel.ToEditingMode`. Mover/borrar deberían integrarse con `UndoStack` / Rehacer (HU-17) para ser deshacibles.
 
 ---
@@ -748,7 +751,7 @@ Escenario: Cancelar el recorte
   Dado que abrí el recorte con Ctrl+S
   Cuando presiono Esc
   Entonces no se guarda nada
-  Y Acetato sigue en modo dibujo con los trazos.
+  Y Acetato queda en modo puntero con los trazos (HU-24).
 
 Escenario: Las otras apps conservan Ctrl+S
   Dado que el overlay está oculto o en click-through
@@ -762,6 +765,53 @@ Escenario: Configurable como los demás
   Y puedo cambiarla, quitarla y restaurarla.
 ```
 **Notas técnicas:** Spec en [`specs/07-recorte-de-pantalla.md`](./specs/07-recorte-de-pantalla.md). Reemplaza a la HU-12: Acetato solo abre la herramienta Recortes de Windows (`ms-screenclip:`), que se encarga de la selección, el portapapeles y el aviso. Se elimina la captura propia (`Imágenes\Acetato` y el aviso «Captura guardada»). El valor interno `Capture` se conserva para que los `settings.json` existentes sigan valiendo. Fuera de alcance: recorte propio, guardar en una carpeta de Acetato, ítem en la bandeja y grabación de video.
+
+---
+
+#### HU-24 — Modo puntero y arranque en modo dibujo
+- **Épica:** EP-01 · **Prioridad:** Should · **Estimación:** 5
+- **Narrativa:**
+  Como presentador, quiero que la app arranque lista para dibujar y salir del dibujo con un botón o con Esc sin ocultar la barra ni los trazos, para alternar rápido entre anotar y usar el computador.
+
+**Criterios de aceptación**
+```
+Escenario: Arranque en modo dibujo
+  Dado que la app está cerrada
+  Cuando la abro
+  Entonces aparecen la capa y la barra en modo dibujo con el Lápiz
+  Y el icono de la bandeja sigue disponible.
+
+Escenario: Salir del dibujo con el botón Puntero
+  Dado que estoy en modo dibujo con trazos en pantalla
+  Cuando hago clic en Puntero
+  Entonces los clics llegan a las ventanas de abajo
+  Y la barra y los trazos siguen visibles
+  Y el botón Puntero aparece activo.
+
+Escenario: Salir del dibujo con Esc
+  Dado que estoy en modo dibujo
+  Cuando presiono Esc
+  Entonces pasa lo mismo que con el botón Puntero
+  Y un segundo Esc llega a la aplicación en foco.
+
+Escenario: Volver a dibujar
+  Dado que estoy en modo puntero
+  Cuando hago clic en una herramienta de la barra
+  Entonces vuelvo al modo dibujo con esa herramienta.
+
+Escenario: Esc mientras escribo un texto
+  Dado que estoy escribiendo un Texto
+  Cuando presiono Esc
+  Entonces el texto se confirma y sigo en modo dibujo.
+
+Escenario: Recortar con un solo Esc para cancelar
+  Dado que estoy en modo dibujo
+  Cuando pulso Recortar
+  Entonces Acetato pasa a modo puntero y se abre el recorte de Windows
+  Y un solo Esc cancela el recorte.
+```
+**Notas técnicas:** Spec en [`specs/08-modo-puntero.md`](./specs/08-modo-puntero.md). El Puntero no es una `ToolKind`: es el modo click-through de HU-02 llevado a la barra. `Esc` es un atajo fijo que solo se registra en modo dibujo y no aparece en Ajustes. Fuera de alcance: herramienta Seleccionar (HU-14), botón de ojo, `Esc` configurable y arranque con Windows.
+
 ---
 
 ## Definition of Done (global)

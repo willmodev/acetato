@@ -1,44 +1,57 @@
 # UI Kit — Barra flotante de Acetato
 
-High-fidelity, interactive recreation of Acetato's single visible surface: the
-floating glass toolbar, shown overlaying a presentation slide (the product's
-core use case — annotating live during a talk or tutorial).
+High-fidelity, interactive recreation of Acetato's visible surfaces — the
+floating toolbar and the Settings window — over a presentation slide (the
+product's core use case). Reconciled with the WPF app on 2026-10-29.
 
-> Reference for re-implementation in **WinForms/WPF**. The HTML/JS here exists to
-> pin down visuals and interaction; it is not the production code.
+> Reference for the **WPF** app. The HTML/JS here pins down visuals and
+> interaction; it is not the production code.
 
 ## Run
-Open `index.html`. Everything is fake but live:
-- **Pick a tool** — Seleccionar, Lápiz, Línea recta, Flecha, Rectángulo, Texto, Borrador.
-- **Color** — click the ink swatch to open the *Tinta* popover (6 inks).
-- **Grosor** — click the thickness glyph for the 5-step stepper.
-- **Draw** — freehand, straight lines, arrows and rectangles render on a transparent `<canvas>`.
-- **Texto** — pick Texto, click on the slide, and type an annotation in place.
-- **Captura** — flashes the screen and shows a "copiada" toast (fake capture).
-- **Ajustes** — minimal settings popover: bar size (Compacta/Cómoda), smoothing,
-  snap-to-edges, show-shortcuts toggles.
-- **Deshacer / Rehacer / Limpiar** — full stroke history.
-- **Drag** — grab the grip at the bar's lead edge to move it.
-- **Keyboard** — `V P L A R T E` select tools, `Ctrl+P` capture,
-  `Ctrl+Z`/`Ctrl+Y` undo/redo, `Del` clear, `Esc` returns to Select.
+Serve the skill folder over HTTP (Babel loads the `.jsx` files with XHR, so
+`file://` does not work), e.g. `python -m http.server --directory .claude/skills/acetato-design`,
+then open `ui_kits/toolbar/index.html`. Everything is fake but live:
+- **Tools** in bar order: Seleccionar (disabled here), Lápiz, Láser,
+  Borrador, Línea, Flecha, Rectángulo, Texto. `Ctrl+Espacio` cycles them.
+  In the app the first button is now **Puntero** (leaves drawing mode, also
+  with `Esc`; see the root README, HU-24). This mock is not updated yet.
+- **Color** — 6 inks and the round **Degradado** swatch. In Gradient mode each
+  stroke takes a random neon pair (never the previous one).
+- **Grosor** — 5 steps (3, 5, 8, 12, 18 px); text size follows the step.
+- **Draw** — smoothed freehand, freehand arrow with head on release, straight
+  line, rounded rectangle, multiline text (Esc or click outside confirms).
+- **Láser** — fading trail (2 s) with a halo; leaves nothing behind.
+- **Borrador** removes whole strokes. **Deshacer / Limpiar todo** as in the app.
+- **Recortar** — only shows a hint: the app opens Windows' Snipping Tool.
+- **Ajustes** — the shortcut list: click a key to capture, conflicts offer
+  *Reemplazar / Cancelar*, per-row *Restaurar* / *Quitar*, *Restaurar todo* with
+  inline confirmation.
+- **Cerrar** (`Ctrl+Alt+D`) hides everything; `Ctrl+Alt+E` toggles drawing mode
+  (clicks pass through to the slide).
+- **Ocultar barra** (eye, right after the grip) folds the bar to grip + eye;
+  the eye turns into `eye-off` (*Mostrar barra*) and brings it back. Drawing and
+  shortcuts keep working while collapsed. Designed here; pending in the app.
+- **Drag** the grip to move the bar (also when collapsed).
+- Browsers keep some combos for themselves (`Ctrl+1…7` switch tabs in most), so
+  a few default shortcuts may not reach the page; remap them in Ajustes.
 
 ## Files
 | File | Role |
 |------|------|
 | `index.html` | Mounts React + Babel + Lucide; loads the scripts below. |
 | `kit.css` | Local layout/cosmetics; extends the root `colors_and_type.css`. |
-| `tools.jsx` | Tool/ink/width catalogs **+ the React-safe `Icon` component**. |
-| `DrawSurface.jsx` | The transparent canvas: pointer drawing, shapes, eraser, re-render. |
-| `Toolbar.jsx` | The bar: `ToolButton`, `InkPopover`, `ThicknessPopover`, tooltip, drag. |
-| `App.jsx` | State, undo/redo stacks, keyboard shortcuts, the backdrop slide. |
+| `tools.jsx` | Catalogs mirrored from the app (tools, hotkeys, inks, gradient pairs, widths, font sizes) **+ the React-safe `Icon` component**. |
+| `DrawSurface.jsx` | The transparent canvas: strokes, gradient, eraser, text, laser. |
+| `Toolbar.jsx` | The bar: tool buttons, ink and thickness popovers, tooltip with shortcut, drag. |
+| `SettingsWindow.jsx` | The Settings window: shortcut capture, conflicts, restore. |
+| `App.jsx` | State, configurable shortcuts, visibility and drawing mode, the backdrop slide. |
 
 ## Notes for native devs
-- **Glass** = `--chrome-glass` fill + a blur-behind. On Windows use Acrylic/Mica
-  (DWM) under the bar; fall back to `--chrome-solid` if composition is off.
-- **Icons** are [Lucide](https://lucide.dev) line icons at 20px / 2px stroke.
-  Ship the equivalent SVGs as resources (names listed in the root README's
-  ICONOGRAPHY section).
-- **Active tool** is the only element that uses the accent (fill + glow + ring).
-  Everything else stays neutral so the bar reads as "off" at a glance.
-- The toolbar is the *only* visible chrome. There is no window frame, no title
-  bar, no background panel — just the bar floating over a click-through overlay.
+- **Glass** = `--chrome-glass` fill, **no blur yet** (HU-18 will add
+  Acrylic/Mica behind it). Settings is opaque on `--chrome-solid`.
+- **Icons** are [Lucide](https://lucide.dev) line icons at 20px / 2px stroke; the
+  app ships them as `StreamGeometry` in `Icons.xaml` (see the root README).
+- **Accent** marks only what is selected: active tool, chosen thickness, chosen
+  ink (ring) and the shortcut being captured. No glow, no ring on the active tool.
+- The toolbar is the *only* visible chrome over the overlay: no window frame, no
+  title bar, no background panel.

@@ -1,6 +1,7 @@
 using System.Windows.Interop;
 using Acetato.Application.Abstractions;
 using Acetato.Domain;
+using Acetato.Presentation.Behaviors;
 using Acetato.Presentation.ViewModels;
 using Acetato.Presentation.Views;
 
@@ -95,6 +96,8 @@ public sealed class OverlayPane : IOverlayCanvas, IDisposable
     public void Clear() => _viewModel.ClearCommand.Execute(null);
 
     public void Undo() => _viewModel.UndoCommand.Execute(null);
+
+    public bool TryCommitText() => TextAnnotationBehavior.TryCommit(_window.InkSurface);
 
     public void Dispose()
     {

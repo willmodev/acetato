@@ -1,7 +1,9 @@
 /* ============================================================================
    Acetato — Design Tokens
-   Floating-overlay annotation tool for Windows (C#/.NET, WinForms/WPF).
-   These CSS vars mirror the values to reimplement natively.
+   Floating-overlay annotation tool for Windows (C#/.NET 9, WPF).
+   SOURCE OF TRUTH: src/Acetato.Presentation/Resources/Tokens.xaml. These CSS
+   vars mirror it (XAML key noted per token). Tokens marked "unused" exist in
+   Tokens.xaml but the app does not paint them today.
    Two palettes:  CHROME (the UI itself)  +  TINTAS (the drawing inks).
    ============================================================================ */
 
@@ -12,13 +14,13 @@
      ---------------------------------------------------------------------- */
 
   /* Glass surfaces (use WITH backdrop-blur). Alpha is intentional. */
-  --chrome-glass:        rgba(22, 24, 28, 0.72);   /* toolbar fill            */
-  --chrome-glass-strong: rgba(18, 20, 23, 0.88);   /* popovers / menus        */
-  --chrome-glass-thin:   rgba(30, 33, 38, 0.55);   /* nested wells            */
+  --chrome-glass:        rgba(22, 24, 28, 0.72);   /* toolbar fill  · Chrome.Glass        */
+  --chrome-glass-strong: rgba(18, 20, 23, 0.88);   /* popovers, tooltips · Chrome.GlassStrong */
+  --chrome-glass-thin:   rgba(30, 33, 38, 0.55);   /* nested wells · unused     */
 
   /* Solid fallbacks (when blur is unavailable, e.g. WinForms no-composition) */
-  --chrome-solid:        #16181C;
-  --chrome-solid-2:      #1E2126;
+  --chrome-solid:        #16181C;   /* Settings window bg · Chrome.Solid */
+  --chrome-solid-2:      #1E2126;   /* Settings keycap · Chrome.Solid2 */
 
   /* Neutral ink scale (foreground on the glass) */
   --fg-1: rgba(255, 255, 255, 0.96);   /* primary icons, active labels        */
@@ -28,7 +30,7 @@
   /* Hairlines & strokes */
   --stroke-1:    rgba(255, 255, 255, 0.10);  /* outer border of glass         */
   --stroke-2:    rgba(255, 255, 255, 0.07);  /* dividers                      */
-  --highlight:   rgba(255, 255, 255, 0.14);  /* top inner light edge          */
+  --highlight:   rgba(255, 255, 255, 0.14);  /* Color-button ring, keycap hover border · Stroke.Highlight */
 
   /* Interaction fills (overlaid on glass) */
   --hover:       rgba(255, 255, 255, 0.08);
@@ -36,13 +38,13 @@
 
   /* Accent — teal/"acetate". Marks the ACTIVE tool only. */
   --accent:        #2FD9C4;
-  --accent-quiet:  #1FA899;                  /* pressed / borders             */
+  --accent-quiet:  #1FA899;                  /* pressed / borders · unused    */
   --accent-fill:   rgba(47, 217, 196, 0.16); /* active button background      */
-  --accent-ring:   rgba(47, 217, 196, 0.45); /* focus ring / active outline   */
-  --accent-glow:   rgba(47, 217, 196, 0.30); /* soft glow under active tool   */
-  --accent-ink:    #0C1413;                  /* text/icon ON solid accent     */
+  --accent-ring:   rgba(47, 217, 196, 0.45); /* selected ink ring, capturing keycap border */
+  --accent-glow:   rgba(47, 217, 196, 0.30); /* glow under active tool · unused (app paints no glow) */
+  --accent-ink:    #0C1413;                  /* text/icon ON solid accent · unused */
 
-  /* Status (rarely used — recording, error) */
+  /* Status — Settings inline messages only (conflict, error) */
   --danger:  #FF453A;
 
   /* ----------------------------------------------------------------------
@@ -56,8 +58,20 @@
   --ink-white:  #FFFFFF;
   --ink-black:  #0A0A0A;
 
+  /* Gradient mode (HU-19, Ctrl+7): neon pairs start → end. Each stroke picks a
+     random pair (never the previous one) and keeps it. Ink.Gradient.*.Color */
+  --ink-grad-bluecyan-start:   #2D6BFF;  --ink-grad-bluecyan-end:   #00E5FF;
+  --ink-grad-yellowlime-start: #FFE600;  --ink-grad-yellowlime-end: #B6FF00;
+  --ink-grad-pinkred-start:    #FF2DAA;  --ink-grad-pinkred-end:    #FF2D2D;
+  --ink-grad-violetpink-start: #9B3DFF;  --ink-grad-violetpink-end: #FF3DCB;
+  --ink-grad-greencyan-start:  #22FF7A;  --ink-grad-greencyan-end:  #00E5FF;
+  --ink-grad-orangepink-start: #FF8A00;  --ink-grad-orangepink-end: #FF3D9A;
+  /* Gradient-mode swatch (represents the mode, not one pair) */
+  --ink-grad-sample: linear-gradient(135deg, #2D6BFF 0%, #00E5FF 35%, #B6FF00 70%, #FF2DAA 100%);
+
   /* Halo printed under a stroke so it survives same-color backdrops.
-     (e.g. a white stroke gets a faint dark halo; a black one a light halo) */
+     (e.g. a white stroke gets a faint dark halo; a black one a light halo)
+     Defined in Tokens.xaml; the app does not paint halos yet. */
   --ink-halo-dark:  rgba(0, 0, 0, 0.35);
   --ink-halo-light: rgba(255, 255, 255, 0.45);
 
@@ -67,12 +81,16 @@
   --r-toolbar: 16px;   /* the floating bar           */
   --r-button:  10px;   /* tool buttons               */
   --r-popover: 14px;   /* palettes & menus           */
-  --r-swatch:  8px;    /* ink swatches               */
-  --r-pill:    999px;
+  --r-swatch:  8px;    /* ink swatch ring, tooltip, Settings keycap */
+  --r-tight:   5px;    /* kbd inside tooltip, inner ink sample */
+  --r-pill:    999px;  /* only the round Gradient swatch */
 
-  /* Elevation — overlay floats well above everything */
-  --shadow-bar:    0 10px 34px rgba(0, 0, 0, 0.46), 0 2px 8px rgba(0, 0, 0, 0.32);
-  --shadow-pop:    0 14px 40px rgba(0, 0, 0, 0.52), 0 3px 10px rgba(0, 0, 0, 0.36);
+  /* Elevation — overlay floats well above everything. Values translate the
+     app's DropShadowEffect (BlurRadius, ShadowDepth down, Opacity). */
+  --shadow-bar:    0 10px 34px rgba(0, 0, 0, 0.46);   /* toolbar   (34, 10, .46) */
+  --shadow-pop:    0 12px 40px rgba(0, 0, 0, 0.52);   /* popovers  (40, 12, .52) */
+  --shadow-tip:    0 6px 20px rgba(0, 0, 0, 0.52);    /* tooltips  (20, 6, .52)  */
+  /* Not painted by the app today (kept for reference): */
   --shadow-inset:  inset 0 1px 0 var(--highlight);
   --shadow-active: 0 0 0 1px var(--accent-ring), 0 4px 14px var(--accent-glow);
 
@@ -86,9 +104,18 @@
 
   /* Control sizing */
   --btn:        36px;   /* tool button hit area (desktop pointer)             */
-  --btn-touch:  44px;   /* min hit area for touch / pen builds                */
+  --btn-touch:  44px;   /* min hit area for touch / pen builds · unused       */
   --icon:       20px;   /* line-icon glyph size                               */
   --bar-pad:     6px;   /* inner padding of the toolbar                       */
+  --btn-row:    26px;   /* Settings row icon button (14px glyph)              */
+  --swatch:     30px;   /* ink swatch incl. 2px ring                          */
+  --settings-w: 480px;  /* Settings window (480 × 600)                        */
+
+  /* Drawing scales (Domain: ThicknessScale, FontScale, LaserSession) */
+  --thick-1: 3px; --thick-2: 5px; --thick-3: 8px; --thick-4: 12px; --thick-5: 18px;
+  --annot-1: 16px; --annot-2: 22px; --annot-3: 30px; --annot-4: 42px; --annot-5: 60px; /* text size per thickness step, weight 600 */
+  --laser-halo: 22px;      /* halo diameter following the pointer */
+  --laser-life: 2000ms;    /* trail fades out linearly */
 
   /* ----------------------------------------------------------------------
      TYPE — minimal. Only tooltips, labels, shortcut hints.
@@ -102,7 +129,7 @@
   --text-tooltip: 12px;   /* tooltip body          */
   --text-label:   11px;   /* chip / value labels   */
   --text-kbd:     11px;   /* keyboard shortcut hint */
-  --text-section: 10px;   /* popover section caption (uppercased) */
+  --text-section: 10px;   /* uppercased caption · unused (popovers show no caption) */
 
   --lh-tight: 1.2;
   --lh-base:  1.35;

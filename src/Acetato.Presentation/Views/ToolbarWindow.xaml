@@ -47,8 +47,33 @@
 
             <Rectangle Style="{StaticResource ToolDivider}" />
 
-            <!-- Herramientas (HU-11): lápiz/borrador/formas funcionales; el activo
-                 se resalta con el acento. Seleccionar y texto siguen placeholder. -->
+            <!-- Puntero (HU-24): sale del modo dibujo sin ocultar la barra ni los
+                 trazos. En modo puntero lleva el acento, como la herramienta activa. -->
+            <Button Command="{Binding EnterPointerModeCommand}" ToolTip="{Binding PointerHint}">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource ToolButton}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsPointerMode}" Value="True">
+                                <Setter Property="Background" Value="{StaticResource Accent.Fill}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+                <Path Data="{StaticResource Icon.Select}">
+                    <Path.Style>
+                        <Style TargetType="Path" BasedOn="{StaticResource ToolGlyph}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsPointerMode}" Value="True">
+                                    <Setter Property="Stroke" Value="{StaticResource Accent}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Path.Style>
+                </Path>
+            </Button>
+
+            <!-- Herramientas de dibujo (HU-11): la activa se resalta con el acento,
+                 salvo en modo puntero (HU-24). -->
             <ItemsControl ItemsSource="{Binding Tools}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>

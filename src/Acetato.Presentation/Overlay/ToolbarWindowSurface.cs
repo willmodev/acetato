@@ -10,7 +10,9 @@ namespace Acetato.Presentation.Overlay;
 /// Adaptador WPF de <see cref="IToolbarSurface"/>: envuelve la
 /// <see cref="ToolbarWindow"/>. Al mostrarse la sitúa en el monitor bajo el
 /// cursor (HU-09), centrada en horizontal y arriba, para que aparezca donde el
-/// usuario está trabajando. El usuario puede reubicarla arrastrando el grip.
+/// usuario está trabajando. El usuario puede reubicarla arrastrando el grip; al
+/// pasar a otro monitor se reamarra a la pane de ese monitor para no quedar
+/// tapada por su lienzo.
 /// </summary>
 public sealed class ToolbarWindowSurface : IToolbarSurface
 {
@@ -21,6 +23,7 @@ public sealed class ToolbarWindowSurface : IToolbarSurface
     private readonly IMonitorService _monitors;
     private readonly ICursorPositionProvider _cursor;
     private readonly IOverlayCanvasProvider _canvases;
+    private nint _ownerPane;
 
     public ToolbarWindowSurface(
         ToolbarWindow window,
@@ -32,6 +35,7 @@ public sealed class ToolbarWindowSurface : IToolbarSurface
         _monitors = monitors;
         _cursor = cursor;
         _canvases = canvases;
+        _window.LocationChanged += OnLocationChanged;
     }
 
     public bool IsVisible => _window.IsVisible;
@@ -66,6 +70,7 @@ public sealed class ToolbarWindowSurface : IToolbarSurface
         // recrean (cierran su ventana) y al destruir una ventana owner Windows
         // destruiría su owned (la barra). Sin owner en ese momento, queda a salvo.
         new WindowInteropHelper(_window).Owner = nint.Zero;
+        _ownerPane = nint.Zero;
         _window.Hide();
     }
 
@@ -74,7 +79,32 @@ public sealed class ToolbarWindowSurface : IToolbarSurface
     // tras Show, y la barra se muestra/oculta repetidamente.
     private void OwnToPaneOf(MonitorInfo monitor)
     {
-        new WindowInteropHelper(_window).Owner = FindPaneHandle(monitor);
+        _ownerPane = FindPaneHandle(monitor);
+        new WindowInteropHelper(_window).Owner = _ownerPane;
+    }
+
+    // Al arrastrar la barra a otro monitor (el cursor va en el grip), la pane de
+    // ese monitor la taparía al activarse: no es su owner. Se reamarra a esa pane
+    // y Windows la mantiene encima en cuanto la pane sube. No se reordena a mano:
+    // quitarle Topmost a una ventana owned se lo quita también a su owner, y el
+    // lienzo quedaría debajo de las demás apps.
+    private void OnLocationChanged(object? sender, EventArgs e)
+    {
+        if (!_window.IsVisible)
+        {
+            return;
+        }
+
+        var monitors = _monitors.GetMonitors();
+        var (x, y) = _cursor.GetCursorPosition();
+        var pane = FindPaneHandle(monitors[MonitorPicker.IndexAt(monitors, x, y)]);
+        if (pane == nint.Zero || pane == _ownerPane)
+        {
+            return;
+        }
+
+        _ownerPane = pane;
+        new WindowInteropHelper(_window).Owner = pane;
     }
 
     private nint FindPaneHandle(MonitorInfo monitor)
