@@ -294,12 +294,17 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
 
     private void SyncActiveState()
     {
+        // Con Tintas degradadas, las muestras y el botón Color enseñan el par (HU-27).
         ActiveInkBrush = _settings.IsGradient
             ? InkSwatchFactory.GradientSample
-            : new SolidColorBrush(TintaColorMap.Resolve(_settings.Color));
+            : InkSwatchFactory.FillFor(_settings.Color, _settings.InkPairsEnabled);
         foreach (var swatch in Swatches)
         {
             swatch.IsSelected = IsActive(swatch);
+            if (swatch.Color is { } color)
+            {
+                swatch.Fill = InkSwatchFactory.FillFor(color, _settings.InkPairsEnabled);
+            }
         }
 
         foreach (var step in Thicknesses)
