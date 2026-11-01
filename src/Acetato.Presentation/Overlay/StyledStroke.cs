@@ -12,6 +12,7 @@ namespace Acetato.Presentation.Overlay;
 /// como una polilínea aparte (extremos y uniones redondeados). Así la punta no pasa por
 /// el suavizado del lápiz, que deformaría el vértice, y la flecha sigue siendo UN solo
 /// trazo para el historial y el borrador. Conserva su par de degradado para siempre.
+/// Al moverlo (SPEC 11) la punta y el degradado lo acompañan.
 /// </summary>
 internal sealed class StyledStroke : Stroke
 {
@@ -29,7 +30,7 @@ internal sealed class StyledStroke : Stroke
     }
 
     /// <summary>Punta de la flecha; <c>null</c> si el trazo no es una flecha.</summary>
-    public ArrowHead? Head { get; }
+    public ArrowHead? Head { get; private set; }
 
     /// <summary>Par de degradado del trazo; <c>null</c> = tinta sólida (<c>DrawingAttributes.Color</c>).</summary>
     public GradientPair? Gradient { get; }
@@ -40,6 +41,25 @@ internal sealed class StyledStroke : Stroke
     /// </summary>
     public override Stroke Clone() =>
         new StyledStroke(StylusPoints.Clone(), DrawingAttributes.Clone(), Head, Gradient);
+
+    /// <summary>
+    /// Mueve el trazo (herramienta Mover, SPEC 11) con su punta y su degradado. La punta y
+    /// el pincel se actualizan ANTES que los puntos: el cambio de puntos repinta el trazo,
+    /// y ese repintado ya debe ver la punta en su sitio y el eje del degradado nuevo.
+    /// </summary>
+    public override void Transform(Matrix transformMatrix, bool applyToStylusTip)
+    {
+        if (Head is { } head)
+        {
+            Head = new ArrowHead(
+                Apply(transformMatrix, head.Left),
+                Apply(transformMatrix, head.Tip),
+                Apply(transformMatrix, head.Right));
+        }
+
+        _gradientBrush = null;
+        base.Transform(transformMatrix, applyToStylusTip);
+    }
 
     /// <summary>
     /// Recuadro del cuerpo ampliado con el de la punta. Si la punta quedara fuera, el
@@ -81,9 +101,9 @@ internal sealed class StyledStroke : Stroke
         }
     }
 
-    // Pincel de degradado del trazo, congelado y cacheado: se arma una vez (el trazo es
-    // inmutable una vez fijado) en vez de en cada repintado. null si el trazo es sólido.
-    private Brush? GradientBrush()
+    // Pincel de degradado del trazo, congelado y cacheado: se arma una vez en vez de en
+    // cada repintado, y se rehace solo si el trazo se mueve. null si el trazo es sólido.
+    internal Brush? GradientBrush()
     {
         if (Gradient is not { } pair)
         {
@@ -130,4 +150,10 @@ internal sealed class StyledStroke : Stroke
     private static double PenThickness(DrawingAttributes attributes) => Math.Max(attributes.Width, attributes.Height);
 
     private static Point ToPoint(StrokePoint point) => new(point.X, point.Y);
+
+    private static StrokePoint Apply(Matrix matrix, StrokePoint point)
+    {
+        var moved = matrix.Transform(ToPoint(point));
+        return new StrokePoint(moved.X, moved.Y);
+    }
 }

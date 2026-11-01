@@ -6,8 +6,8 @@ namespace Acetato.Presentation.Overlay;
 
 /// <summary>
 /// Historial cronológico de acciones de UNA pane (HU-13, SPEC 11): deshace «la
-/// última acción, sea cual sea» —dibujar un trazo o un texto, o borrar con el
-/// Borrador—. Los trazos se sincronizan con la <see cref="StrokeCollection"/>
+/// última acción, sea cual sea» —dibujar un trazo o un texto, borrar con el
+/// Borrador o mover—. Los trazos se sincronizan con la <see cref="StrokeCollection"/>
 /// (única fuente de verdad). Las bajas cuentan como borrado deshacible solo
 /// mientras <see cref="RecordsErasures"/> está activo (herramienta Borrador); con
 /// cualquier otra herramienta se «olvidan» en silencio, así el ir y venir del trazo
@@ -44,6 +44,12 @@ internal sealed class AnnotationHistory : IDisposable
     /// <summary>Registra un texto recién fijado al final de la línea de tiempo.</summary>
     public void RecordText(InkCanvas canvas, UIElement element) =>
         _timeline.Add(new TextAdded(canvas, element));
+
+    /// <summary>
+    /// Registra una acción que no pasa por la colección de trazos, como mover
+    /// (SPEC 11); los trazos que mueve siguen siendo los mismos objetos.
+    /// </summary>
+    public void Record(IHistoryEntry entry) => _timeline.Add(entry);
 
     /// <summary>Revierte la última acción. Sin acciones no hace nada.</summary>
     public void UndoLast()
