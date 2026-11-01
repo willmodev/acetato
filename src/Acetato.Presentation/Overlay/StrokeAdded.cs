@@ -3,14 +3,14 @@ using System.Windows.Ink;
 namespace Acetato.Presentation.Overlay;
 
 /// <summary>
-/// Entrada de trazo en el historial unificado (HU-13). Deshacerla es quitar el
+/// Entrada de trazo dibujado en el historial (HU-13). Deshacerla es quitar el
 /// <see cref="Stroke"/> de su <see cref="StrokeCollection"/>.
 /// </summary>
-internal sealed class StrokeAnnotation : IAnnotation
+internal sealed class StrokeAdded : IHistoryEntry
 {
     private readonly StrokeCollection _strokes;
 
-    public StrokeAnnotation(StrokeCollection strokes, Stroke stroke)
+    public StrokeAdded(StrokeCollection strokes, Stroke stroke)
     {
         _strokes = strokes;
         Stroke = stroke;
@@ -19,5 +19,5 @@ internal sealed class StrokeAnnotation : IAnnotation
     /// <summary>Trazo representado; lo usa el historial para sincronizar con la colección.</summary>
     public Stroke Stroke { get; }
 
-    public void Remove() => _strokes.Remove(Stroke);
+    public void Undo() => _strokes.Remove(Stroke);
 }

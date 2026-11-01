@@ -100,7 +100,10 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void DecreaseThickness() => _settings.DecreaseThickness();
 
-    /// <summary>Deshace la última anotación (trazo o texto) de esta pantalla (HU-07/HU-13).</summary>
+    /// <summary>
+    /// Deshace la última acción de esta pantalla: un trazo o texto dibujado, o lo quitado
+    /// con el Borrador (HU-07/HU-13, SPEC 11).
+    /// </summary>
     [RelayCommand]
     private void Undo() => _history.UndoLast();
 
@@ -124,6 +127,8 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
     {
         ActiveTool = _settings.SelectedTool;
         EditingMode = ToEditingMode(_settings.SelectedTool);
+        // Solo con el Borrador, quitar un trazo es una acción que Deshacer revierte (SPEC 11).
+        _history.RecordsErasures = _settings.SelectedTool == ToolKind.Eraser;
     }
 
     private static InkCanvasEditingMode ToEditingMode(ToolKind tool) => tool switch
