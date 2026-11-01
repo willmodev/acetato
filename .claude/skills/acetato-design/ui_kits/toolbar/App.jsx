@@ -9,6 +9,7 @@ function App() {
   const [tool, setTool] = useS('pencil');
   const [ink, setInk] = useS('red');
   const [gradient, setGradient] = useS(false);
+  const [inkPairs, setInkPairs] = useS(false); // Ajustes → Tintas degradadas
   const [widthIndex, setWidthIndex] = useS(0); // starts at 3 px
   const [strokes, setStrokes] = useS([]);
   const [chords, setChords] = useS(DEFAULT_CHORDS);
@@ -23,18 +24,22 @@ function App() {
 
   const flashHint = useC((text) => { setHint(text); setTimeout(() => setHint(null), 2200); }, []);
 
-  // Each gradient stroke takes a random neon pair, never the previous one.
+  // Each gradient stroke takes a random neon pair, never the previous one. With
+  // Tintas degradadas on, a solid ink paints ink → its fixed neighbor instead.
   const paint = useM(() => ({
     solid: window.ACETATO_INKS.find(i => i.id === ink).value,
     nextGradient: () => {
-      if (!gradient) return null;
+      if (!gradient) {
+        const solid = window.ACETATO_INKS.find(i => i.id === ink);
+        return inkPairs ? [solid.value, solid.end] : null;
+      }
       const pairs = window.ACETATO_GRADIENTS;
       let i;
       do { i = Math.floor(Math.random() * pairs.length); } while (i === lastPair.current);
       lastPair.current = i;
       return pairs[i];
     },
-  }), [ink, gradient]);
+  }), [ink, gradient, inkPairs]);
 
   const add = useC((s) => setStrokes(prev => [...prev, s]), []);
   const erase = useC((p) => setStrokes(prev => prev.filter(s => !window.ACETATO_HIT(s, p))), []);
@@ -97,7 +102,7 @@ function App() {
         <Toolbar
           pos={pos} setPos={setPos}
           tool={tool} setTool={setTool}
-          ink={ink} gradient={gradient} setInk={setInk} setGradient={setGradient}
+          ink={ink} gradient={gradient} inkPairs={inkPairs} setInk={setInk} setGradient={setGradient}
           widthIndex={widthIndex} setWidthIndex={setWidthIndex}
           chords={chords}
           onUndo={undo} onClear={clear} onCapture={capture}
@@ -107,7 +112,8 @@ function App() {
 
       {settingsOpen && (
         <div className="settings-backdrop">
-          <SettingsWindow chords={chords} setChords={setChords} onClose={() => setSettingsOpen(false)} />
+          <SettingsWindow chords={chords} setChords={setChords} inkPairs={inkPairs} setInkPairs={setInkPairs}
+                          onClose={() => setSettingsOpen(false)} />
         </div>
       )}
 

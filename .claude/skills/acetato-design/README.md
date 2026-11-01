@@ -43,8 +43,9 @@ confused with the user's drawing:
 1. **Chrome** — the tool's own UI. Dark translucent neutrals **+ one accent**
    (teal). The accent marks *only* what is selected.
 2. **Tintas** — the drawing inks: six solids (**red, blue, yellow, green, white,
-   black**) and six **neon gradient pairs** for Gradient mode. Saturated and
-   legible over any backdrop, light or dark.
+   black**), six **neon gradient pairs** for Gradient mode and, *proposed*, one
+   fixed **neighbor per solid** (`--ink-*-end`) for *Tintas degradadas*.
+   Saturated and legible over any backdrop, light or dark.
 
 Full token values live in [`colors_and_type.css`](./colors_and_type.css), each
 with its XAML key.
@@ -64,7 +65,10 @@ There is almost no copy in Acetato — that is the point. Text appears only in
 - **One or two words, max.** A tooltip is a noun (*Lápiz*) or a short verb
   phrase (*Limpiar todo*). Never a sentence inside the toolbar.
 - **Casing: Sentence case** (*Limpiar todo*, not *Limpiar Todo*). Settings block
-  headings too (*Siempre activos*, *Solo al dibujar*).
+  headings too (*Dibujo*, *Siempre activos*, *Solo al dibujar*).
+- **Settings hints** (one line under an option, `--fg-3`, 11px) may be a short
+  phrase with no final period: *Cada tinta pasa a un tono vecino*. Only in
+  Settings, never in the toolbar.
 - **No punctuation** ending labels. No exclamation marks, ever.
 - **No emoji.** Not in UI, not in docs-facing strings. Icons carry meaning.
 - **Keyboard hints** are monospace key caps next to the label, written in
@@ -118,7 +122,7 @@ each side. Popovers pad 12px; Settings pads 20px at the sides.
 **Corners.** Soft but not pill-round: toolbar 16px, popovers 14px, buttons 10px,
 swatch ring / tooltip / Settings keycap 8px, tooltip kbd and inner ink sample
 5px. A full round (`--r-pill`) is used only for the Gradient swatch, because it
-is a mode, not an ink.
+is a mode, not an ink, and for the Settings switch.
 
 **Borders & edges.** Every translucent surface gets a **1px hairline**
 `--stroke-1`. Dividers between tool groups and Settings rows are a single
@@ -184,7 +188,15 @@ an eye button that collapses the bar:
 - No animation beyond the instant resize.
 Popovers open directly below their trigger; tooltips too. Settings is the only
 other window (480 × 600, own draggable title, *Cerrar* button, *Restaurar todo*
-footer with inline confirmation — never a system dialog).
+footer with inline confirmation — never a system dialog). *Restaurar todo*
+resets shortcuts only, not the *Dibujo* options.
+
+**Settings switch (proposed).** For on/off options in the *Dibujo* block: a
+32 × 18 pill (`--switch-w/h`, `--r-pill`) with a 12px knob, right-aligned on
+its row. Off: `--chrome-solid-2` track, `--stroke-1` border, `--fg-2` knob on
+the left (hover: `--highlight` border). On: `--accent-fill` track,
+`--accent-ring` border, `--accent` knob on the right — the same recipe as a
+capturing keycap. No animation beyond the instant change.
 
 ---
 
@@ -195,6 +207,16 @@ footer with inline confirmation — never a system dialog).
   random neon pair (never the previous one) and keeps it; the gradient runs from
   the first to the last point (closed shapes: bounding-box diagonal). Applies to
   pencil, line, arrow and rectangle; picking a solid ink leaves the mode.
+- **Tintas degradadas (proposed)** — switch in *Ajustes → Dibujo*, off by
+  default, remembered between sessions. When on, every solid ink paints a
+  gradient from itself to its fixed neighbor on the color wheel (`--ink-*-end`):
+  red → pink, blue → indigo, yellow → orange, green → lime; white and black,
+  which have no hue, fade to gray. The pair is always the same for each ink (no
+  randomness), with the same axis and tools as Gradient mode. The ink swatches
+  and the Color button show the pair (135°, start top-left), and so does the ink
+  cursor. Text and Láser keep the flat ink. Gradient mode (the round swatch,
+  `Ctrl+7`) still picks random neon pairs and ignores the switch. No shortcut.
+  Neighbor hex values are a first pass, to be tuned by eye in the app.
 - **Thickness** steps `--thick-1…5` (3, 5, 8, 12, 18px), starting at 3.
   `Ctrl+RePág` / `Ctrl+AvPág` move one step and stop at the ends.
 - **Pencil / Arrow:** smoothed freehand. Arrow adds an open two-wing head on
@@ -209,8 +231,8 @@ footer with inline confirmation — never a system dialog).
   (`Ctrl+Retroceso`) work on whole strokes too. There is no Redo yet (HU-17).
 - `--ink-halo-*` are defined but the app does not paint halos yet.
 - **Ink cursor (HU-26).** With Lápiz, Línea, Flecha or Rectángulo the pointer is
-  a filled circle: the active ink (in gradient mode, the pair of the next stroke,
-  diagonal start → end), as wide as the thickness with a 6 DIP minimum, and the
+  a filled circle: the active ink (in gradient mode, the pair of the next stroke;
+  with *Tintas degradadas*, the ink and its neighbor; diagonal start → end), as wide as the thickness with a 6 DIP minimum, and the
   stroke starts at its center. Two 1px rings keep it visible on any background:
   dark inside (`Cursor.Ring.Dark.Color`, black 60 %), light outside
   (`Cursor.Ring.Light.Color`, white 80 %). It is a real Windows cursor, rebuilt
@@ -255,8 +277,8 @@ footer with inline confirmation — never a system dialog).
 - **Reserved** (SVGs ready, no feature yet — keep them off the bar): `circle`
   (Elipse, HU-16), `redo-2` (Rehacer, HU-17), `highlighter`, `palette`, `pin`,
   `pipette`.
-- **Color** and **Grosor** are not icons: Color shows the active ink (or the
-  gradient sample) as an 18px circle with a `--highlight` ring; Grosor is a
+- **Color** and **Grosor** are not icons: Color shows the active ink (its pair
+  with *Tintas degradadas*, or the gradient sample) as an 18px circle with a `--highlight` ring; Grosor is a
   custom **3-stacked-lines glyph** (1.5 / 2.5 / 4px).
 - **Emoji / unicode as icons: never.**
 

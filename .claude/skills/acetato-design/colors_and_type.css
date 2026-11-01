@@ -3,7 +3,8 @@
    Floating-overlay annotation tool for Windows (C#/.NET 9, WPF).
    SOURCE OF TRUTH: src/Acetato.Presentation/Resources/Tokens.xaml. These CSS
    vars mirror it (XAML key noted per token). Tokens marked "unused" exist in
-   Tokens.xaml but the app does not paint them today.
+   Tokens.xaml but the app does not paint them today. Tokens marked "proposed"
+   are designed here first and do not exist in Tokens.xaml yet.
    Two palettes:  CHROME (the UI itself)  +  TINTAS (the drawing inks).
    ============================================================================ */
 
@@ -58,6 +59,17 @@
   --ink-white:  #FFFFFF;
   --ink-black:  #0A0A0A;
 
+  /* Tintas degradadas (Ajustes → Dibujo): with the switch on, each solid ink
+     paints ink → its fixed neighbor on the color wheel (~30–50° away). White
+     and black have no hue, so they fade to gray. Start = the ink itself.
+     PROPOSED — not in Tokens.xaml yet; would be Ink.<Name>.End.Color */
+  --ink-red-end:    #FF2D92;   /* red → pink         */
+  --ink-blue-end:   #5E5CE6;   /* blue → indigo      */
+  --ink-yellow-end: #FF9F0A;   /* yellow → orange    */
+  --ink-green-end:  #A3E635;   /* green → lime       */
+  --ink-white-end:  #AEAEB2;   /* white → light gray */
+  --ink-black-end:  #636366;   /* black → dark gray  */
+
   /* Gradient mode (HU-19, Ctrl+7): neon pairs start → end. Each stroke picks a
      random pair (never the previous one) and keeps it. Ink.Gradient.*.Color */
   --ink-grad-bluecyan-start:   #2D6BFF;  --ink-grad-bluecyan-end:   #00E5FF;
@@ -83,7 +95,7 @@
   --r-popover: 14px;   /* palettes & menus           */
   --r-swatch:  8px;    /* ink swatch ring, tooltip, Settings keycap */
   --r-tight:   5px;    /* kbd inside tooltip, inner ink sample */
-  --r-pill:    999px;  /* only the round Gradient swatch */
+  --r-pill:    999px;  /* the round Gradient swatch and the Settings switch */
 
   /* Elevation — overlay floats well above everything. Values translate the
      app's DropShadowEffect (BlurRadius, ShadowDepth down, Opacity). */
@@ -110,6 +122,8 @@
   --btn-row:    26px;   /* Settings row icon button (14px glyph)              */
   --swatch:     30px;   /* ink swatch incl. 2px ring                          */
   --settings-w: 480px;  /* Settings window (480 × 600)                        */
+  --switch-w:    32px;  /* Settings switch track (32 × 18, 12px knob) · proposed */
+  --switch-h:    18px;
 
   /* Drawing scales (Domain: ThicknessScale, FontScale, LaserSession) */
   --thick-1: 3px; --thick-2: 5px; --thick-3: 8px; --thick-4: 12px; --thick-5: 18px;

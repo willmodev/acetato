@@ -16,14 +16,17 @@ then open `ui_kits/toolbar/index.html`. Everything is fake but live:
   In the app the first button is now **Puntero** (leaves drawing mode, also
   with `Esc`; see the root README, HU-24). This mock is not updated yet.
 - **Color** — 6 inks and the round **Degradado** swatch. In Gradient mode each
-  stroke takes a random neon pair (never the previous one).
+  stroke takes a random neon pair (never the previous one). With *Tintas
+  degradadas* on (Ajustes), each ink paints ink → its fixed neighbor and the
+  swatches show that pair (proposed).
 - **Grosor** — 5 steps (3, 5, 8, 12, 18 px); text size follows the step.
 - **Draw** — smoothed freehand, freehand arrow with head on release, straight
   line, rounded rectangle, multiline text (Esc or click outside confirms).
 - **Láser** — fading trail (2 s) with a halo; leaves nothing behind.
 - **Borrador** removes whole strokes. **Deshacer / Limpiar todo** as in the app.
 - **Recortar** — only shows a hint: the app opens Windows' Snipping Tool.
-- **Ajustes** — the shortcut list: click a key to capture, conflicts offer
+- **Ajustes** — the *Dibujo* switch (*Tintas degradadas*, proposed) and the
+  shortcut list: click a key to capture, conflicts offer
   *Reemplazar / Cancelar*, per-row *Restaurar* / *Quitar*, *Restaurar todo* with
   inline confirmation.
 - **Cerrar** (`Ctrl+Alt+D`) hides everything; `Ctrl+Alt+E` toggles drawing mode
@@ -41,7 +44,7 @@ then open `ui_kits/toolbar/index.html`. Everything is fake but live:
 |------|------|
 | `index.html` | Mounts React + Babel + Lucide; loads the scripts below. |
 | `kit.css` | Local layout/cosmetics; extends the root `colors_and_type.css`. |
-| `tools.jsx` | Catalogs mirrored from the app (tools, hotkeys, inks, gradient pairs, widths, font sizes) **+ the React-safe `Icon` component**. |
+| `tools.jsx` | Catalogs mirrored from the app (tools, hotkeys, inks with their neighbors, gradient pairs, widths, font sizes) **+ the React-safe `Icon` component**. |
 | `DrawSurface.jsx` | The transparent canvas: strokes, gradient, eraser, text, laser. |
 | `Toolbar.jsx` | The bar: tool buttons, ink and thickness popovers, tooltip with shortcut, drag. |
 | `SettingsWindow.jsx` | The Settings window: shortcut capture, conflicts, restore. |
