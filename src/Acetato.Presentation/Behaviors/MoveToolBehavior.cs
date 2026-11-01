@@ -149,6 +149,8 @@ public static class MoveToolBehavior
         host.PreviewKeyDown += (_, e) => OnKeyDown(canvas, e);
         host.PreviewKeyUp += (_, e) => OnKeyUp(canvas, e);
         canvas.MouseLeave += (_, _) => EndHover(canvas);
+        // Si el arrastre se corta (Alt+Tab, Esc, la capa se oculta), se cierra como al soltar.
+        canvas.LostMouseCapture += (_, _) => EndDrag(canvas);
     }
 
     private static void OnCanvasLoaded(object sender, RoutedEventArgs e) => Hook((InkCanvas)sender);
@@ -229,11 +231,16 @@ public static class MoveToolBehavior
         e.Handled = UpdateHover(canvas);
     }
 
-    private static void OnMouseUp(InkCanvas canvas, MouseButtonEventArgs e)
+    private static void OnMouseUp(InkCanvas canvas, MouseButtonEventArgs e) => e.Handled = EndDrag(canvas);
+
+    // Cierra el arrastre: lo registra en el historial y quita la mano cerrada. Devuelve si
+    // había uno. La sesión se suelta antes de liberar el mouse, porque liberarlo vuelve a
+    // entrar aquí por LostMouseCapture.
+    private static bool EndDrag(InkCanvas canvas)
     {
         if (canvas.GetValue(SessionProperty) is not MoveSession session)
         {
-            return;
+            return false;
         }
 
         canvas.SetValue(SessionProperty, null);
@@ -250,7 +257,7 @@ public static class MoveToolBehavior
             canvas.Select(new StrokeCollection(session.Targets.Strokes), session.Targets.Elements);
         }
 
-        e.Handled = true;
+        return true;
     }
 
     private static void OnKeyDown(InkCanvas canvas, KeyEventArgs e)
