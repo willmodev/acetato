@@ -151,7 +151,7 @@ html, body { margin: 0; height: 100%; font-family: var(--font-ui); -webkit-font-
 .tool--row svg { width: 14px; height: 14px; }
 .row-msg { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; gap: var(--s-2);
            margin-bottom: 6px; font-size: 11px; color: var(--danger); }
-/* Switch (proposed): 32 × 18 pill, 12px knob. Off neutral, on accent. */
+/* Switch (HU-27): 32 × 18 pill, 12px knob. Off neutral, on accent. */
 .row--switch { grid-template-columns: 1fr auto; }
 .row-hint { grid-column: 1 / -1; margin: -4px 0 4px; font-size: 11px; color: var(--fg-3); }
 .switch { width: var(--switch-w); height: var(--switch-h); padding: 2px; justify-self: end; display: flex; align-items: center;

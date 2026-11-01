@@ -43,8 +43,8 @@ confused with the user's drawing:
 1. **Chrome** — the tool's own UI. Dark translucent neutrals **+ one accent**
    (teal). The accent marks *only* what is selected.
 2. **Tintas** — the drawing inks: six solids (**red, blue, yellow, green, white,
-   black**), six **neon gradient pairs** for Gradient mode and, *proposed*, one
-   fixed **neighbor per solid** (`--ink-*-end`) for *Tintas degradadas*.
+   black**), six **neon gradient pairs** for Gradient mode and one fixed
+   **neighbor per solid** (`--ink-*-end`) for *Tintas degradadas*.
    Saturated and legible over any backdrop, light or dark.
 
 Full token values live in [`colors_and_type.css`](./colors_and_type.css), each
@@ -191,12 +191,14 @@ other window (480 × 600, own draggable title, *Cerrar* button, *Restaurar todo*
 footer with inline confirmation — never a system dialog). *Restaurar todo*
 resets shortcuts only, not the *Dibujo* options.
 
-**Settings switch (proposed).** For on/off options in the *Dibujo* block: a
-32 × 18 pill (`--switch-w/h`, `--r-pill`) with a 12px knob, right-aligned on
+**Settings switch** (`SettingsSwitch`, HU-27). For on/off options in the
+*Dibujo* block: a 32 × 18 pill (`--switch-w/h`; in the app `Size.Switch.*` and
+`Radius.Switch`, half its height) with a 12px knob, right-aligned on
 its row. Off: `--chrome-solid-2` track, `--stroke-1` border, `--fg-2` knob on
 the left (hover: `--highlight` border). On: `--accent-fill` track,
 `--accent-ring` border, `--accent` knob on the right — the same recipe as a
-capturing keycap. No animation beyond the instant change.
+capturing keycap. No animation beyond the instant change. It applies and
+saves at once; there is no Save button.
 
 ---
 
@@ -207,7 +209,7 @@ capturing keycap. No animation beyond the instant change.
   random neon pair (never the previous one) and keeps it; the gradient runs from
   the first to the last point (closed shapes: bounding-box diagonal). Applies to
   pencil, line, arrow and rectangle; picking a solid ink leaves the mode.
-- **Tintas degradadas (proposed)** — switch in *Ajustes → Dibujo*, off by
+- **Tintas degradadas (HU-27)** — switch in *Ajustes → Dibujo*, off by
   default, remembered between sessions. When on, every solid ink paints a
   gradient from itself to its fixed neighbor on the color wheel (`--ink-*-end`):
   red → pink, blue → indigo, yellow → orange, green → lime; white and black,
@@ -215,7 +217,9 @@ capturing keycap. No animation beyond the instant change.
   randomness), with the same axis and tools as Gradient mode. The ink swatches
   and the Color button show the pair (135°, start top-left), and so does the ink
   cursor. Text and Láser keep the flat ink. Gradient mode (the round swatch,
-  `Ctrl+7`) still picks random neon pairs and ignores the switch. No shortcut.
+  `Ctrl+7`) still picks random neon pairs and ignores the switch; while it is
+  on, it wins. Strokes already drawn keep their colors when the switch changes.
+  No shortcut. Saved in the `drawing` section of `settings.json`.
   Neighbor hex values are a first pass, to be tuned by eye in the app.
 - **Thickness** steps `--thick-1…5` (3, 5, 8, 12, 18px), starting at 3.
   `Ctrl+RePág` / `Ctrl+AvPág` move one step and stop at the ends.

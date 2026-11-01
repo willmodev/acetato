@@ -43,7 +43,7 @@ const ACETATO_HOTKEYS = [
 ];
 
 // Solid inks (Ink.*), in swatch and Ctrl+1…6 order. `end` is the fixed neighbor
-// used by Ajustes → Tintas degradadas (proposed, --ink-*-end).
+// used by Ajustes → Tintas degradadas (HU-27, --ink-*-end).
 const ACETATO_INKS = [
   { id: 'red',    value: '#FF3B30', end: '#FF2D92', label: 'Tinta roja' },
   { id: 'blue',   value: '#0A84FF', end: '#5E5CE6', label: 'Tinta azul' },

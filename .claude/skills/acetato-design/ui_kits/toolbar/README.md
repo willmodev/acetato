@@ -18,14 +18,14 @@ then open `ui_kits/toolbar/index.html`. Everything is fake but live:
 - **Color** — 6 inks and the round **Degradado** swatch. In Gradient mode each
   stroke takes a random neon pair (never the previous one). With *Tintas
   degradadas* on (Ajustes), each ink paints ink → its fixed neighbor and the
-  swatches show that pair (proposed).
+  swatches show that pair (HU-27).
 - **Grosor** — 5 steps (3, 5, 8, 12, 18 px); text size follows the step.
 - **Draw** — smoothed freehand, freehand arrow with head on release, straight
   line, rounded rectangle, multiline text (Esc or click outside confirms).
 - **Láser** — fading trail (2 s) with a halo; leaves nothing behind.
 - **Borrador** removes whole strokes. **Deshacer / Limpiar todo** as in the app.
 - **Recortar** — only shows a hint: the app opens Windows' Snipping Tool.
-- **Ajustes** — the *Dibujo* switch (*Tintas degradadas*, proposed) and the
+- **Ajustes** — the *Dibujo* switch (*Tintas degradadas*) and the
   shortcut list: click a key to capture, conflicts offer
   *Reemplazar / Cancelar*, per-row *Restaurar* / *Quitar*, *Restaurar todo* with
   inline confirmation.
