@@ -71,6 +71,7 @@ public sealed class HotkeyCatalogTests
                 (HotkeyAction.SelectLineTool, "Ctrl+I"),
                 (HotkeyAction.SelectArrowTool, "Ctrl+F"),
                 (HotkeyAction.SelectRectangleTool, "Ctrl+R"),
+                (HotkeyAction.SelectEllipseTool, "Ctrl+O"),
                 (HotkeyAction.SelectTextTool, "Ctrl+T"),
                 (HotkeyAction.ThicknessUp, "Ctrl+PageUp"),
                 (HotkeyAction.ThicknessDown, "Ctrl+PageDown"),
@@ -83,6 +84,7 @@ public sealed class HotkeyCatalogTests
     [InlineData(HotkeyAction.SelectLineTool)]
     [InlineData(HotkeyAction.SelectArrowTool)]
     [InlineData(HotkeyAction.SelectRectangleTool)]
+    [InlineData(HotkeyAction.SelectEllipseTool)]
     [InlineData(HotkeyAction.ThicknessUp)]
     [InlineData(HotkeyAction.ThicknessDown)]
     public void The_actions_of_HU_22_are_only_active_while_drawing(HotkeyAction action)

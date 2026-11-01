@@ -251,6 +251,7 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
         new(ToolKind.Line, shortcuts.Hint("Línea", HotkeyAction.SelectLineTool), Glyph("Icon.Line"), true),
         new(ToolKind.Arrow, shortcuts.Hint("Flecha", HotkeyAction.SelectArrowTool), Glyph("Icon.Arrow"), true),
         new(ToolKind.Rectangle, shortcuts.Hint("Rectángulo", HotkeyAction.SelectRectangleTool), Glyph("Icon.Rectangle"), true),
+        new(ToolKind.Ellipse, shortcuts.Hint("Elipse", HotkeyAction.SelectEllipseTool), Glyph("Icon.Ellipse"), true),
         new(ToolKind.Text, shortcuts.Hint("Texto", HotkeyAction.SelectTextTool), Glyph("Icon.Text"), true),
     ];
 

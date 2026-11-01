@@ -9,8 +9,8 @@ namespace Acetato.Presentation.Behaviors;
 
 /// <summary>
 /// Comportamiento adjunto que dibuja formas (HU-11) sobre el InkCanvas sin lógica
-/// en el code-behind. Cuando la herramienta activa es una forma (línea o
-/// rectángulo), captura el mouse y va reemplazando un trazo de previsualización
+/// en el code-behind. Cuando la herramienta activa es una forma (línea,
+/// rectángulo o elipse; con Mayús, la elipse es un círculo, HU-16), captura el mouse y va reemplazando un trazo de previsualización
 /// mientras se arrastra; al soltar, el último queda fijo. Cada forma es UN
 /// <see cref="Stroke"/>, así reutiliza undo/limpiar/color/grosor. Con el modo Degradado
 /// activo (HU-19) la forma se pinta con su par ya durante el arrastre y, al soltar, avisa
@@ -64,7 +64,7 @@ public static class ShapeDrawingBehavior
     }
 
     private static bool IsShapeTool(ToolKind tool) =>
-        tool is ToolKind.Line or ToolKind.Rectangle;
+        tool is ToolKind.Line or ToolKind.Rectangle or ToolKind.Ellipse;
 
     private static void OnMouseDown(object sender, MouseButtonEventArgs e)
     {
@@ -116,8 +116,12 @@ public static class ShapeDrawingBehavior
             canvas.Strokes.Remove(session.Preview);
         }
 
+        var tool = GetTool(canvas);
+        var end = tool == ToolKind.Ellipse && Keyboard.Modifiers.HasFlag(ModifierKeys.Shift)
+            ? ShapeConstraint.Square(session.Start, current)
+            : current;
         var thickness = canvas.DefaultDrawingAttributes.Width;
-        var points = ShapeBuilder.Build(GetTool(canvas), session.Start, current, thickness);
+        var points = ShapeBuilder.Build(tool, session.Start, end, thickness);
         var stroke = BuildStroke(points, canvas.DefaultDrawingAttributes, InkGradient.GetPair(canvas));
         canvas.Strokes.Add(stroke);
         session.Preview = stroke;

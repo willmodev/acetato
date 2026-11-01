@@ -29,6 +29,7 @@ internal static class HotkeyActionLabels
         [HotkeyAction.SelectLineTool] = "Línea",
         [HotkeyAction.SelectArrowTool] = "Flecha",
         [HotkeyAction.SelectRectangleTool] = "Rectángulo",
+        [HotkeyAction.SelectEllipseTool] = "Elipse",
         [HotkeyAction.SelectTextTool] = "Texto",
         [HotkeyAction.ThicknessUp] = "Más grueso",
         [HotkeyAction.ThicknessDown] = "Más fino",

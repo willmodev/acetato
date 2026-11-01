@@ -59,6 +59,7 @@ internal sealed class HotkeyActionRouter
         [HotkeyAction.SelectLineTool] = () => broadcaster.SelectTool(ToolKind.Line),
         [HotkeyAction.SelectArrowTool] = () => broadcaster.SelectTool(ToolKind.Arrow),
         [HotkeyAction.SelectRectangleTool] = () => broadcaster.SelectTool(ToolKind.Rectangle),
+        [HotkeyAction.SelectEllipseTool] = () => broadcaster.SelectTool(ToolKind.Ellipse),
         [HotkeyAction.ThicknessUp] = broadcaster.IncreaseThickness,
         [HotkeyAction.ThicknessDown] = broadcaster.DecreaseThickness,
         [HotkeyAction.EnterPointerMode] = () => EnterPointerMode(controller, broadcaster),

@@ -19,6 +19,12 @@ namespace Acetato.Presentation.Behaviors;
 /// </summary>
 public static class ToolCursorBehavior
 {
+    // Herramientas que pintan tinta: su cursor es el círculo de tinta (HU-26).
+    private static readonly HashSet<ToolKind> InkTools =
+    [
+        ToolKind.Pencil, ToolKind.Arrow, ToolKind.Line, ToolKind.Rectangle, ToolKind.Ellipse,
+    ];
+
     /// <summary>Herramienta activa (enlazada al ViewModel del overlay).</summary>
     public static readonly DependencyProperty ToolProperty =
         DependencyProperty.RegisterAttached(
@@ -65,10 +71,9 @@ public static class ToolCursorBehavior
     /// </summary>
     internal static Cursor? CursorFor(ToolKind tool, InkCursorTip? tip, double scale) => tool switch
     {
-        ToolKind.Pencil or ToolKind.Arrow or ToolKind.Line or ToolKind.Rectangle =>
-            tip is null ? Cursors.Cross : InkCursorFactory.For(tip, scale),
         ToolKind.Text => Cursors.IBeam,
         ToolKind.Laser => Cursors.None,
+        _ when InkTools.Contains(tool) => tip is null ? Cursors.Cross : InkCursorFactory.For(tip, scale),
         _ => null,
     };
 

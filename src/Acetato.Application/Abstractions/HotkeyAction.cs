@@ -71,6 +71,9 @@ public enum HotkeyAction
     /// <summary>Seleccionar la herramienta Rectángulo (HU-22).</summary>
     SelectRectangleTool,
 
+    /// <summary>Seleccionar la herramienta Elipse (HU-16).</summary>
+    SelectEllipseTool,
+
     /// <summary>Subir el grosor un paso, con tope en el más grueso (HU-22).</summary>
     ThicknessUp,
 

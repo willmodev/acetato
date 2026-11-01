@@ -14,7 +14,7 @@ public static class HotkeyCatalog
     private const HotkeyModifiers CtrlAlt = HotkeyModifiers.Ctrl | HotkeyModifiers.Alt;
 
     /// <summary>
-    /// Las 23 definiciones, en orden de presentación. Las de elegir herramienta
+    /// Las 24 definiciones, en orden de presentación. Las de elegir herramienta
     /// siguen el orden de la barra (HU-22), seguidas del grosor.
     /// </summary>
     public static IReadOnlyList<HotkeyDefinition> All { get; } =
@@ -38,6 +38,7 @@ public static class HotkeyCatalog
         Drawing(HotkeyAction.SelectLineTool, HotkeyKey.I),
         Drawing(HotkeyAction.SelectArrowTool, HotkeyKey.F),
         Drawing(HotkeyAction.SelectRectangleTool, HotkeyKey.R),
+        Drawing(HotkeyAction.SelectEllipseTool, HotkeyKey.O),
         Drawing(HotkeyAction.SelectTextTool, HotkeyKey.T),
         Drawing(HotkeyAction.ThicknessUp, HotkeyKey.PageUp),
         Drawing(HotkeyAction.ThicknessDown, HotkeyKey.PageDown),

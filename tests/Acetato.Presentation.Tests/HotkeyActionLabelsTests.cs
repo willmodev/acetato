@@ -20,6 +20,7 @@ public sealed class HotkeyActionLabelsTests
     [InlineData(HotkeyAction.SelectLineTool, "Línea")]
     [InlineData(HotkeyAction.SelectArrowTool, "Flecha")]
     [InlineData(HotkeyAction.SelectRectangleTool, "Rectángulo")]
+    [InlineData(HotkeyAction.SelectEllipseTool, "Elipse")]
     [InlineData(HotkeyAction.ThicknessUp, "Más grueso")]
     [InlineData(HotkeyAction.ThicknessDown, "Más fino")]
     public void The_actions_of_HU_22_have_their_spanish_label(HotkeyAction action, string expected)
