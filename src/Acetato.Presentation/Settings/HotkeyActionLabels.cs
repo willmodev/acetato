@@ -23,6 +23,7 @@ internal static class HotkeyActionLabels
         [HotkeyAction.Undo] = "Deshacer",
         [HotkeyAction.Clear] = "Limpiar todo",
         [HotkeyAction.CycleTool] = "Siguiente herramienta",
+        [HotkeyAction.SelectMoveTool] = "Mover",
         [HotkeyAction.SelectPencilTool] = "Lápiz",
         [HotkeyAction.SelectLaserTool] = "Láser",
         [HotkeyAction.SelectEraserTool] = "Borrador",

@@ -68,7 +68,11 @@ public sealed class OverlayPane : IOverlayCanvas, IDisposable
         _shown = true;
     }
 
-    public void Hide() => _window.Hide();
+    public void Hide()
+    {
+        MoveToolBehavior.ClearSelection(_window.InkSurface);
+        _window.Hide();
+    }
 
     public void ApplyStyles()
     {
@@ -91,6 +95,11 @@ public sealed class OverlayPane : IOverlayCanvas, IDisposable
         }
 
         _styler.SetClickThrough(handle, clickThrough);
+        if (clickThrough)
+        {
+            // Pasar a Puntero (Esc) quita la selección de la mano (SPEC 11).
+            MoveToolBehavior.ClearSelection(_window.InkSurface);
+        }
     }
 
     public void Clear() => _viewModel.ClearCommand.Execute(null);

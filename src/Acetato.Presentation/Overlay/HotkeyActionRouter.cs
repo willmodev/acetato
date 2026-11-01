@@ -54,6 +54,7 @@ internal sealed class HotkeyActionRouter
         [HotkeyAction.Capture] = broadcaster.LaunchScreenClip,
         [HotkeyAction.SelectTextTool] = () => broadcaster.SelectTool(ToolKind.Text),
         [HotkeyAction.SelectLaserTool] = () => broadcaster.SelectTool(ToolKind.Laser),
+        [HotkeyAction.SelectMoveTool] = () => broadcaster.SelectTool(ToolKind.Move),
         [HotkeyAction.SelectPencilTool] = () => broadcaster.SelectTool(ToolKind.Pencil),
         [HotkeyAction.SelectEraserTool] = () => broadcaster.SelectTool(ToolKind.Eraser),
         [HotkeyAction.SelectLineTool] = () => broadcaster.SelectTool(ToolKind.Line),

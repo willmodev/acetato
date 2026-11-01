@@ -26,7 +26,7 @@ public sealed class ToolbarWindowSmokeTests
         var (labels, hasTooltipStyle) = WpfTestHost.Run(LoadToolbar);
 
         hasTooltipStyle.Should().BeTrue();
-        labels.Should().Contain(["Ocultar barra", "Puntero", "Lápiz", "Rectángulo", "Deshacer", "Limpiar todo", "Recortar", "Cerrar", "Mover"]);
+        labels.Should().Contain(["Ocultar barra", "Puntero", "Lápiz", "Rectángulo", "Deshacer", "Limpiar todo", "Recortar", "Cerrar", "Mover", "Mover barra", "Elipse"]);
     }
 
     [Fact]

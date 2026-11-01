@@ -15,6 +15,7 @@ public sealed class HotkeyActionLabelsTests
     }
 
     [Theory]
+    [InlineData(HotkeyAction.SelectMoveTool, "Mover")]
     [InlineData(HotkeyAction.SelectPencilTool, "Lápiz")]
     [InlineData(HotkeyAction.SelectEraserTool, "Borrador")]
     [InlineData(HotkeyAction.SelectLineTool, "Línea")]

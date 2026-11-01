@@ -56,6 +56,9 @@ public enum HotkeyAction
     /// <summary>Seleccionar la herramienta Láser (HU-15).</summary>
     SelectLaserTool,
 
+    /// <summary>Seleccionar la herramienta Mover (HU-14).</summary>
+    SelectMoveTool,
+
     /// <summary>Seleccionar la herramienta Lápiz (HU-22).</summary>
     SelectPencilTool,
 

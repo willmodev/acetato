@@ -31,7 +31,7 @@ public static class ToolCursorBehavior
             "Tool",
             typeof(ToolKind),
             typeof(ToolCursorBehavior),
-            new PropertyMetadata(ToolKind.Select, OnCursorInputChanged));
+            new PropertyMetadata(ToolKind.Move, OnCursorInputChanged));
 
     /// <summary>Tinta y grosor del círculo (HU-26), enlazados al ViewModel del overlay.</summary>
     public static readonly DependencyProperty TipProperty =
@@ -73,6 +73,7 @@ public static class ToolCursorBehavior
     {
         ToolKind.Text => Cursors.IBeam,
         ToolKind.Laser => Cursors.None,
+        ToolKind.Move => HandCursorFactory.Open(scale),
         _ when InkTools.Contains(tool) => tip is null ? Cursors.Cross : InkCursorFactory.For(tip, scale),
         _ => null,
     };
@@ -100,5 +101,7 @@ public static class ToolCursorBehavior
         var cursor = CursorFor(GetTool(canvas), GetTip(canvas), VisualTreeHelper.GetDpi(canvas).DpiScaleX);
         canvas.Cursor = cursor;
         canvas.ForceCursor = cursor is not null;
+        // En modo selección (Mover) el lienzo pone sus propios cursores si no se le pide el nuestro.
+        canvas.UseCustomCursor = cursor is not null;
     }
 }

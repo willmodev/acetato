@@ -85,6 +85,9 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
     /// <summary>Registra un texto recién fijado en el historial de esta pane (HU-13).</summary>
     public void RecordText(InkCanvas canvas, UIElement element) => _history.RecordText(canvas, element);
 
+    /// <summary>Registra un arrastre de la mano o de Ctrl en el historial de esta pane (SPEC 11).</summary>
+    internal void RecordMove(AnnotationsMoved moved) => _history.Record(moved);
+
     /// <summary>
     /// Un trazo se fijó en degradado: sortea el par del siguiente (HU-19). Enlazado a
     /// <c>InkGradient.UsedCommand</c>.
@@ -134,6 +137,7 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
     private static InkCanvasEditingMode ToEditingMode(ToolKind tool) => tool switch
     {
         ToolKind.Eraser => InkCanvasEditingMode.EraseByStroke,
+        ToolKind.Move => InkCanvasEditingMode.Select, // el lazo de la mano (SPEC 11)
         _ => InkCanvasEditingMode.None, // lápiz y flecha (captura propia, HU-20), formas, texto y láser: los dibuja su behavior
     };
 

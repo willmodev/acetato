@@ -19,12 +19,12 @@ namespace Acetato.Presentation.Tests;
 public sealed class SettingsWindowSmokeTests
 {
     [Fact]
-    public void Settings_window_loads_and_lays_out_the_twenty_four_rows()
+    public void Settings_window_loads_and_lays_out_the_twenty_five_rows()
     {
         int texts = WpfTestHost.Run(() => WithContent(content => VisualTree.Descendants<TextBlock>(content).Count()));
 
-        // 24 nombres + 24 combinaciones como mínimo.
-        texts.Should().BeGreaterThanOrEqualTo(48);
+        // 25 nombres + 25 combinaciones como mínimo.
+        texts.Should().BeGreaterThanOrEqualTo(50);
     }
 
     [Fact]

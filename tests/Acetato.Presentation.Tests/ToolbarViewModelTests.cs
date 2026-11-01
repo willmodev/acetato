@@ -114,12 +114,24 @@ public sealed class ToolbarViewModelTests
     }
 
     [Fact]
-    public void The_pointer_is_not_a_drawing_tool_of_the_bar()
+    public void Move_is_the_first_tool_of_the_bar_and_the_pointer_is_not_a_tool()
     {
         var kinds = WpfTestHost.Run(() => WithToolbar((_, viewModel) =>
             viewModel.Tools.Select(tool => tool.Kind).ToList()));
 
-        kinds.Should().NotContain(ToolKind.Select);
+        kinds[0].Should().Be(ToolKind.Move);
+        kinds[1].Should().Be(ToolKind.Pencil);
+    }
+
+    [Fact]
+    public void The_move_tooltip_shows_its_shortcut_and_the_grip_says_move_bar()
+    {
+        var (move, grip) = WpfTestHost.Run(() => WithToolbar((_, viewModel) =>
+            (viewModel.Tools.Single(tool => tool.Kind == ToolKind.Move).Hint, viewModel.MoveHint)));
+
+        move.Label.Should().Be("Mover");
+        move.Shortcut.Should().Be("Ctrl+M");
+        grip.Label.Should().Be("Mover barra");
     }
 
     [Fact]

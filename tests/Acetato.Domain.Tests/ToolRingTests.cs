@@ -43,6 +43,6 @@ public sealed class ToolRingTests
     [Fact]
     public void Next_from_a_tool_outside_the_ring_returns_the_first()
     {
-        ToolRing.Next(ToolKind.Select).Should().Be(ToolKind.Pencil);
+        ToolRing.Next(ToolKind.Move).Should().Be(ToolKind.Pencil);
     }
 }

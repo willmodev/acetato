@@ -65,6 +65,7 @@ public sealed class HotkeyCatalogTests
                 (HotkeyAction.Undo, "Ctrl+Z"),
                 (HotkeyAction.Clear, "Ctrl+Back"),
                 (HotkeyAction.CycleTool, "Ctrl+Space"),
+                (HotkeyAction.SelectMoveTool, "Ctrl+M"),
                 (HotkeyAction.SelectPencilTool, "Ctrl+P"),
                 (HotkeyAction.SelectLaserTool, "Ctrl+L"),
                 (HotkeyAction.SelectEraserTool, "Ctrl+B"),
@@ -79,6 +80,7 @@ public sealed class HotkeyCatalogTests
     }
 
     [Theory]
+    [InlineData(HotkeyAction.SelectMoveTool)]
     [InlineData(HotkeyAction.SelectPencilTool)]
     [InlineData(HotkeyAction.SelectEraserTool)]
     [InlineData(HotkeyAction.SelectLineTool)]
