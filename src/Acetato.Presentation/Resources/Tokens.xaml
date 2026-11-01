@@ -66,6 +66,18 @@
     <SolidColorBrush x:Key="Ink.Black" Color="{StaticResource Ink.Black.Color}" />
 
     <!--
+      Tintas degradadas (HU-27): con el interruptor de Ajustes encendido, cada tinta
+      sólida pinta de sí misma a su vecina fija del círculo cromático. Blanca y negra,
+      sin tono, van a gris. Hex iniciales, ajustables a ojo.
+    -->
+    <Color x:Key="Ink.Red.End.Color">#FFFF2D92</Color>
+    <Color x:Key="Ink.Blue.End.Color">#FF5E5CE6</Color>
+    <Color x:Key="Ink.Yellow.End.Color">#FFFF9F0A</Color>
+    <Color x:Key="Ink.Green.End.Color">#FFA3E635</Color>
+    <Color x:Key="Ink.White.End.Color">#FFAEAEB2</Color>
+    <Color x:Key="Ink.Black.End.Color">#FF636366</Color>
+
+    <!--
       Pares neón del modo Degradado (HU-19). Son tintas (trazos del usuario), no
       chrome: viven en la paleta Ink.* y nunca se mezclan con Chrome.*. Cada trazo en
       degradado toma un par al azar (inicio → fin). Hex iniciales, ajustables a ojo.

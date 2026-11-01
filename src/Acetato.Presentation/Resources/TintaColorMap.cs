@@ -12,17 +12,23 @@ namespace Acetato.Presentation.Resources;
 public static class TintaColorMap
 {
     /// <summary>Color WPF del token de tinta para la <paramref name="color"/> dada.</summary>
-    public static Color Resolve(TintaColor color) =>
-        (Color)System.Windows.Application.Current.Resources[ResourceKey(color)];
+    public static Color Resolve(TintaColor color) => Lookup($"Ink.{Name(color)}.Color");
 
-    private static string ResourceKey(TintaColor color) => color switch
+    /// <summary>Vecina fija de la <paramref name="color"/> dada (<c>Ink.*.End.Color</c>, HU-27).</summary>
+    public static Color ResolveEnd(TintaColor color) => Lookup($"Ink.{Name(color)}.End.Color");
+
+    private static Color Lookup(string key) =>
+        (Color)System.Windows.Application.Current.Resources[key];
+
+    // Un valor fuera del enum (cast inválido) cae a la tinta roja.
+    private static string Name(TintaColor color) => color switch
     {
-        TintaColor.Red => "Ink.Red.Color",
-        TintaColor.Blue => "Ink.Blue.Color",
-        TintaColor.Yellow => "Ink.Yellow.Color",
-        TintaColor.Green => "Ink.Green.Color",
-        TintaColor.White => "Ink.White.Color",
-        TintaColor.Black => "Ink.Black.Color",
-        _ => "Ink.Red.Color",
+        TintaColor.Red => "Red",
+        TintaColor.Blue => "Blue",
+        TintaColor.Yellow => "Yellow",
+        TintaColor.Green => "Green",
+        TintaColor.White => "White",
+        TintaColor.Black => "Black",
+        _ => "Red",
     };
 }
