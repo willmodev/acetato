@@ -6,8 +6,8 @@ namespace Acetato.Presentation.ViewModels;
 
 /// <summary>
 /// Ítem del popover de tintas (HU-10): una tinta sólida seleccionable, o la muestra del
-/// modo Degradado (HU-19). Lleva su pincel para pintar la muestra y si está activo
-/// (para mostrar el anillo de acento).
+/// modo Degradado (HU-19). Lleva su pincel para pintar la muestra, que cambia con Tintas
+/// degradadas (HU-27), y si está activo (para mostrar el anillo de acento).
 /// </summary>
 public sealed partial class InkSwatchItem : ObservableObject
 {
@@ -16,10 +16,12 @@ public sealed partial class InkSwatchItem : ObservableObject
     {
     }
 
+    private Brush _fill;
+
     private InkSwatchItem(TintaColor? color, Brush fill)
     {
         Color = color;
-        Fill = fill;
+        _fill = fill;
     }
 
     /// <summary>Tinta sólida que representa este ítem; <c>null</c> en la muestra de degradado.</summary>
@@ -28,8 +30,12 @@ public sealed partial class InkSwatchItem : ObservableObject
     /// <summary>Indica si es la muestra del modo Degradado (no una tinta sólida).</summary>
     public bool IsGradient => Color is null;
 
-    /// <summary>Pincel con el color de la tinta, o con el degradado de muestra.</summary>
-    public Brush Fill { get; }
+    /// <summary>Pincel con el color de la tinta (o su par), o con el degradado de muestra.</summary>
+    public Brush Fill
+    {
+        get => _fill;
+        set => SetProperty(ref _fill, value);
+    }
 
     /// <summary>Indica si es la opción activa (la tinta elegida o el modo Degradado).</summary>
     [ObservableProperty]

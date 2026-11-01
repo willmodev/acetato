@@ -1,5 +1,6 @@
 // Acetato — the Settings window (SettingsWindow.xaml + SettingsStyles.xaml):
-// the editable shortcut list with capture, conflicts, restore and remove.
+// the Dibujo switch and the editable shortcut list with capture, conflicts,
+// restore and remove.
 const { useState: useSt, useEffect: useEf } = React;
 
 // Rules from KeyChordRules / HotkeyMessages.
@@ -41,7 +42,19 @@ function HotkeyRow({ def, chord, isCapturing, message, canReplace, onCapture, on
   );
 }
 
-function SettingsWindow({ chords, setChords, onClose }) {
+// On/off row. Off is neutral; on uses the accent, like a capturing keycap.
+function SwitchRow({ label, hint, checked, onChange }) {
+  return (
+    <div className="row row--switch">
+      <span className="row-label">{label}</span>
+      <button className={'switch' + (checked ? ' switch--on' : '')} role="switch" aria-checked={checked}
+              aria-label={label} onClick={() => onChange(!checked)}></button>
+      {hint && <span className="row-hint">{hint}</span>}
+    </div>
+  );
+}
+
+function SettingsWindow({ chords, setChords, inkPairs, setInkPairs, onClose }) {
   const Icon = window.Icon;
   const defs = window.ACETATO_HOTKEYS;
   const [capturing, setCapturing] = useSt(null);  // action being captured
@@ -99,6 +112,9 @@ function SettingsWindow({ chords, setChords, onClose }) {
       </div>
       <div className="hr"></div>
       <div className="settings-body">
+        <div className="settings-cap">Dibujo</div>
+        <SwitchRow label="Tintas degradadas" hint="Cada tinta pasa a un tono vecino"
+                   checked={inkPairs} onChange={setInkPairs} />
         <div className="settings-cap">Siempre activos</div>
         {defs.filter(d => d.scope === 'always').map(renderRow)}
         <div className="settings-cap">Solo al dibujar</div>

@@ -275,6 +275,7 @@ public sealed class DrawingSettingsTests
     public void Advance_gradient_raises_changed()
     {
         var settings = CreateSettings();
+        settings.SelectGradient();
         var raised = 0;
         settings.Changed += (_, _) => raised++;
 
@@ -287,6 +288,7 @@ public sealed class DrawingSettingsTests
     public void Advance_gradient_never_repeats_the_previous_pair()
     {
         var settings = CreateSettings(3, 3, 0, 4, 2);
+        settings.SelectGradient();
         var previous = settings.NextGradient;
 
         for (var i = 0; i < 20; i++)
@@ -302,6 +304,7 @@ public sealed class DrawingSettingsTests
     public void Advance_gradient_never_repeats_with_the_production_source()
     {
         var settings = CreateSettings();
+        settings.SelectGradient();
         var previous = settings.NextGradient;
 
         for (var i = 0; i < 200; i++)
@@ -311,5 +314,78 @@ public sealed class DrawingSettingsTests
             settings.NextGradient.Should().NotBe(previous);
             previous = settings.NextGradient;
         }
+    }
+
+    [Fact]
+    public void Advance_gradient_outside_the_gradient_mode_does_nothing()
+    {
+        var settings = CreateSettings(3, 0);
+        settings.SetInkPairs(true);
+        var before = settings.NextGradient;
+        var raised = 0;
+        settings.Changed += (_, _) => raised++;
+
+        settings.AdvanceGradient();
+
+        settings.NextGradient.Should().Be(before);
+        raised.Should().Be(0);
+    }
+
+    [Fact]
+    public void Ink_pairs_start_off_and_the_next_stroke_is_flat()
+    {
+        var settings = CreateSettings();
+
+        settings.InkPairsEnabled.Should().BeFalse();
+        settings.NextStrokePair.Should().BeNull();
+    }
+
+    [Fact]
+    public void With_ink_pairs_the_next_stroke_goes_from_the_ink_to_its_neighbor()
+    {
+        var settings = CreateSettings();
+        settings.SelectColor(TintaColor.Yellow);
+
+        settings.SetInkPairs(true);
+
+        settings.NextStrokePair.Should().Be(GradientPair.FromInk(TintaColor.Yellow));
+    }
+
+    [Fact]
+    public void The_neon_mode_wins_over_ink_pairs()
+    {
+        var settings = CreateSettings(3);
+        settings.SetInkPairs(true);
+
+        settings.SelectGradient();
+
+        settings.NextStrokePair.Should().Be(GradientPair.FromNeon(TintaGradiente.VioletPink));
+    }
+
+    [Fact]
+    public void Picking_an_ink_from_the_neon_mode_with_ink_pairs_on_uses_that_ink_pair()
+    {
+        var settings = CreateSettings();
+        settings.SetInkPairs(true);
+        settings.SelectGradient();
+
+        settings.SelectColor(TintaColor.Blue);
+
+        settings.NextStrokePair.Should().Be(GradientPair.FromInk(TintaColor.Blue));
+    }
+
+    [Fact]
+    public void Set_ink_pairs_raises_changed_only_when_the_value_changes()
+    {
+        var settings = CreateSettings();
+        var raised = 0;
+        settings.Changed += (_, _) => raised++;
+
+        settings.SetInkPairs(true);
+        settings.SetInkPairs(true);
+        settings.SetInkPairs(false);
+
+        raised.Should().Be(2);
+        settings.InkPairsEnabled.Should().BeFalse();
     }
 }

@@ -42,15 +42,21 @@ const ACETATO_HOTKEYS = [
   { action: 'capture',   label: 'Recortar',              scope: 'drawing', chord: 'Ctrl+S' },
 ];
 
-// Solid inks (Ink.*), in swatch and Ctrl+1…6 order.
+// Solid inks (Ink.*), in swatch and Ctrl+1…6 order. `end` is the fixed neighbor
+// used by Ajustes → Tintas degradadas (HU-27, --ink-*-end).
 const ACETATO_INKS = [
-  { id: 'red',    value: '#FF3B30', label: 'Tinta roja' },
-  { id: 'blue',   value: '#0A84FF', label: 'Tinta azul' },
-  { id: 'yellow', value: '#FFD60A', label: 'Tinta amarilla' },
-  { id: 'green',  value: '#30D158', label: 'Tinta verde' },
-  { id: 'white',  value: '#FFFFFF', label: 'Tinta blanca' },
-  { id: 'black',  value: '#0A0A0A', label: 'Tinta negra' },
+  { id: 'red',    value: '#FF3B30', end: '#FF2D92', label: 'Tinta roja' },
+  { id: 'blue',   value: '#0A84FF', end: '#5E5CE6', label: 'Tinta azul' },
+  { id: 'yellow', value: '#FFD60A', end: '#FF9F0A', label: 'Tinta amarilla' },
+  { id: 'green',  value: '#30D158', end: '#A3E635', label: 'Tinta verde' },
+  { id: 'white',  value: '#FFFFFF', end: '#AEAEB2', label: 'Tinta blanca' },
+  { id: 'black',  value: '#0A0A0A', end: '#636366', label: 'Tinta negra' },
 ];
+
+// Swatch background for a solid ink: flat, or its pair when Tintas degradadas is on.
+function inkFill(ink, paired) {
+  return paired ? `linear-gradient(135deg, ${ink.value}, ${ink.end})` : ink.value;
+}
 
 // Gradient mode neon pairs (Ink.Gradient.*), start → end.
 const ACETATO_GRADIENTS = [
@@ -85,6 +91,7 @@ window.ACETATO_TOOLS = ACETATO_TOOLS;
 window.ACETATO_TOOL_RING = ACETATO_TOOL_RING;
 window.ACETATO_HOTKEYS = ACETATO_HOTKEYS;
 window.ACETATO_INKS = ACETATO_INKS;
+window.inkFill = inkFill;
 window.ACETATO_GRADIENTS = ACETATO_GRADIENTS;
 window.ACETATO_WIDTHS = ACETATO_WIDTHS;
 window.ACETATO_FONT_SIZES = ACETATO_FONT_SIZES;

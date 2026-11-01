@@ -3,13 +3,13 @@
 const { useState, useCallback: useCb } = React;
 const Icon = window.Icon;
 
-function InkPopover({ ink, gradient, onPick, onGradient }) {
+function InkPopover({ ink, gradient, inkPairs, onPick, onGradient }) {
   return (
     <div className="popover">
       {window.ACETATO_INKS.map(i => (
         <button key={i.id} className={'ink' + (!gradient && ink === i.id ? ' ink--sel' : '')}
                 title={i.label} aria-label={i.label} onClick={() => onPick(i.id)}>
-          <i style={{ background: i.value }}></i>
+          <i style={{ background: window.inkFill(i, inkPairs) }}></i>
         </button>
       ))}
       {/* Round: Gradient is a mode, not an ink. */}
@@ -38,7 +38,7 @@ function ThicknessPopover({ index, onPick }) {
 }
 
 function Toolbar(props) {
-  const { pos, setPos, tool, setTool, ink, gradient, setInk, setGradient, widthIndex, setWidthIndex,
+  const { pos, setPos, tool, setTool, ink, gradient, inkPairs, setInk, setGradient, widthIndex, setWidthIndex,
           chords, onUndo, onClear, onCapture, onSettings, onClose } = props;
   const [open, setOpen] = useState(null); // 'ink' | 'thick' | null
   const [hover, setHover] = useState(null);
@@ -63,7 +63,7 @@ function Toolbar(props) {
     onMouseLeave: () => setHover(null),
   });
   const toggle = (name) => setOpen(open === name ? null : name);
-  const solid = window.ACETATO_INKS.find(i => i.id === ink).value;
+  const solid = window.inkFill(window.ACETATO_INKS.find(i => i.id === ink), inkPairs);
 
   return (
     <div className="bar" style={{ left: pos.x, top: pos.y }} role="toolbar" aria-label="Acetato">
@@ -92,7 +92,7 @@ function Toolbar(props) {
           <span className={'swatch' + (gradient ? ' grad-sample' : '')} style={gradient ? null : { background: solid }}></span>
         </button>
         {open === 'ink' && (
-          <InkPopover ink={ink} gradient={gradient}
+          <InkPopover ink={ink} gradient={gradient} inkPairs={inkPairs}
                       onPick={(id) => { setInk(id); setGradient(false); setOpen(null); }}
                       onGradient={() => { setGradient(true); setOpen(null); }} />
         )}

@@ -34,7 +34,7 @@ internal static class ToolbarHost
             Substitute.For<IScreenClipLauncher>(),
             controller);
         var layout = new ToolbarLayout();
-        var launcher = new SettingsWindowLauncher(controller, coordinator, dragHandler);
+        var launcher = new SettingsWindowLauncher(controller, coordinator, dragHandler, settings, Substitute.For<IDrawingPreferencesStore>());
         var chrome = new ToolbarChrome(dragHandler, launcher, shortcuts, layout);
         using var viewModel = new ToolbarViewModel(broadcaster, settings, controller, chrome);
         return work(new ToolbarContext(settings, controller, layout, viewModel));

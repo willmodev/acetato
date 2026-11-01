@@ -44,7 +44,7 @@ internal static class InkCursorFactory
         return new Cursor(stream);
     }
 
-    // En modo degradado, el par del próximo trazo en diagonal (inicio arriba a la
+    // En degradado (neón o de tinta), el par del próximo trazo en diagonal (inicio arriba a la
     // izquierda), como se ve en las figuras cerradas (HU-19).
     internal static Brush FillOf(InkCursorTip tip)
     {
@@ -53,7 +53,7 @@ internal static class InkCursorFactory
             return new SolidColorBrush(tip.Solid);
         }
 
-        var (start, end) = TintaGradienteMap.Resolve(pair);
+        var (start, end) = GradientPairMap.Resolve(pair);
         return new LinearGradientBrush(start, end, new Point(0d, 0d), new Point(1d, 1d));
     }
 

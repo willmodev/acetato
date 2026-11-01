@@ -123,7 +123,7 @@ public static class ShapeDrawingBehavior
         session.Preview = stroke;
     }
 
-    private static Stroke BuildStroke(IReadOnlyList<StrokePoint> points, DrawingAttributes baseAttributes, TintaGradiente? gradient)
+    private static Stroke BuildStroke(IReadOnlyList<StrokePoint> points, DrawingAttributes baseAttributes, GradientPair? gradient)
     {
         var stylusPoints = new StylusPointCollection(points.Count);
         foreach (var point in points)

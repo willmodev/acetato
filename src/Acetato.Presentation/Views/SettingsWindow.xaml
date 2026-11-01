@@ -1,8 +1,8 @@
 <!--
   Ventana Ajustes (HU-21). Ventana normal (no overlay): aparece en la barra de
   tareas y queda encima del overlay. Sin barra de título de Windows: título
-  propio arrastrable con WindowDragBehavior y botón Cerrar. Solo la sección
-  Atajos por ahora. Code-behind solo con InitializeComponent (MVVM estricto).
+  propio arrastrable con WindowDragBehavior y botón Cerrar. Bloque Dibujo (HU-27)
+  y la lista de atajos. Code-behind solo con InitializeComponent (MVVM estricto).
 -->
 <Window x:Class="Acetato.Presentation.Views.SettingsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -62,6 +62,20 @@
 
         <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
             <StackPanel Margin="20,4,20,16">
+                <!-- Dibujo (HU-27): opciones que se aplican y se guardan al instante. -->
+                <TextBlock Style="{StaticResource SettingsCaption}" Text="Dibujo" />
+                <Grid MinHeight="30">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Style="{StaticResource SettingsRowLabel}" Text="Tintas degradadas" />
+                    <ToggleButton Grid.Column="1" Style="{StaticResource SettingsSwitch}"
+                                  IsChecked="{Binding InkPairs}"
+                                  AutomationProperties.Name="Tintas degradadas" />
+                </Grid>
+                <TextBlock Style="{StaticResource SettingsHint}" Text="Cada tinta pasa a un tono vecino" />
+
                 <TextBlock Style="{StaticResource SettingsCaption}" Text="Siempre activos" />
                 <ItemsControl ItemsSource="{Binding AlwaysRows}" ItemTemplate="{StaticResource HotkeyRowTemplate}"
                               Focusable="False" />

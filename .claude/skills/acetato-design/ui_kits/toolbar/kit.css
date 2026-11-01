@@ -151,6 +151,15 @@ html, body { margin: 0; height: 100%; font-family: var(--font-ui); -webkit-font-
 .tool--row svg { width: 14px; height: 14px; }
 .row-msg { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; gap: var(--s-2);
            margin-bottom: 6px; font-size: 11px; color: var(--danger); }
+/* Switch (HU-27): 32 × 18 pill, 12px knob. Off neutral, on accent. */
+.row--switch { grid-template-columns: 1fr auto; }
+.row-hint { grid-column: 1 / -1; margin: -4px 0 4px; font-size: 11px; color: var(--fg-3); }
+.switch { width: var(--switch-w); height: var(--switch-h); padding: 2px; justify-self: end; display: flex; align-items: center;
+          background: var(--chrome-solid-2); border: 1px solid var(--stroke-1); border-radius: var(--r-pill); cursor: pointer; }
+.switch::after { content: ""; width: 12px; height: 12px; border-radius: var(--r-pill); background: var(--fg-2); }
+.switch:hover { border-color: var(--highlight); }
+.switch--on, .switch--on:hover { justify-content: flex-end; background: var(--accent-fill); border-color: var(--accent-ring); }
+.switch--on::after { background: var(--accent); }
 .textbtn { padding: 3px var(--s-2); margin-left: 6px; border: none; background: transparent; color: var(--fg-1);
            font-family: var(--font-ui); font-size: 11px; border-radius: var(--r-swatch); cursor: pointer; }
 .textbtn:hover { background: var(--hover); }

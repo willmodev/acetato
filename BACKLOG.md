@@ -886,6 +886,43 @@ Escenario: Otras herramientas
 ```
 **Notas técnicas:** Spec en [`specs/09-barra-plegable-y-cursor-de-tinta.md`](./specs/09-barra-plegable-y-cursor-de-tinta.md). Es un cursor real de Windows (`.cur` de 32 bits creado en memoria y cacheado), no un dibujo en la capa, para que no se quede atrás del mouse. Cada monitor lo genera a su escala. Fuera de alcance: círculo para el Borrador y previsualizar la forma antes de hacer clic.
 
+#### HU-27 — Tintas degradadas
+- **Épica:** EP-02 · **Prioridad:** Could · **Estimación:** 3
+- **Narrativa:**
+  Como presentador, quiero que cada tinta pinte un degradado fijo hacia su tono vecino, para tener el acabado del degradado sin perder el control del color.
+
+**Criterios de aceptación**
+```
+Escenario: Encender el interruptor
+  Dado que abro Ajustes
+  Cuando enciendo «Tintas degradadas» en el bloque Dibujo
+  Entonces el siguiente trazo de Lápiz, Línea, Flecha o Rectángulo va de la tinta a su vecina
+  Y roja va a rosa, azul a índigo, amarilla a naranja, verde a lima, blanca y negra a gris
+  Y Texto y Láser siguen con la tinta plana.
+
+Escenario: Lo que se ve
+  Dado que el interruptor está encendido
+  Cuando abro el popover de color o miro el cursor
+  Entonces las muestras, el botón Color y el cursor enseñan el par de cada tinta.
+
+Escenario: Modo neón
+  Dado que el interruptor está encendido
+  Cuando elijo el degradado neón (Ctrl+7)
+  Entonces cada trazo sigue tomando un par neón al azar.
+
+Escenario: Memoria
+  Dado que encendí el interruptor
+  Cuando reinicio la app
+  Entonces sigue encendido
+  Y «Restaurar todo» no lo apaga.
+
+Escenario: Lo ya dibujado
+  Dado que hay trazos en pantalla
+  Cuando enciendo o apago el interruptor
+  Entonces esos trazos no cambian.
+```
+**Notas técnicas:** Spec en [`specs/10-tintas-degradadas.md`](./specs/10-tintas-degradadas.md). Un solo tipo `GradientPair` (neón o tinta → vecina) recorre la tubería del degradado. La opción se guarda en la sección `drawing` de `settings.json`, que conserva los atajos. Fuera de alcance: elegir la vecina a mano, un atajo para el interruptor y degradado en Texto o Láser.
+
 ---
 
 ## Definition of Done (global)

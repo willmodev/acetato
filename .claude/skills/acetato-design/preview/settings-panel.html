@@ -22,6 +22,14 @@
   .ib svg { width: 14px; height: 14px; stroke-width: 2; }
   .msg { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 11px; color: var(--danger); }
   .tb { font-weight: 400; font-size: 11px; color: var(--fg-1); padding: 3px var(--s-2); margin-left: 6px; border-radius: var(--r-swatch); }
+  /* Interruptor (HU-27): apagado neutro; encendido con el acento, como el keycap en captura. */
+  .row--switch { grid-template-columns: 1fr auto; }
+  .hint { grid-column: 1 / -1; margin: -4px 0 4px; font-size: 11px; color: var(--fg-3); }
+  .switch { width: var(--switch-w); height: var(--switch-h); padding: 2px; justify-self: end; display: flex; align-items: center;
+            background: var(--chrome-solid-2); border: 1px solid var(--stroke-1); border-radius: var(--r-pill); }
+  .switch::after { content: ""; width: 12px; height: 12px; border-radius: var(--r-pill); background: var(--fg-2); }
+  .switch--on { justify-content: flex-end; background: var(--accent-fill); border-color: var(--accent-ring); }
+  .switch--on::after { background: var(--accent); }
   .foot { height: 48px; display: flex; align-items: center; justify-content: flex-end; padding: 0 14px 0 var(--s-5); }
 </style>
 </head>
@@ -31,7 +39,8 @@
     <div class="head"><span>Ajustes</span><button class="tool" title="Cerrar"><i data-lucide="x"></i></button></div>
     <div class="hr"></div>
     <div class="body">
-      <div class="blk">Siempre activos</div>
+      <div class="blk">Dibujo</div>
+      <div class="row row--switch"><span class="lbl">Tintas degradadas</span><span class="switch switch--on" role="switch" aria-checked="true" title="Tintas degradadas"></span><span class="hint">Cada tinta pasa a un tono vecino</span></div>      <div class="blk">Siempre activos</div>
       <div class="row"><span class="lbl">Mostrar/ocultar</span><span class="cap-key">Ctrl+Alt+D</span><span></span><span class="ib" title="Quitar"><i data-lucide="x"></i></span></div>
       <div class="row"><span class="lbl">Modo dibujo</span><span class="cap-key">Ctrl+Alt+E</span><span></span><span class="ib" title="Quitar"><i data-lucide="x"></i></span></div>
       <div class="blk">Solo al dibujar</div>

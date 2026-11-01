@@ -3,8 +3,8 @@ using Acetato.Domain;
 namespace Acetato.Application.Drawing;
 
 /// <summary>
-/// Estado del trazo activo: color (HU-05), grosor (HU-06) y modo Degradado (HU-19). Agnóstico de
-/// plataforma; la traducción a tipos de WPF vive en Presentation. Notifica con
+/// Estado del trazo activo: color (HU-05), grosor (HU-06), modo Degradado (HU-19) y Tintas
+/// degradadas (HU-27). Agnóstico de plataforma; la traducción a tipos de WPF vive en Presentation. Notifica con
 /// <see cref="Changed"/> para que la vista refresque los atributos de dibujo.
 /// </summary>
 public interface IDrawingSettings
@@ -24,8 +24,17 @@ public interface IDrawingSettings
     /// <summary>Modo Degradado activo: cada trazo toma un par neón al azar (HU-19).</summary>
     public bool IsGradient { get; }
 
-    /// <summary>Par de degradado que tomará el PRÓXIMO trazo (HU-19).</summary>
+    /// <summary>Par neón que tomará el PRÓXIMO trazo en modo Degradado (HU-19).</summary>
     public TintaGradiente NextGradient { get; }
+
+    /// <summary>Tintas degradadas: cada tinta sólida pinta hacia su vecina fija (HU-27).</summary>
+    public bool InkPairsEnabled { get; }
+
+    /// <summary>
+    /// Par del PRÓXIMO trazo: el neón en modo Degradado; si no, la tinta hacia su vecina con
+    /// Tintas degradadas encendido; <c>null</c> = tinta plana (HU-19, HU-27).
+    /// </summary>
+    public GradientPair? NextStrokePair { get; }
 
     /// <summary>Cambia el color activo y sale del modo Degradado (HU-05/HU-19).</summary>
     public void SelectColor(TintaColor color);
@@ -33,8 +42,14 @@ public interface IDrawingSettings
     /// <summary>Entra al modo Degradado; <see cref="Color"/> conserva la última tinta sólida (HU-19).</summary>
     public void SelectGradient();
 
-    /// <summary>Tras fijar un trazo en degradado, sortea el par del siguiente, distinto del actual (HU-19).</summary>
+    /// <summary>
+    /// Tras fijar un trazo en modo Degradado, sortea el par neón del siguiente, distinto del
+    /// actual (HU-19). Fuera del modo no hace nada (HU-27).
+    /// </summary>
     public void AdvanceGradient();
+
+    /// <summary>Enciende o apaga Tintas degradadas (HU-27).</summary>
+    public void SetInkPairs(bool enabled);
 
     /// <summary>Sube un paso de grosor; en el máximo se mantiene (HU-06).</summary>
     public void IncreaseThickness();

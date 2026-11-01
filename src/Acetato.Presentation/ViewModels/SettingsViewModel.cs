@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using Acetato.Application.Abstractions;
+using Acetato.Application.Drawing;
 using Acetato.Application.Hotkeys;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -7,8 +8,8 @@ using CommunityToolkit.Mvvm.Input;
 namespace Acetato.Presentation.ViewModels;
 
 /// <summary>
-/// ViewModel de la ventana Ajustes (HU-21). Por ahora una sola sección,
-/// Atajos, en dos bloques: «Siempre activos» y «Solo al dibujar». Solo una fila
+/// ViewModel de la ventana Ajustes (HU-21): el bloque «Dibujo» (HU-27) y los atajos,
+/// en dos bloques: «Siempre activos» y «Solo al dibujar». Solo una fila
 /// captura a la vez (<see cref="CapturingRow"/>, que recibe las teclas). Escucha
 /// al coordinador para refrescar las filas; se desecha al cerrar la ventana para
 /// no dejar suscripciones vivas ni los atajos en pausa.
@@ -17,6 +18,8 @@ internal sealed partial class SettingsViewModel : ObservableObject, IDisposable
 {
     private readonly HotkeyCoordinator _coordinator;
     private readonly List<HotkeyRowViewModel> _rows;
+    private readonly IDrawingSettings _drawing;
+    private readonly IDrawingPreferencesStore _preferences;
 
     /// <summary>Fila que está capturando una combinación; <c>null</c> si ninguna.</summary>
     [ObservableProperty]
@@ -26,9 +29,15 @@ internal sealed partial class SettingsViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private bool _isConfirmingResetAll;
 
-    public SettingsViewModel(HotkeyCoordinator coordinator, IWindowDragHandler dragHandler)
+    public SettingsViewModel(
+        HotkeyCoordinator coordinator,
+        IWindowDragHandler dragHandler,
+        IDrawingSettings drawing,
+        IDrawingPreferencesStore preferences)
     {
         _coordinator = coordinator;
+        _drawing = drawing;
+        _preferences = preferences;
         DragHandler = dragHandler;
         _rows = [.. HotkeyCatalog.All.Select(definition => new HotkeyRowViewModel(definition.Action, coordinator))];
         AlwaysRows = RowsOf(HotkeyScope.Always);
@@ -45,6 +54,26 @@ internal sealed partial class SettingsViewModel : ObservableObject, IDisposable
 
     /// <summary>Inicia el arrastre nativo de la ventana desde el título.</summary>
     public IWindowDragHandler DragHandler { get; }
+
+    /// <summary>
+    /// Tintas degradadas (HU-27): se aplica al momento al estado de dibujo y se guarda.
+    /// Restaurar los atajos no lo cambia.
+    /// </summary>
+    public bool InkPairs
+    {
+        get => _drawing.InkPairsEnabled;
+        set
+        {
+            if (value == _drawing.InkPairsEnabled)
+            {
+                return;
+            }
+
+            _drawing.SetInkPairs(value);
+            _preferences.Save(new DrawingPreferences(value));
+            OnPropertyChanged();
+        }
+    }
 
     /// <summary>Filas del bloque «Siempre activos».</summary>
     public IReadOnlyList<HotkeyRowViewModel> AlwaysRows { get; }
