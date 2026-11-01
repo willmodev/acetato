@@ -1,6 +1,5 @@
-using System.IO;
-using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using Acetato.Application.Abstractions;
 using Acetato.Application.Hotkeys;
 using Acetato.Domain;
@@ -8,41 +7,31 @@ using Acetato.Domain;
 namespace Acetato.Infrastructure.Settings;
 
 /// <summary>
-/// Formato de settings.json (HU-21): <c>{ "version": 1, "hotkeys": { "Undo": "Alt+Z",
+/// Sección de atajos de settings.json (HU-21): <c>{ "version": 1, "hotkeys": { "Undo": "Alt+Z",
 /// "Capture": null } }</c>. Clave ausente = predeterminado y <c>null</c> = sin atajo.
 /// Una acción desconocida o una combinación inválida se ignora (vale el
 /// predeterminado); solo un JSON ilegible se considera dañado.
 /// </summary>
 internal static class HotkeySettingsJson
 {
-    private const int CurrentVersion = 1;
-    private const string VersionKey = "version";
-    private const string HotkeysKey = "hotkeys";
+    /// <summary>Nombre de la sección de los atajos en settings.json.</summary>
+    public const string SectionKey = "hotkeys";
 
     // Nombres de acción aceptados. Un diccionario evita que Enum.TryParse
     // acepte números ("3") como acciones.
     private static readonly Dictionary<string, HotkeyAction> ActionsByName =
         Enum.GetValues<HotkeyAction>().ToDictionary(action => action.ToString(), StringComparer.Ordinal);
 
-    /// <summary>JSON con la versión y las diferencias del mapa, en orden estable.</summary>
-    public static string Serialize(HotkeyMap map)
+    /// <summary>Sección <c>hotkeys</c> con las diferencias del mapa, en orden estable.</summary>
+    public static JsonObject ToSection(HotkeyMap map)
     {
-        using var buffer = new MemoryStream();
-        using (var writer = new Utf8JsonWriter(buffer, new JsonWriterOptions { Indented = true }))
+        var section = new JsonObject();
+        foreach (var (action, chord) in map.Overrides.OrderBy(entry => entry.Key))
         {
-            writer.WriteStartObject();
-            writer.WriteNumber(VersionKey, CurrentVersion);
-            writer.WriteStartObject(HotkeysKey);
-            foreach (var (action, chord) in map.Overrides.OrderBy(entry => entry.Key))
-            {
-                writer.WriteString(action.ToString(), chord?.ToString());
-            }
-
-            writer.WriteEndObject();
-            writer.WriteEndObject();
+            section[action.ToString()] = chord?.ToString();
         }
 
-        return Encoding.UTF8.GetString(buffer.ToArray());
+        return section;
     }
 
     /// <summary>Lee el JSON; <c>false</c> si es ilegible o no tiene la forma esperada.</summary>
@@ -67,7 +56,7 @@ internal static class HotkeySettingsJson
             return false;
         }
 
-        if (!root.TryGetProperty(HotkeysKey, out var hotkeys))
+        if (!root.TryGetProperty(SectionKey, out var hotkeys))
         {
             return true;
         }

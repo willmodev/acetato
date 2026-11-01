@@ -144,9 +144,17 @@ public partial class App : System.Windows.Application
     private static void RegisterDrawingAndScreenClip(IServiceCollection services)
     {
         services.AddSingleton<IRandomSource>(SecureRandomSource.Instance);
-        services.AddSingleton<IDrawingSettings, DrawingSettings>();
+        services.AddSingleton<IDrawingSettings>(CreateDrawingSettings);
         services.AddSingleton(TimeProvider.System);
         services.AddSingleton<IScreenClipLauncher, WindowsScreenClipLauncher>();
+    }
+
+    // Estado del trazo con las opciones de dibujo guardadas: Tintas degradadas (HU-27).
+    private static DrawingSettings CreateDrawingSettings(IServiceProvider services)
+    {
+        var settings = new DrawingSettings(services.GetRequiredService<IRandomSource>());
+        settings.SetInkPairs(services.GetRequiredService<IDrawingPreferencesStore>().Load().InkPairs);
+        return settings;
     }
 
     // Adaptadores de Infrastructure (interop Win32) — solo en el root.
@@ -158,6 +166,7 @@ public partial class App : System.Windows.Application
         services.AddSingleton<IWindowDragHandler, Win32WindowDragHandler>();
         services.AddSingleton<IGlobalHotkeyService, Win32GlobalHotkeyService>();
         services.AddSingleton<IHotkeySettingsStore>(_ => new JsonHotkeySettingsStore());
+        services.AddSingleton<IDrawingPreferencesStore>(_ => new JsonDrawingPreferencesStore());
         services.AddSingleton<IHotkeyNotifier, ToastHotkeyNotifier>();
         services.AddSingleton<IMonitorService, Win32MonitorService>();
         services.AddSingleton<ICursorPositionProvider, Win32CursorPositionProvider>();
