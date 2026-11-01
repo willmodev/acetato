@@ -1,4 +1,5 @@
 using Acetato.Application.Abstractions;
+using Acetato.Application.Drawing;
 using Acetato.Application.Hotkeys;
 using Acetato.Domain;
 using Acetato.Presentation.ViewModels;
@@ -13,6 +14,8 @@ public sealed class SettingsViewModelTests : IDisposable
 {
     private readonly IGlobalHotkeyService _hotkeys = Substitute.For<IGlobalHotkeyService>();
     private readonly IHotkeySettingsStore _store = Substitute.For<IHotkeySettingsStore>();
+    private readonly IDrawingPreferencesStore _preferences = Substitute.For<IDrawingPreferencesStore>();
+    private readonly DrawingSettings _drawing = new();
     private readonly List<IReadOnlyList<HotkeyAssignment>> _applied = [];
     private readonly HotkeyCoordinator _coordinator;
     private readonly SettingsViewModel _settings;
@@ -24,7 +27,7 @@ public sealed class SettingsViewModelTests : IDisposable
         _store.Load().Returns(new HotkeySettingsLoad(HotkeyMap.Defaults, WasCorrupt: false));
         _coordinator = new HotkeyCoordinator(_hotkeys, Substitute.For<IOverlayController>(), _store, Substitute.For<IHotkeyNotifier>());
         _coordinator.Start();
-        _settings = new SettingsViewModel(_coordinator, Substitute.For<IWindowDragHandler>());
+        _settings = new SettingsViewModel(_coordinator, Substitute.For<IWindowDragHandler>(), _drawing, _preferences);
     }
 
     private HotkeyRowViewModel Row(HotkeyAction action) =>
@@ -100,6 +103,47 @@ public sealed class SettingsViewModelTests : IDisposable
         _settings.Dispose();
 
         _applied[^1].Should().NotBeEmpty();
+    }
+
+    [Fact]
+    public void Ink_pairs_start_as_the_drawing_state()
+    {
+        _settings.InkPairs.Should().BeFalse();
+    }
+
+    [Fact]
+    public void Turning_on_ink_pairs_applies_it_and_saves_it()
+    {
+        var raised = new List<string?>();
+        _settings.PropertyChanged += (_, e) => raised.Add(e.PropertyName);
+
+        _settings.InkPairs = true;
+
+        _drawing.InkPairsEnabled.Should().BeTrue();
+        _preferences.Received(1).Save(new DrawingPreferences(InkPairs: true));
+        raised.Should().Contain(nameof(SettingsViewModel.InkPairs));
+    }
+
+    [Fact]
+    public void Setting_the_same_value_does_not_save_again()
+    {
+        _settings.InkPairs = false;
+
+        _preferences.DidNotReceiveWithAnyArgs().Save(default!);
+    }
+
+    [Fact]
+    public void Reset_all_restores_the_hotkeys_and_keeps_ink_pairs()
+    {
+        _settings.InkPairs = true;
+        Row(HotkeyAction.Undo).RemoveCommand.Execute(null);
+
+        _settings.ResetAllCommand.Execute(null);
+        _settings.ConfirmResetAllCommand.Execute(null);
+
+        Row(HotkeyAction.Undo).HasChord.Should().BeTrue();
+        _settings.InkPairs.Should().BeTrue();
+        _drawing.InkPairsEnabled.Should().BeTrue();
     }
 
     public void Dispose()

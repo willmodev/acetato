@@ -1,6 +1,8 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using Acetato.Application.Abstractions;
+using Acetato.Application.Drawing;
 using Acetato.Presentation.ViewModels;
 using Acetato.Presentation.Views;
 using FluentAssertions;
@@ -19,16 +21,29 @@ public sealed class SettingsWindowSmokeTests
     [Fact]
     public void Settings_window_loads_and_lays_out_the_twenty_three_rows()
     {
-        int texts = WpfTestHost.Run(LoadAndCountTexts);
+        int texts = WpfTestHost.Run(() => WithContent(content => VisualTree.Descendants<TextBlock>(content).Count()));
 
         // 23 nombres + 23 combinaciones como mínimo.
         texts.Should().BeGreaterThanOrEqualTo(46);
     }
 
-    private static int LoadAndCountTexts()
+    [Fact]
+    public void Settings_window_shows_the_drawing_block_with_its_switch_and_hint()
+    {
+        var (texts, switches) = WpfTestHost.Run(() => WithContent(content => (
+            VisualTree.Descendants<TextBlock>(content).Select(text => text.Text).ToList(),
+            VisualTree.Descendants<ToggleButton>(content).Count())));
+
+        texts.Should().ContainInOrder("Dibujo", "Tintas degradadas", "Cada tinta pasa a un tono vecino", "Siempre activos");
+        switches.Should().Be(1);
+    }
+
+    // Carga la ventana, hace el layout de su contenido y lee lo que pide el test.
+    private static T WithContent<T>(Func<FrameworkElement, T> read)
     {
         using var coordinator = TestCoordinators.Started();
-        using var settings = new SettingsViewModel(coordinator, Substitute.For<IWindowDragHandler>());
+        using var settings = new SettingsViewModel(
+            coordinator, Substitute.For<IWindowDragHandler>(), new DrawingSettings(), Substitute.For<IDrawingPreferencesStore>());
         var window = new SettingsWindow();
 
         // Una ventana sin mostrar no hace layout: se mide su contenido suelto,
@@ -39,6 +54,6 @@ public sealed class SettingsWindowSmokeTests
         content.Measure(new Size(480, 600));
         content.Arrange(new Rect(0, 0, 480, 600));
         content.UpdateLayout();
-        return VisualTree.Descendants<TextBlock>(content).Count();
+        return read(content);
     }
 }

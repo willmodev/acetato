@@ -1,6 +1,7 @@
 <!--
   Estilos de la ventana Ajustes (HU-21). Solo tokens vía StaticResource; nada de
-  colores hardcodeados. El acento teal marca ÚNICAMENTE la fila que captura.
+  colores hardcodeados. El acento teal marca ÚNICAMENTE la fila que captura y el
+  interruptor encendido.
   Depende de Tokens.xaml, Icons.xaml y ToolbarStyles.xaml (merged antes en App.xaml).
 -->
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -30,6 +31,50 @@
         <Setter Property="FontSize" Value="{StaticResource Text.Tooltip}" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+    </Style>
+
+    <!-- Pista de una opción, bajo su fila (Text.Label, Fg.Disabled, sin punto final). -->
+    <Style x:Key="SettingsHint" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{StaticResource Fg.Disabled}" />
+        <Setter Property="FontSize" Value="{StaticResource Text.Label}" />
+        <Setter Property="Margin" Value="0,-4,0,4" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+
+    <!-- Interruptor de una opción (HU-27): píldora de 32 × 18 con perilla de 12. Apagado,
+         neutro; encendido, el acento, como la tecla que captura. Cambio sin animación. -->
+    <Style x:Key="SettingsSwitch" TargetType="ToggleButton">
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="HorizontalAlignment" Value="Right" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border x:Name="Track" Padding="2"
+                            Width="{StaticResource Size.Switch.Width}" Height="{StaticResource Size.Switch.Height}"
+                            Background="{StaticResource Chrome.Solid2}"
+                            BorderBrush="{StaticResource Stroke.Outer}" BorderThickness="1"
+                            CornerRadius="{StaticResource Radius.Switch}">
+                        <Ellipse x:Name="Knob" HorizontalAlignment="Left"
+                                 Width="{StaticResource Size.Switch.Knob}" Height="{StaticResource Size.Switch.Knob}"
+                                 Fill="{StaticResource Fg.Resting}" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Track" Property="BorderBrush" Value="{StaticResource Stroke.Highlight}" />
+                        </Trigger>
+                        <!-- Después del hover: encendido manda también con el mouse encima. -->
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Track" Property="Background" Value="{StaticResource Accent.Fill}" />
+                            <Setter TargetName="Track" Property="BorderBrush" Value="{StaticResource Accent.Ring}" />
+                            <Setter TargetName="Knob" Property="HorizontalAlignment" Value="Right" />
+                            <Setter TargetName="Knob" Property="Fill" Value="{StaticResource Accent}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <!-- Divisor horizontal (hairline). -->

@@ -104,12 +104,19 @@
     <CornerRadius x:Key="Radius.Button">10</CornerRadius>
     <CornerRadius x:Key="Radius.Popover">14</CornerRadius>
     <CornerRadius x:Key="Radius.Swatch">8</CornerRadius>
+    <!-- Píldora del interruptor de Ajustes: la mitad de su alto (HU-27). -->
+    <CornerRadius x:Key="Radius.Switch">9</CornerRadius>
 
     <!-- ===================== TAMAÑOS de control ========================= -->
     <sys:Double x:Key="Size.Button">36</sys:Double>
     <sys:Double x:Key="Size.ButtonTouch">44</sys:Double>
     <sys:Double x:Key="Size.Icon">20</sys:Double>
     <sys:Double x:Key="Size.BarPadding">6</sys:Double>
+
+    <!-- Interruptor de Ajustes (HU-27): pista de 32 × 18 y perilla de 12. -->
+    <sys:Double x:Key="Size.Switch.Width">32</sys:Double>
+    <sys:Double x:Key="Size.Switch.Height">18</sys:Double>
+    <sys:Double x:Key="Size.Switch.Knob">12</sys:Double>
 
     <!-- ===================== TIPOGRAFÍA ================================= -->
     <FontFamily x:Key="Font.Ui">Segoe UI Variable, Segoe UI</FontFamily>

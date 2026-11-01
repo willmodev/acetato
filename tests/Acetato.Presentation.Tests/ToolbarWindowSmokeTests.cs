@@ -59,7 +59,7 @@ public sealed class ToolbarWindowSmokeTests
             settings,
             Substitute.For<IScreenClipLauncher>(),
             controller);
-        var chrome = new ToolbarChrome(dragHandler, new SettingsWindowLauncher(controller, coordinator, dragHandler), shortcuts, new ToolbarLayout());
+        var chrome = new ToolbarChrome(dragHandler, new SettingsWindowLauncher(controller, coordinator, dragHandler, settings, Substitute.For<IDrawingPreferencesStore>()), shortcuts, new ToolbarLayout());
         using var viewModel = new ToolbarViewModel(broadcaster, settings, controller, chrome);
         var window = new ToolbarWindow();
         var content = (FrameworkElement)window.Content;
