@@ -1,6 +1,6 @@
 # SPEC 10 — Tintas degradadas (HU-27)
 
-> **Estado:** Aprobado · **Depende de:** SPEC 03 (HU-19) — modo Degradado, SPEC 05 (HU-21) — Ajustes y `settings.json`, SPEC 09 (HU-26) — cursor de tinta · **Fecha:** 2026-11-01
+> **Estado:** Implementado · **Depende de:** SPEC 03 (HU-19) — modo Degradado, SPEC 05 (HU-21) — Ajustes y `settings.json`, SPEC 09 (HU-26) — cursor de tinta · **Fecha:** 2026-11-01
 > **Objetivo:** Que un interruptor en Ajustes haga que cada tinta sólida pinte un degradado fijo hacia su tono vecino, recordado entre sesiones.
 
 ---
@@ -184,41 +184,43 @@
 
 ## Criterios de aceptación
 
+> **Cierre (2026-11-01):** verificados con tests automáticos: regla del próximo par, guardado de la sección `drawing` sin pisar los atajos, interruptor de Ajustes, muestras y botón Color, cursor y trazo con el par de su tinta. Build `-warnaserror` y tests verdes. En la app real (prueba con mouse y teclado simulados) se comprobaron: bloque «Dibujo» y su interruptor, apagado de entrada, encendido al instante con Ajustes abierto, memoria tras reiniciar, «Restaurar todo» sin apagarlo, las seis tintas con su vecina (Lápiz y Rectángulo), modo neón, tinta elegida desde el neón, Texto y Láser planos, trazos previos sin cambios, Deshacer, Limpiar todo y el cursor. Las muestras y el botón Color solo se comprobaron con tests: la barra no sale en capturas por diseño. Quedan sin prueba manual los tres criterios sin marcar: el degradado en vivo mientras se traza, el Borrador y el recorte de pantalla. Los hex de las vecinas siguen siendo los iniciales; el ajuste a ojo (paso 9) queda a criterio del usuario.
+
 **Ajustes**
 
-- [ ] Ajustes muestra el bloque «Dibujo» encima de «Siempre activos», con «Tintas degradadas», un interruptor a la derecha y debajo la pista «Cada tinta pasa a un tono vecino».
-- [ ] En una instalación nueva el interruptor está apagado.
-- [ ] Apagado se ve neutro y encendido con el acento teal; el cambio es instantáneo.
-- [ ] Al encenderlo con Ajustes abierto, el siguiente trazo ya sale degradado, sin cerrar la ventana.
-- [ ] Encendido y con la app reiniciada, sigue encendido.
-- [ ] «Restaurar todo» devuelve los atajos y deja el interruptor como estaba.
-- [ ] Un `settings.json` anterior, que solo tiene atajos, conserva sus atajos y arranca con el interruptor apagado.
-- [ ] Cambiar un atajo con el interruptor encendido no lo apaga al reiniciar, y cambiar el interruptor no borra los atajos.
+- [x] Ajustes muestra el bloque «Dibujo» encima de «Siempre activos», con «Tintas degradadas», un interruptor a la derecha y debajo la pista «Cada tinta pasa a un tono vecino».
+- [x] En una instalación nueva el interruptor está apagado.
+- [x] Apagado se ve neutro y encendido con el acento teal; el cambio es instantáneo.
+- [x] Al encenderlo con Ajustes abierto, el siguiente trazo ya sale degradado, sin cerrar la ventana.
+- [x] Encendido y con la app reiniciada, sigue encendido.
+- [x] «Restaurar todo» devuelve los atajos y deja el interruptor como estaba.
+- [x] Un `settings.json` anterior, que solo tiene atajos, conserva sus atajos y arranca con el interruptor apagado.
+- [x] Cambiar un atajo con el interruptor encendido no lo apaga al reiniciar, y cambiar el interruptor no borra los atajos.
 
 **Dibujo**
 
-- [ ] Con el interruptor encendido, Lápiz, Línea, Flecha y Rectángulo pintan cada tinta hacia su vecina: roja → rosa, azul → índigo, amarilla → naranja, verde → lima, blanca → gris claro y negra → gris oscuro.
-- [ ] El degradado corre del primer al último punto; en el rectángulo, en diagonal.
+- [x] Con el interruptor encendido, Lápiz, Línea, Flecha y Rectángulo pintan cada tinta hacia su vecina: roja → rosa, azul → índigo, amarilla → naranja, verde → lima, blanca → gris claro y negra → gris oscuro.
+- [x] El degradado corre del primer al último punto; en el rectángulo, en diagonal.
 - [ ] Con Lápiz y Flecha, el degradado se ve mientras se traza y queda igual al soltar.
-- [ ] Dos trazos seguidos con la misma tinta tienen exactamente el mismo par.
-- [ ] Texto y Láser pintan con la tinta plana con el interruptor encendido.
-- [ ] Con el modo neón (`Ctrl+7`) activo, cada trazo sigue tomando un par neón al azar, esté como esté el interruptor.
-- [ ] Al elegir una tinta sólida desde el modo neón con el interruptor encendido, el siguiente trazo sale con el par de esa tinta.
-- [ ] Encender o apagar el interruptor no cambia los trazos que ya están en pantalla.
+- [x] Dos trazos seguidos con la misma tinta tienen exactamente el mismo par.
+- [x] Texto y Láser pintan con la tinta plana con el interruptor encendido.
+- [x] Con el modo neón (`Ctrl+7`) activo, cada trazo sigue tomando un par neón al azar, esté como esté el interruptor.
+- [x] Al elegir una tinta sólida desde el modo neón con el interruptor encendido, el siguiente trazo sale con el par de esa tinta.
+- [x] Encender o apagar el interruptor no cambia los trazos que ya están en pantalla.
 - [ ] Deshacer, Borrador y Limpiar todo quitan un trazo de tinta degradada entero, como cualquier otro.
 - [ ] El recorte de pantalla muestra los trazos con su degradado.
 
 **Barra y cursor**
 
-- [ ] Con el interruptor encendido, las 6 muestras del popover enseñan su par en diagonal y la muestra del modo neón sigue redonda; apagado, son planas.
-- [ ] El botón Color muestra el par de la tinta activa; en modo neón, el degradado de muestra.
-- [ ] El cursor de tinta se rellena con el par de la tinta activa y cambia al instante al cambiar de tinta o al tocar el interruptor.
+- [x] Con el interruptor encendido, las 6 muestras del popover enseñan su par en diagonal y la muestra del modo neón sigue redonda; apagado, son planas.
+- [x] El botón Color muestra el par de la tinta activa; en modo neón, el degradado de muestra.
+- [x] El cursor de tinta se rellena con el par de la tinta activa y cambia al instante al cambiar de tinta o al tocar el interruptor.
 
 **General**
 
-- [ ] `dotnet build -warnaserror` y `dotnet test` en verde.
-- [ ] `BACKLOG.md` incluye HU-27.
-- [ ] Las dos copias del design system describen *Tintas degradadas* sin la marca «propuesto» y con los mismos hex que `Tokens.xaml`.
+- [x] `dotnet build -warnaserror` y `dotnet test` en verde.
+- [x] `BACKLOG.md` incluye HU-27.
+- [x] Las dos copias del design system describen *Tintas degradadas* sin la marca «propuesto» y con los mismos hex que `Tokens.xaml`.
 
 ---
 
