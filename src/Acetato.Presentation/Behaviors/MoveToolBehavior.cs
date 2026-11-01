@@ -101,6 +101,17 @@ public static class MoveToolBehavior
         canvas.SetCurrentValue(InkCanvas.EditingModeProperty, mode);
     }
 
+    /// <summary>
+    /// Lo seleccionado en <paramref name="canvas"/>, que deja de estarlo: Supr lo borra a
+    /// continuación (SPEC 11). Vacío si no hay selección.
+    /// </summary>
+    internal static GrabTargets TakeSelection(InkCanvas canvas)
+    {
+        var selection = new GrabTargets([.. canvas.GetSelectedStrokes()], [.. canvas.GetSelectedElements()]);
+        ClearSelection(canvas);
+        return selection;
+    }
+
     private static void OnToolChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         if (d is not InkCanvas canvas)

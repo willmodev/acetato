@@ -96,6 +96,10 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
     /// <summary>Registra un arrastre de la mano o de Ctrl en el historial de esta pane (SPEC 11).</summary>
     internal void RecordMove(AnnotationsMoved moved) => _history.Record(moved);
 
+    /// <summary>Borra trazos y textos seleccionados como una sola acción que Deshacer revierte (SPEC 11).</summary>
+    internal void DeleteSelection(InkCanvas canvas, IReadOnlyList<Stroke> strokes, IReadOnlyList<UIElement> elements) =>
+        _history.DeleteSelection(canvas, strokes, elements);
+
     /// <summary>
     /// Un trazo se fijó en degradado: sortea el par del siguiente (HU-19). Enlazado a
     /// <c>InkGradient.UsedCommand</c>.

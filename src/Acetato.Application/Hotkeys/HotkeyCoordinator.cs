@@ -1,4 +1,5 @@
 using Acetato.Application.Abstractions;
+using Acetato.Application.Drawing;
 using Acetato.Domain;
 
 namespace Acetato.Application.Hotkeys;
@@ -8,7 +9,8 @@ namespace Acetato.Application.Hotkeys;
 /// atajos están registrados según el estado del overlay y la pausa de captura.
 /// Los del grupo «Siempre» viven mientras la app corre; los de «Al dibujar»,
 /// solo con el overlay visible y en modo dibujo, para no quitarles Ctrl+Z o
-/// Ctrl+S a las demás apps. Mientras se captura una combinación en Ajustes no
+/// Ctrl+S a las demás apps; Supr, además, solo con la herramienta Mover (SPEC 11),
+/// por eso también sigue la herramienta elegida. Mientras se captura una combinación en Ajustes no
 /// hay ninguno registrado. Cada cambio se guarda al instante. Agnóstico de
 /// plataforma: depende solo de puertos.
 /// </summary>
@@ -18,6 +20,7 @@ public sealed class HotkeyCoordinator : IDisposable
     private readonly IOverlayController _overlay;
     private readonly IHotkeySettingsStore _store;
     private readonly IHotkeyNotifier _notifier;
+    private readonly IDrawingSettings? _drawing;
     private readonly HotkeyAvailability _availability;
     private List<HotkeyAssignment> _applied = [];
     private bool _started;
@@ -27,12 +30,14 @@ public sealed class HotkeyCoordinator : IDisposable
         IGlobalHotkeyService hotkeys,
         IOverlayController overlay,
         IHotkeySettingsStore store,
-        IHotkeyNotifier notifier)
+        IHotkeyNotifier notifier,
+        IDrawingSettings? drawing = null)
     {
         _hotkeys = hotkeys;
         _overlay = overlay;
         _store = store;
         _notifier = notifier;
+        _drawing = drawing;
         _availability = new HotkeyAvailability(hotkeys);
     }
 
@@ -46,6 +51,8 @@ public sealed class HotkeyCoordinator : IDisposable
     public event EventHandler? Changed;
 
     private bool IsDrawingActive => _overlay.IsVisible && _overlay.IsDrawingMode;
+
+    private bool IsMoveToolActive => _drawing?.SelectedTool == ToolKind.Move;
 
     /// <summary>
     /// Carga los atajos guardados, prueba todas sus combinaciones (también las
@@ -67,6 +74,11 @@ public sealed class HotkeyCoordinator : IDisposable
         Map = load.Map;
         _ = _availability.Probe(Map, HotkeyCatalog.All.Select(definition => definition.Action));
         _overlay.StateChanged += OnOverlayStateChanged;
+        if (_drawing is not null)
+        {
+            _drawing.Changed += OnOverlayStateChanged;
+        }
+
         _ = Refresh(force: true);
         Changed?.Invoke(this, EventArgs.Empty);
         if (Unavailable.Count > 0 || load.WasCorrupt)
@@ -131,7 +143,14 @@ public sealed class HotkeyCoordinator : IDisposable
         RefreshAndNotify();
     }
 
-    public void Dispose() => _overlay.StateChanged -= OnOverlayStateChanged;
+    public void Dispose()
+    {
+        _overlay.StateChanged -= OnOverlayStateChanged;
+        if (_drawing is not null)
+        {
+            _drawing.Changed -= OnOverlayStateChanged;
+        }
+    }
 
     private void OnOverlayStateChanged(object? sender, EventArgs e) => RefreshAndNotify();
 
@@ -173,7 +192,7 @@ public sealed class HotkeyCoordinator : IDisposable
     // disponibilidad de algún atajo.
     private bool Refresh(bool force)
     {
-        var active = _capturing ? [] : ActiveHotkeys.Select(Map, IsDrawingActive);
+        var active = _capturing ? [] : ActiveHotkeys.Select(Map, IsDrawingActive, IsMoveToolActive);
         if (!force && active.SequenceEqual(_applied))
         {
             return false;

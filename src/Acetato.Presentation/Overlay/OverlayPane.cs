@@ -106,6 +106,12 @@ public sealed class OverlayPane : IOverlayCanvas, IDisposable
 
     public void Undo() => _viewModel.UndoCommand.Execute(null);
 
+    public void DeleteSelection()
+    {
+        var selection = MoveToolBehavior.TakeSelection(_window.InkSurface);
+        _viewModel.DeleteSelection(_window.InkSurface, selection.Strokes, selection.Elements);
+    }
+
     public bool TryCommitText() => TextAnnotationBehavior.TryCommit(_window.InkSurface);
 
     public void Dispose()

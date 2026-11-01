@@ -12,7 +12,7 @@ public sealed class HotkeyCatalogTests
     public void Every_action_has_exactly_one_definition_or_a_fixed_chord()
     {
         HotkeyCatalog.All.Select(definition => definition.Action)
-            .Concat(FixedHotkeys.Drawing.Select(assignment => assignment.Action))
+            .Concat(FixedHotkeys.All.Select(assignment => assignment.Action))
             .Should().BeEquivalentTo(Enum.GetValues<HotkeyAction>())
             .And.OnlyHaveUniqueItems();
     }

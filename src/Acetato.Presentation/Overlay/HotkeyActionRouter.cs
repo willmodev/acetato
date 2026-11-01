@@ -64,6 +64,7 @@ internal sealed class HotkeyActionRouter
         [HotkeyAction.ThicknessUp] = broadcaster.IncreaseThickness,
         [HotkeyAction.ThicknessDown] = broadcaster.DecreaseThickness,
         [HotkeyAction.EnterPointerMode] = () => EnterPointerMode(controller, broadcaster),
+        [HotkeyAction.DeleteSelection] = broadcaster.DeleteSelection,
     };
 
     // Plegar barra (HU-25): con la capa oculta la barra no se ve, así que no hace nada.

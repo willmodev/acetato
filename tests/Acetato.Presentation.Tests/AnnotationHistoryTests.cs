@@ -162,6 +162,64 @@ public sealed class AnnotationHistoryTests
         after.Should().HaveCount(2);
     }
 
+    [Fact]
+    public void A_deleted_selection_comes_back_whole_with_one_undo()
+    {
+        var (afterDelete, afterUndo, textBack) = WpfTestHost.Run(() =>
+        {
+            var canvas = new InkCanvas();
+            using var history = new AnnotationHistory(canvas.Strokes);
+            var a = AddStroke(canvas.Strokes);
+            AddStroke(canvas.Strokes);
+            var c = AddStroke(canvas.Strokes);
+            var text = new TextBlock { Text = "Hola" };
+            _ = canvas.Children.Add(text);
+            history.RecordText(canvas, text);
+
+            history.DeleteSelection(canvas, [a, c], [text]);
+            var deleted = canvas.Strokes.ToList();
+            history.UndoLast();
+            return (deleted, canvas.Strokes.ToList(), canvas.Children.Contains(text));
+        });
+
+        afterDelete.Should().HaveCount(1);
+        afterUndo.Should().HaveCount(3);
+        textBack.Should().BeTrue();
+    }
+
+    [Fact]
+    public void Strokes_brought_back_after_a_deletion_can_still_be_undone()
+    {
+        var strokes = WpfTestHost.Run(() =>
+        {
+            var canvas = new InkCanvas();
+            using var history = new AnnotationHistory(canvas.Strokes);
+            var a = AddStroke(canvas.Strokes);
+            history.DeleteSelection(canvas, [a], []);
+            history.UndoLast(); // vuelve a
+            history.UndoLast(); // deshace el dibujo de a
+            return canvas.Strokes.Count;
+        });
+
+        strokes.Should().Be(0);
+    }
+
+    [Fact]
+    public void Deleting_an_empty_selection_leaves_no_entry()
+    {
+        var strokes = WpfTestHost.Run(() =>
+        {
+            var canvas = new InkCanvas();
+            using var history = new AnnotationHistory(canvas.Strokes);
+            AddStroke(canvas.Strokes);
+            history.DeleteSelection(canvas, [], []);
+            history.UndoLast(); // deshace el trazo, no un borrado vacío
+            return canvas.Strokes.Count;
+        });
+
+        strokes.Should().Be(0);
+    }
+
     private static Stroke AddStroke(StrokeCollection strokes)
     {
         var stroke = new Stroke(new StylusPointCollection([new StylusPoint(0, 0), new StylusPoint(10, 10)]));

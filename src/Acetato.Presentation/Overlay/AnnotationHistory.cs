@@ -7,7 +7,7 @@ namespace Acetato.Presentation.Overlay;
 /// <summary>
 /// Historial cronológico de acciones de UNA pane (HU-13, SPEC 11): deshace «la
 /// última acción, sea cual sea» —dibujar un trazo o un texto, borrar con el
-/// Borrador o mover—. Los trazos se sincronizan con la <see cref="StrokeCollection"/>
+/// Borrador, mover o borrar una selección con Supr—. Los trazos se sincronizan con la <see cref="StrokeCollection"/>
 /// (única fuente de verdad). Las bajas cuentan como borrado deshacible solo
 /// mientras <see cref="RecordsErasures"/> está activo (herramienta Borrador); con
 /// cualquier otra herramienta se «olvidan» en silencio, así el ir y venir del trazo
@@ -50,6 +50,41 @@ internal sealed class AnnotationHistory : IDisposable
     /// (SPEC 11); los trazos que mueve siguen siendo los mismos objetos.
     /// </summary>
     public void Record(IHistoryEntry entry) => _timeline.Add(entry);
+
+    /// <summary>
+    /// Quita <paramref name="strokes"/> y <paramref name="elements"/> como UNA acción
+    /// (Supr con Mover, SPEC 11). Lo hace por su cuenta, sin que la baja se tome por un
+    /// «olvido»: así Deshacer los devuelve a su capa y siguen siendo deshacibles.
+    /// </summary>
+    public void DeleteSelection(InkCanvas canvas, IReadOnlyList<Stroke> strokes, IReadOnlyList<UIElement> elements)
+    {
+        var erased = strokes
+            .Select(stroke => new ErasedStroke(stroke, _strokes.IndexOf(stroke)))
+            .Where(entry => entry.Index >= 0)
+            .ToList();
+        var removed = elements
+            .Select(element => (Element: element, Index: canvas.Children.IndexOf(element)))
+            .Where(entry => entry.Index >= 0)
+            .ToList();
+        if (erased.Count == 0 && removed.Count == 0)
+        {
+            return;
+        }
+
+        Silently(() =>
+        {
+            foreach (var entry in erased)
+            {
+                _strokes.Remove(entry.Stroke);
+            }
+
+            foreach (var (element, _) in removed)
+            {
+                canvas.Children.Remove(element);
+            }
+        });
+        _timeline.Add(new SelectionDeleted(new StrokesErased(_strokes, erased), canvas, removed));
+    }
 
     /// <summary>Revierte la última acción. Sin acciones no hace nada.</summary>
     public void UndoLast()

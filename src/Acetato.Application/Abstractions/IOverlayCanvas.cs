@@ -22,8 +22,11 @@ public interface IOverlayCanvas
     /// <summary>Borra todos los trazos de este lienzo (HU-04).</summary>
     public void Clear();
 
-    /// <summary>Deshace el último trazo de este lienzo (HU-07).</summary>
+    /// <summary>Deshace la última acción de este lienzo (HU-07, SPEC 11).</summary>
     public void Undo();
+
+    /// <summary>Borra lo seleccionado con la herramienta Mover; sin selección no hace nada (SPEC 11).</summary>
+    public void DeleteSelection();
 
     /// <summary>
     /// Confirma el texto que se está escribiendo en este lienzo (HU-13/HU-24).

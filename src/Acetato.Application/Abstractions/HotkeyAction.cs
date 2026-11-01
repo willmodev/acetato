@@ -91,4 +91,10 @@ public enum HotkeyAction
 
     /// <summary>Plegar o desplegar la barra con el ojo (HU-25).</summary>
     ToggleToolbarCollapsed,
+
+    /// <summary>
+    /// Borrar lo seleccionado con la herramienta Mover (SPEC 11). Su atajo es fijo
+    /// (<see cref="Hotkeys.FixedHotkeys"/>): no está en el catálogo ni en Ajustes.
+    /// </summary>
+    DeleteSelection,
 }
