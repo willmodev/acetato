@@ -119,7 +119,7 @@ Fuentes: [Zoom](https://support.zoom.com/hc/en/article?id=zm_kb&sysparm_article=
   - HU-16: notas técnicas al día (atajo, ciclo, Mayús).
   - HU-18: resultado de la prueba (adoptada o descartada).
 - **Design system**, primero en el artefacto «Acetato» y después en la skill local (las dos copias iguales):
-  - Iconos nuevos `hand` (Mover) y `hand-grab` (cursor al arrastrar).
+  - Iconos nuevos `hand` (Mover) y `grab` (cursor al arrastrar; en Lucide la mano cerrada se llama `grab`).
   - `circle` deja de estar reservado: es Elipse.
   - `redo-2` se quita de los reservados: Rehacer no se hará.
   - El asa de la barra pasa a llamarse «Mover barra».
@@ -189,7 +189,7 @@ Fuentes: [Zoom](https://support.zoom.com/hc/en/article?id=zm_kb&sysparm_article=
   - **Con Ctrl, desde otra herramienta:** en `PreviewMouseDown` con Ctrl pulsada, busca el dibujo bajo el cursor (`Strokes.HitTest` y los textos del lienzo). Si lo hay, marca el evento como manejado (el Lápiz, las formas, el láser y el texto no lo ven) y arrastra con `AnnotationDrag`. Si no lo hay, marca el evento como manejado y no hace nada más.
   - Quita al lienzo los comandos Cortar, Copiar y Pegar, que el `InkCanvas` trae de serie en modo selección y que el historial no controla.
   - Quita la selección cuando el ViewModel lo pide.
-- **Cursores:** `hand` (mano abierta) y `hand-grab` (mano cerrada) como cursores propios, construidos igual que el cursor de tinta (`CursorFile`). Blancos con borde oscuro, para verse sobre cualquier fondo, y a la escala de cada monitor.
+- **Cursores:** `hand` (mano abierta) y `grab` (mano cerrada) como cursores propios, construidos igual que el cursor de tinta (`CursorFile`). Blancos con borde oscuro, para verse sobre cualquier fondo, y a la escala de cada monitor.
 - **`ToolCursorBehavior`:** Mover usa la mano abierta. Con Ctrl pulsada, cualquier herramienta muestra la mano abierta, y la mano cerrada mientras se arrastra. Elipse usa el cursor de tinta.
 - **`OverlayViewModel`:**
   - `ToEditingMode`: `ToolKind.Move` → `InkCanvasEditingMode.Select`.
@@ -247,6 +247,19 @@ Fuentes: [Zoom](https://support.zoom.com/hc/en/article?id=zm_kb&sysparm_article=
 ---
 
 ## Criterios de aceptación
+
+> **Avance (2026-11-01).** Pasos 1 a 9 y 11 implementados en la rama `spec-11-elipse-mover-y-vidrio`; build `-warnaserror` y tests en verde. La prueba del vidrio (paso 10) quedó lista en la rama aparte `spike-18-vidrio-real`, sin integrar. **Nada se probó todavía en la app real** (no se lanzó sin permiso del usuario): las casillas siguen sin marcar hasta esa prueba.
+>
+> **Cubierto por tests automáticos:** la elipse (puntos, cierre, mínimo y máximo, dirección, círculo con Mayús, ciclo, atajo y botón); Deshacer de dibujo, Borrador (a su capa), movimientos y `Supr`; la punta y el degradado de una flecha movida; qué hace cada clic con la mano y con Ctrl (arrastra, pasa al lazo o se queda el clic); `Supr` solo con Mover en modo dibujo y fuera de Ajustes; la selección se suelta al cambiar de herramienta; atajos `Ctrl+M` y `Ctrl+O` y su cesión si ya están usados.
+>
+> **Diferencias con lo escrito arriba:**
+> - La mano cerrada de Lucide se llama `grab`, no `hand-grab` (ya corregido en el texto).
+> - El paso 7 no hizo la prueba previa de si WPF ve Ctrl sin foco, porque pedía lanzar la app: se fue directo al puerto `IModifierKeyState` (lee la tecla del sistema), que funciona en ambos casos.
+> - La selección se suelta desde la pane (al pasar a Puntero y al ocultarse) y desde el propio behavior (al cambiar de herramienta), no con un aviso del ViewModel. Borrar con `Supr` va de la pane al historial: `MoveToolBehavior.TakeSelection` y `OverlayViewModel.DeleteSelection`.
+> - La entrada del Borrador se llama `StrokesErased` (en plural), porque un gesto del Borrador puede quitar varios trazos a la vez.
+> - `MoveToolBehavior` escucha en la ventana y no en el lienzo, para recibir el clic con Ctrl antes que el Lápiz, las formas, el láser y el Borrador.
+> - Añadido en el repaso del paso 9: si un arrastre se corta a mitad (Alt+Tab, Esc, capa oculta), se cierra como al soltar; antes la mano cerrada quedaba puesta.
+> - En el artefacto «Acetato» también se corrigieron restos anteriores a este spec: el ojo ya no figura como pendiente (HU-25) y Seleccionar pasó a Puntero.
 
 **Elipse**
 

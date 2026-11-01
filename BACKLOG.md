@@ -508,7 +508,7 @@ Escenario: Degradación elegante
 ```
 **Notas técnicas:** hoy el `DwmSetWindowAttribute(DWMWA_SYSTEMBACKDROP_TYPE)` es best-effort y **no compone** con `AllowsTransparency=True` (esquinas redondeadas). Trade-off a evaluar: el acrílico real exige quitar `AllowsTransparency`, lo que afecta esquinas redondeadas y los `Popup` de color/grosor → riesgo. Consultar el design system (`/acetato-design`) para el look glass de marca.
 
-> **SPEC 11 (2026-11-01).** Se resuelve con una **prueba de 1 día** en rama aparte y seis condiciones de adopción (acrílico con la barra inactiva, sin robar el foco, popovers/plegado/arrastre intactos, fuera de los recortes, encima del dibujo y radio de Windows aceptado). Resultado: *pendiente*. Ver [`specs/11-elipse-mover-y-vidrio.md`](./specs/11-elipse-mover-y-vidrio.md).
+> **SPEC 11 (2026-11-01).** Se resuelve con una **prueba de 1 día** en rama aparte y seis condiciones de adopción (acrílico con la barra inactiva, sin robar el foco, popovers/plegado/arrastre intactos, fuera de los recortes, encima del dibujo y radio de Windows aceptado). Resultado: *pendiente de prueba manual*. El experimento está en la rama `spike-18-vidrio-real` (sin integrar). Ver [`specs/11-elipse-mover-y-vidrio.md`](./specs/11-elipse-mover-y-vidrio.md).
 
 ---
 
