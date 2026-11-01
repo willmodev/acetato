@@ -28,6 +28,22 @@ public sealed class DrawingSettings : IDrawingSettings
 
     public TintaGradiente NextGradient { get; private set; }
 
+    public bool InkPairsEnabled { get; private set; }
+
+    public GradientPair? NextStrokePair
+    {
+        get
+        {
+            // El neón manda sobre Tintas degradadas mientras su modo está activo.
+            if (IsGradient)
+            {
+                return GradientPair.FromNeon(NextGradient);
+            }
+
+            return InkPairsEnabled ? GradientPair.FromInk(Color) : null;
+        }
+    }
+
     public double Thickness => ThicknessScale.At(_thicknessIndex);
 
     public int ThicknessIndex => _thicknessIndex;
@@ -61,7 +77,24 @@ public sealed class DrawingSettings : IDrawingSettings
 
     public void AdvanceGradient()
     {
+        // Un trazo de tinta degradada no gasta pares neón (HU-27).
+        if (!IsGradient)
+        {
+            return;
+        }
+
         NextGradient = GradientPicker.Next(NextGradient, _random);
+        RaiseChanged();
+    }
+
+    public void SetInkPairs(bool enabled)
+    {
+        if (InkPairsEnabled == enabled)
+        {
+            return;
+        }
+
+        InkPairsEnabled = enabled;
         RaiseChanged();
     }
 
