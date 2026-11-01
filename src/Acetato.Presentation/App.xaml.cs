@@ -7,6 +7,7 @@ using Acetato.Application.Overlay;
 using Acetato.Domain;
 using Acetato.Infrastructure.Capture;
 using Acetato.Infrastructure.Hotkeys;
+using Acetato.Infrastructure.Input;
 using Acetato.Infrastructure.Monitors;
 using Acetato.Infrastructure.Overlay;
 using Acetato.Infrastructure.Settings;
@@ -170,6 +171,7 @@ public partial class App : System.Windows.Application
         services.AddSingleton<IHotkeyNotifier, ToastHotkeyNotifier>();
         services.AddSingleton<IMonitorService, Win32MonitorService>();
         services.AddSingleton<ICursorPositionProvider, Win32CursorPositionProvider>();
+        services.AddSingleton<IModifierKeyState, Win32ModifierKeyState>();
     }
 
     // Overlay multi-monitor (HU-09), barra (HU-10) y orquestación.

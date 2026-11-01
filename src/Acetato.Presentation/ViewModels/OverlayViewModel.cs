@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Ink;
 using System.Windows.Media;
+using Acetato.Application.Abstractions;
 using Acetato.Application.Drawing;
 using Acetato.Domain;
 using Acetato.Presentation.Overlay;
@@ -58,6 +59,12 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
     /// </summary>
     public InkCursorTip CursorTip => new(SolidInkColor, ActiveGradient, _settings.Thickness);
 
+    /// <summary>
+    /// Estado de Ctrl para mover con Ctrl desde cualquier herramienta (SPEC 11). Enlazado a
+    /// <c>MoveToolBehavior.KeyState</c>.
+    /// </summary>
+    public IModifierKeyState KeyState { get; }
+
     /// <summary>Tamaño de fuente del texto, derivado del grosor activo (HU-13).</summary>
     public double ActiveFontSize => FontScale.FromThicknessIndex(_settings.ThicknessIndex);
 
@@ -69,9 +76,10 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private InkCanvasEditingMode _editingMode = InkCanvasEditingMode.None;
 
-    public OverlayViewModel(IDrawingSettings settings)
+    public OverlayViewModel(IDrawingSettings settings, IModifierKeyState? keyState = null)
     {
         _settings = settings;
+        KeyState = keyState ?? WpfModifierKeyState.Instance;
         _settings.Changed += OnSettingsChanged;
         _history = new AnnotationHistory(Strokes);
         SyncAttributes();

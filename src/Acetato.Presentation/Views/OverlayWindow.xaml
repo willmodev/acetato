@@ -61,6 +61,7 @@
                    behaviors:InkGradient.UsedCommand="{Binding GradientUsedCommand}"
                    behaviors:TextAnnotationBehavior.Tool="{Binding ActiveTool}"
                    behaviors:MoveToolBehavior.Tool="{Binding ActiveTool}"
+                   behaviors:MoveToolBehavior.KeyState="{Binding KeyState}"
                    behaviors:LaserPointerBehavior.Tool="{Binding ActiveTool}"
                    behaviors:LaserPointerBehavior.Layer="{Binding ElementName=LaserLayer}" />
         <overlay:LiveStrokeLayer x:Name="LiveLayer" IsHitTestVisible="False" />

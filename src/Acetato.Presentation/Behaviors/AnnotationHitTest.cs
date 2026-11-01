@@ -24,7 +24,7 @@ internal static class AnnotationHitTest
 
         return StrokeAt(canvas.Strokes, point) is { } stroke
             ? new GrabTargets([stroke], [])
-            : new GrabTargets([], []);
+            : GrabTargets.None;
     }
 
     // De arriba abajo: el último hijo añadido es el que se ve encima.

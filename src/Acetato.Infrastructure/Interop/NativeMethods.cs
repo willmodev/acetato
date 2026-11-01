@@ -16,6 +16,7 @@ internal static partial class NativeMethods
     internal const uint WmQuit = 0x0012;
     internal const uint WmApp = 0x8000; // Aviso de petición encolada al hilo de atajos (HU-21)
     internal const uint WmNcLButtonDown = 0x00A1; // Clic en área no cliente (arrastre)
+    internal const int VkControl = 0x11; // Tecla Ctrl (SPEC 11, mover con Ctrl)
     internal const uint ModAlt = 0x0001;
     internal const uint ModControl = 0x0002;
     internal const uint ModShift = 0x0004;
@@ -111,6 +112,10 @@ internal static partial class NativeMethods
     [LibraryImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     internal static partial bool GetCursorPos(out NativePoint lpPoint);
+
+    // Estado físico de una tecla aunque la ventana no tenga el foco (SPEC 11, mover con Ctrl).
+    [LibraryImport("user32.dll")]
+    internal static partial short GetAsyncKeyState(int vKey);
 
     // Posiciona/maximiza una ventana en píxeles físicos (HU-09): rcNormalPosition
     // en coordenadas del monitor objetivo + SW_SHOWMAXIMIZED → Windows maximiza en

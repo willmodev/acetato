@@ -96,6 +96,9 @@ public static class ToolCursorBehavior
     // Recalcula con la escala del monitor donde ya está la pane (HU-09/HU-26).
     private static void OnRefresh(object sender, RoutedEventArgs e) => Apply((InkCanvas)sender);
 
+    /// <summary>Vuelve a poner el cursor de la herramienta (al soltar Ctrl tras la mano, SPEC 11).</summary>
+    internal static void Refresh(InkCanvas canvas) => Apply(canvas);
+
     private static void Apply(InkCanvas canvas)
     {
         var cursor = CursorFor(GetTool(canvas), GetTip(canvas), VisualTreeHelper.GetDpi(canvas).DpiScaleX);

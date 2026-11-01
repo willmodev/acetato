@@ -8,6 +8,9 @@ namespace Acetato.Presentation.Behaviors;
 [StructLayout(LayoutKind.Auto)]
 internal readonly record struct GrabTargets(IReadOnlyList<Stroke> Strokes, IReadOnlyList<UIElement> Elements)
 {
+    /// <summary>Nada que agarrar.</summary>
+    public static GrabTargets None { get; } = new([], []);
+
     /// <summary>No hay nada que agarrar.</summary>
     public bool IsEmpty => Strokes.Count == 0 && Elements.Count == 0;
 }

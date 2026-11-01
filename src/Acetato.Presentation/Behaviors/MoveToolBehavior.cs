@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
+using Acetato.Application.Abstractions;
 using Acetato.Domain;
 using Acetato.Presentation.Overlay;
 using Acetato.Presentation.ViewModels;
@@ -10,14 +11,20 @@ using Acetato.Presentation.ViewModels;
 namespace Acetato.Presentation.Behaviors;
 
 /// <summary>
-/// Comportamiento adjunto de la herramienta Mover (HU-14, SPEC 11) sin lógica en el
-/// code-behind. Con Mover activa el lienzo está en modo selección: apretar sobre un
-/// trazo o un texto lo agarra y lo arrastra en el mismo gesto, y al soltar queda
-/// seleccionado; apretar dentro de una selección la arrastra entera; apretar en un
-/// sitio vacío deja que el lienzo dibuje su lazo. El arrastre lo hace
-/// <see cref="AnnotationDrag"/> y se registra en el historial de la pane, así Deshacer
-/// lo revierte. Bloquea Cortar, Copiar, Pegar y Supr del lienzo, que el historial no
-/// controla: borrar va por el atajo fijo Supr (SPEC 11).
+/// Comportamiento adjunto que mueve lo dibujado (HU-14, SPEC 11) sin lógica en el
+/// code-behind, de dos formas:
+/// <list type="bullet">
+/// <item>Con la herramienta Mover (lienzo en modo selección): apretar sobre un trazo o un
+/// texto lo agarra y lo arrastra en el mismo gesto, y al soltar queda seleccionado;
+/// dentro de una selección la arrastra entera; en un sitio vacío el lienzo dibuja su lazo.</item>
+/// <item>Con cualquier otra herramienta, manteniendo Ctrl: arrastra el dibujo de debajo sin
+/// dibujar nada ni dejarlo seleccionado; en un sitio vacío no hace nada.</item>
+/// </list>
+/// Escucha en la ventana, no en el lienzo: los eventos «Preview» bajan de la ventana al
+/// lienzo, así el clic con Ctrl llega aquí antes que al Lápiz, las formas, el láser, el
+/// texto o el Borrador, y marcarlo como manejado los deja fuera. El arrastre lo hace
+/// <see cref="AnnotationDrag"/> y se registra en el historial de la pane. Bloquea Cortar,
+/// Copiar, Pegar y Supr del lienzo, que el historial no controla.
 /// </summary>
 public static class MoveToolBehavior
 {
@@ -29,13 +36,23 @@ public static class MoveToolBehavior
             typeof(MoveToolBehavior),
             new PropertyMetadata(ToolKind.Move, OnToolChanged));
 
-    // Arrastre en curso (por InkCanvas); no es bindable.
-    private static readonly DependencyProperty SessionProperty =
+    /// <summary>Estado de Ctrl (enlazado al ViewModel del overlay); sin él, el de WPF.</summary>
+    public static readonly DependencyProperty KeyStateProperty =
         DependencyProperty.RegisterAttached(
-            "Session",
-            typeof(MoveSession),
+            "KeyState",
+            typeof(IModifierKeyState),
             typeof(MoveToolBehavior),
             new PropertyMetadata(null));
+
+    // Arrastre en curso, mano de Ctrl a la vista y ventana ya escuchada (por InkCanvas).
+    private static readonly DependencyProperty SessionProperty =
+        DependencyProperty.RegisterAttached("Session", typeof(MoveSession), typeof(MoveToolBehavior), new PropertyMetadata(null));
+
+    private static readonly DependencyProperty HoverProperty =
+        DependencyProperty.RegisterAttached("Hover", typeof(bool), typeof(MoveToolBehavior), new PropertyMetadata(false));
+
+    private static readonly DependencyProperty HostProperty =
+        DependencyProperty.RegisterAttached("Host", typeof(Window), typeof(MoveToolBehavior), new PropertyMetadata(null));
 
     // Gestos del lienzo que cambiarían trazos a espaldas del historial.
     private static readonly RoutedUICommand[] BlockedCommands =
@@ -53,6 +70,18 @@ public static class MoveToolBehavior
     {
         ArgumentNullException.ThrowIfNull(element);
         return (ToolKind)element.GetValue(ToolProperty);
+    }
+
+    public static void SetKeyState(DependencyObject element, IModifierKeyState? value)
+    {
+        ArgumentNullException.ThrowIfNull(element);
+        element.SetValue(KeyStateProperty, value);
+    }
+
+    public static IModifierKeyState? GetKeyState(DependencyObject element)
+    {
+        ArgumentNullException.ThrowIfNull(element);
+        return (IModifierKeyState?)element.GetValue(KeyStateProperty);
     }
 
     /// <summary>
@@ -79,39 +108,78 @@ public static class MoveToolBehavior
             return;
         }
 
-        // Re-suscribir es idempotente: evita enganchar los manejadores dos veces.
-        canvas.PreviewMouseLeftButtonDown -= OnMouseDown;
-        canvas.PreviewMouseLeftButtonDown += OnMouseDown;
-        canvas.PreviewMouseMove -= OnMouseMove;
-        canvas.PreviewMouseMove += OnMouseMove;
-        canvas.PreviewMouseLeftButtonUp -= OnMouseUp;
-        canvas.PreviewMouseLeftButtonUp += OnMouseUp;
-        canvas.PreviewKeyDown -= OnKeyDown;
-        canvas.PreviewKeyDown += OnKeyDown;
-
+        Hook(canvas);
+        EndHover(canvas);
         if ((ToolKind)e.NewValue != ToolKind.Move)
         {
             ClearSelection(canvas);
         }
     }
 
-    private static void OnMouseDown(object sender, MouseButtonEventArgs e)
+    // Escucha la ventana del lienzo una sola vez; si aún no está en una, al cargarse.
+    private static void Hook(InkCanvas canvas)
     {
-        var canvas = (InkCanvas)sender;
-        if (GetTool(canvas) != ToolKind.Move)
+        if (canvas.GetValue(HostProperty) is not null)
         {
             return;
         }
 
-        var point = e.GetPosition(canvas);
-        var targets = SelectionUnder(canvas, point) ?? AnnotationHitTest.At(canvas, point);
-        if (targets.IsEmpty)
+        canvas.Loaded -= OnCanvasLoaded;
+        if (Window.GetWindow(canvas) is not { } host)
         {
-            return; // sitio vacío: el lienzo dibuja el lazo
+            canvas.Loaded += OnCanvasLoaded;
+            return;
         }
 
-        canvas.Select(new StrokeCollection(targets.Strokes), targets.Elements);
-        StartDrag(canvas, targets, point, keepSelected: true);
+        canvas.SetValue(HostProperty, host);
+        host.PreviewMouseLeftButtonDown += (_, e) => OnMouseDown(canvas, e);
+        host.PreviewMouseMove += (_, e) => OnMouseMove(canvas, e);
+        host.PreviewMouseLeftButtonUp += (_, e) => OnMouseUp(canvas, e);
+        host.PreviewKeyDown += (_, e) => OnKeyDown(canvas, e);
+        host.PreviewKeyUp += (_, e) => OnKeyUp(canvas, e);
+        canvas.MouseLeave += (_, _) => EndHover(canvas);
+    }
+
+    private static void OnCanvasLoaded(object sender, RoutedEventArgs e) => Hook((InkCanvas)sender);
+
+    /// <summary>
+    /// Qué hacer con un clic en <paramref name="point"/>. Con Mover: arrastrar lo que hay
+    /// debajo (o la selección si cae dentro) y dejarlo seleccionado; en vacío, pasar para
+    /// que el lienzo dibuje el lazo. Con otra herramienta y Ctrl: arrastrar lo de debajo
+    /// sin seleccionarlo, y en vacío quedarse el clic para que no dibuje. Sin Ctrl, pasar.
+    /// </summary>
+    internal static GrabDecision Decide(InkCanvas canvas, Point point)
+    {
+        if (GetTool(canvas) == ToolKind.Move)
+        {
+            var targets = SelectionUnder(canvas, point) ?? AnnotationHitTest.At(canvas, point);
+            return targets.IsEmpty ? GrabDecision.Pass : new GrabDecision(true, targets, KeepSelected: true);
+        }
+
+        return WantsCtrlGrab(canvas)
+            ? new GrabDecision(true, AnnotationHitTest.At(canvas, point), KeepSelected: false)
+            : GrabDecision.Pass;
+    }
+
+    private static void OnMouseDown(InkCanvas canvas, MouseButtonEventArgs e)
+    {
+        var point = e.GetPosition(canvas);
+        var decision = Decide(canvas, point);
+        if (!decision.Handles)
+        {
+            return;
+        }
+
+        if (!decision.Targets.IsEmpty)
+        {
+            if (decision.KeepSelected)
+            {
+                canvas.Select(new StrokeCollection(decision.Targets.Strokes), decision.Targets.Elements);
+            }
+
+            StartDrag(canvas, decision.Targets, point, decision.KeepSelected);
+        }
+
         e.Handled = true;
     }
 
@@ -132,26 +200,26 @@ public static class MoveToolBehavior
         var drag = new AnnotationDrag(targets.Strokes, targets.Elements);
         canvas.SetValue(SessionProperty, new MoveSession(drag, targets, start, keepSelected));
         _ = canvas.CaptureMouse();
-        Mouse.OverrideCursor = HandCursorFactory.Grab(VisualTreeHelper.GetDpi(canvas).DpiScaleX);
+        Mouse.OverrideCursor = HandCursorFactory.Grab(Scale(canvas));
     }
 
-    private static void OnMouseMove(object sender, MouseEventArgs e)
+    private static void OnMouseMove(InkCanvas canvas, MouseEventArgs e)
     {
-        var canvas = (InkCanvas)sender;
-        if (canvas.GetValue(SessionProperty) is not MoveSession session)
+        if (canvas.GetValue(SessionProperty) is MoveSession session)
         {
+            var point = e.GetPosition(canvas);
+            session.Drag.MoveBy(point - session.Last);
+            session.Last = point;
+            e.Handled = true;
             return;
         }
 
-        var point = e.GetPosition(canvas);
-        session.Drag.MoveBy(point - session.Last);
-        session.Last = point;
-        e.Handled = true;
+        // Con Ctrl a la vista, el movimiento no llega a las herramientas (p. ej. el láser).
+        e.Handled = UpdateHover(canvas);
     }
 
-    private static void OnMouseUp(object sender, MouseButtonEventArgs e)
+    private static void OnMouseUp(InkCanvas canvas, MouseButtonEventArgs e)
     {
-        var canvas = (InkCanvas)sender;
         if (canvas.GetValue(SessionProperty) is not MoveSession session)
         {
             return;
@@ -174,21 +242,73 @@ public static class MoveToolBehavior
         e.Handled = true;
     }
 
-    private static void OnKeyDown(object sender, KeyEventArgs e)
+    private static void OnKeyDown(InkCanvas canvas, KeyEventArgs e)
     {
-        var canvas = (InkCanvas)sender;
+        if (IsCtrlKey(e) && canvas.IsMouseOver)
+        {
+            _ = UpdateHover(canvas);
+        }
+
         if (GetTool(canvas) == ToolKind.Move && IsBlockedGesture(canvas, e))
         {
             e.Handled = true;
         }
     }
 
+    private static void OnKeyUp(InkCanvas canvas, KeyEventArgs e)
+    {
+        if (IsCtrlKey(e))
+        {
+            EndHover(canvas);
+        }
+    }
+
+    // Muestra u oculta la mano de Ctrl según la tecla. Devuelve si la mano está a la vista.
+    private static bool UpdateHover(InkCanvas canvas)
+    {
+        bool wanted = WantsCtrlGrab(canvas);
+        bool shown = (bool)canvas.GetValue(HoverProperty);
+        if (wanted && !shown)
+        {
+            canvas.Cursor = HandCursorFactory.Open(Scale(canvas));
+            canvas.ForceCursor = true;
+            canvas.UseCustomCursor = true;
+            canvas.SetValue(HoverProperty, true);
+        }
+        else if (!wanted && shown)
+        {
+            EndHover(canvas);
+        }
+
+        return wanted;
+    }
+
+    // Vuelve el cursor de la herramienta.
+    private static void EndHover(InkCanvas canvas)
+    {
+        if ((bool)canvas.GetValue(HoverProperty))
+        {
+            canvas.SetValue(HoverProperty, false);
+            ToolCursorBehavior.Refresh(canvas);
+        }
+    }
+
+    // Ctrl agarra con las herramientas de dibujo; con un texto en edición, el clic lo confirma.
+    private static bool WantsCtrlGrab(InkCanvas canvas) =>
+        GetTool(canvas) != ToolKind.Move
+        && (GetKeyState(canvas) ?? WpfModifierKeyState.Instance).IsCtrlDown
+        && !TextAnnotationBehavior.IsEditing(canvas);
+
+    private static bool IsCtrlKey(KeyEventArgs e) => e.Key is Key.LeftCtrl or Key.RightCtrl;
+
     private static bool IsBlockedGesture(InkCanvas canvas, KeyEventArgs e) =>
         BlockedCommands
             .SelectMany(command => command.InputGestures.OfType<KeyGesture>())
             .Any(gesture => gesture.Matches(canvas, e));
 
-    // Estado de un arrastre de la mano en curso.
+    private static double Scale(Visual canvas) => VisualTreeHelper.GetDpi(canvas).DpiScaleX;
+
+    // Estado de un arrastre en curso, con la mano o con Ctrl.
     private sealed class MoveSession
     {
         public MoveSession(AnnotationDrag drag, GrabTargets targets, Point start, bool keepSelected)
