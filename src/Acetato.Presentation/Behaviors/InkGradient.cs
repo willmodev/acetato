@@ -16,7 +16,7 @@ public static class InkGradient
     public static readonly DependencyProperty PairProperty =
         DependencyProperty.RegisterAttached(
             "Pair",
-            typeof(TintaGradiente?),
+            typeof(GradientPair?),
             typeof(InkGradient),
             new PropertyMetadata(null));
 
@@ -28,16 +28,16 @@ public static class InkGradient
             typeof(InkGradient),
             new PropertyMetadata(null));
 
-    public static void SetPair(DependencyObject element, TintaGradiente? value)
+    public static void SetPair(DependencyObject element, GradientPair? value)
     {
         ArgumentNullException.ThrowIfNull(element);
         element.SetValue(PairProperty, value);
     }
 
-    public static TintaGradiente? GetPair(DependencyObject element)
+    public static GradientPair? GetPair(DependencyObject element)
     {
         ArgumentNullException.ThrowIfNull(element);
-        return (TintaGradiente?)element.GetValue(PairProperty);
+        return (GradientPair?)element.GetValue(PairProperty);
     }
 
     public static void SetUsedCommand(DependencyObject element, ICommand? value)

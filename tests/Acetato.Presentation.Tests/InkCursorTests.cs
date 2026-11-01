@@ -50,10 +50,10 @@ public sealed class InkCursorTests
     {
         var (solid, gradient, otherPair, start, end) = WpfTestHost.Run(() =>
         {
-            var tip = new InkCursorTip(Red, TintaGradiente.BlueCyan, 18d);
+            var tip = new InkCursorTip(Red, GradientPair.FromNeon(TintaGradiente.BlueCyan), 18d);
             var colors = TintaGradienteMap.Resolve(TintaGradiente.BlueCyan);
             return (InkCursorFactory.For(tip with { Gradient = null }, 1d), InkCursorFactory.For(tip, 1d),
-                InkCursorFactory.For(tip with { Gradient = TintaGradiente.PinkRed }, 1d), colors.Start, colors.End);
+                InkCursorFactory.For(tip with { Gradient = GradientPair.FromNeon(TintaGradiente.PinkRed) }, 1d), colors.Start, colors.End);
         });
 
         gradient.Should().NotBeSameAs(solid);
@@ -62,7 +62,7 @@ public sealed class InkCursorTests
         // Arriba a la izquierda domina el inicio del par y abajo a la derecha, el fin.
         const int Diameter = 18;
         var pixels = WpfTestHost.Run(() => InkCursorRenderer.Render(
-            InkCursorFactory.FillOf(new InkCursorTip(Red, TintaGradiente.BlueCyan, Diameter)), Diameter, Light, Dark));
+            InkCursorFactory.FillOf(new InkCursorTip(Red, GradientPair.FromNeon(TintaGradiente.BlueCyan), Diameter)), Diameter, Light, Dark));
         int size = InkCursorRenderer.SizeFor(Diameter);
         var topLeft = Pixel(pixels, size, (size / 2) - 4, (size / 2) - 4);
         var bottomRight = Pixel(pixels, size, (size / 2) + 4, (size / 2) + 4);

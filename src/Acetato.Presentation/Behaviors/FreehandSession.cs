@@ -20,11 +20,11 @@ internal sealed class FreehandSession
     private const double ArrowMinDistance = 1d;
 
     private readonly DrawingAttributes _attributes;
-    private readonly TintaGradiente? _gradient;
+    private readonly GradientPair? _gradient;
     private readonly JitterFilter? _filter;
     private readonly List<StrokePoint> _points = [];
 
-    public FreehandSession(ToolKind tool, DrawingAttributes attributes, TintaGradiente? gradient)
+    public FreehandSession(ToolKind tool, DrawingAttributes attributes, GradientPair? gradient)
     {
         Tool = tool;
         _attributes = attributes.Clone();

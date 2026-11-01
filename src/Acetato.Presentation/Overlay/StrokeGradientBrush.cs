@@ -14,10 +14,10 @@ namespace Acetato.Presentation.Overlay;
 /// </summary>
 internal static class StrokeGradientBrush
 {
-    private static readonly ConcurrentDictionary<TintaGradiente, GradientStopCollection> StopsByPair = new();
+    private static readonly ConcurrentDictionary<GradientPair, GradientStopCollection> StopsByPair = new();
 
     /// <summary>Pincel congelado del par <paramref name="pair"/> para un trazo con ese recorrido y grosor.</summary>
-    public static Brush Create(TintaGradiente pair, IReadOnlyList<StrokePoint> path, double thickness)
+    public static Brush Create(GradientPair pair, IReadOnlyList<StrokePoint> path, double thickness)
     {
         var axis = GradientAxis.For(path, thickness);
         var brush = new LinearGradientBrush(
@@ -31,9 +31,9 @@ internal static class StrokeGradientBrush
         return brush;
     }
 
-    private static GradientStopCollection BuildStops(TintaGradiente pair)
+    private static GradientStopCollection BuildStops(GradientPair pair)
     {
-        var (start, end) = TintaGradienteMap.Resolve(pair);
+        var (start, end) = GradientPairMap.Resolve(pair);
         var stops = new GradientStopCollection { new GradientStop(start, 0d), new GradientStop(end, 1d) };
         stops.Freeze();
         return stops;

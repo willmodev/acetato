@@ -8,7 +8,7 @@ namespace Acetato.Presentation.Overlay;
 
 /// <summary>
 /// Trazo propio del overlay (HU-19). Pinta el cuerpo con el estilo normal del lienzo
-/// (o con un degradado neón, si lo tiene) y, si es una flecha, añade la punta abierta
+/// (o con su par de degradado, neón o de tinta, si lo tiene) y, si es una flecha, añade la punta abierta
 /// como una polilínea aparte (extremos y uniones redondeados). Así la punta no pasa por
 /// el suavizado del lápiz, que deformaría el vértice, y la flecha sigue siendo UN solo
 /// trazo para el historial y el borrador. Conserva su par de degradado para siempre.
@@ -21,7 +21,7 @@ internal sealed class StyledStroke : Stroke
         StylusPointCollection stylusPoints,
         DrawingAttributes drawingAttributes,
         ArrowHead? head,
-        TintaGradiente? gradient = null)
+        GradientPair? gradient = null)
         : base(stylusPoints, drawingAttributes)
     {
         Head = head;
@@ -32,7 +32,7 @@ internal sealed class StyledStroke : Stroke
     public ArrowHead? Head { get; }
 
     /// <summary>Par de degradado del trazo; <c>null</c> = tinta sólida (<c>DrawingAttributes.Color</c>).</summary>
-    public TintaGradiente? Gradient { get; }
+    public GradientPair? Gradient { get; }
 
     /// <summary>
     /// Copia profunda que conserva punta y degradado. WPF clona trazos por su cuenta (p. ej.

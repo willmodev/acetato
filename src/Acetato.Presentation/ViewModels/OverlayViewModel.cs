@@ -49,7 +49,7 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
     /// Par de degradado que tomará el próximo trazo; <c>null</c> en modo sólido (HU-19).
     /// Los behaviors que crean trazos lo reciben por <c>InkGradient.Pair</c>.
     /// </summary>
-    public TintaGradiente? ActiveGradient => _settings.IsGradient ? _settings.NextGradient : null;
+    public GradientPair? ActiveGradient => _settings.IsGradient ? GradientPair.FromNeon(_settings.NextGradient) : null;
 
     /// <summary>
     /// Tinta, par del próximo trazo y grosor que pinta el cursor de tinta (HU-26).
