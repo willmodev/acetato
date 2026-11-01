@@ -94,6 +94,50 @@ public sealed class InkCursorTests
     }
 
     [Fact]
+    public void With_ink_pairs_the_tip_shows_the_pair_of_the_active_ink_and_keeps_it_after_a_stroke()
+    {
+        var (off, on, afterStroke, otherInk, notified) = WpfTestHost.Run(() =>
+        {
+            var settings = new DrawingSettings();
+            using var overlay = new OverlayViewModel(settings);
+            settings.SelectColor(TintaColor.Yellow);
+            var flat = overlay.CursorTip;
+            var changes = 0;
+            overlay.PropertyChanged += (_, e) => changes += string.Equals(e.PropertyName, nameof(OverlayViewModel.CursorTip), StringComparison.Ordinal) ? 1 : 0;
+            settings.SetInkPairs(true);
+            var paired = overlay.CursorTip;
+            overlay.GradientUsedCommand.Execute(null);
+            var kept = overlay.CursorTip;
+            settings.SelectColor(TintaColor.Blue);
+            return (flat, paired, kept, overlay.CursorTip, changes);
+        });
+
+        off.Gradient.Should().BeNull();
+        on.Gradient.Should().Be(GradientPair.FromInk(TintaColor.Yellow));
+        afterStroke.Should().Be(on);
+        otherInk.Gradient.Should().Be(GradientPair.FromInk(TintaColor.Blue));
+        notified.Should().BeGreaterThan(0);
+    }
+
+    [Fact]
+    public void An_ink_pair_circle_goes_from_the_ink_to_its_neighbor()
+    {
+        const int Diameter = 18;
+        var (pixels, start, end) = WpfTestHost.Run(() =>
+        {
+            var tip = new InkCursorTip(Red, GradientPair.FromInk(TintaColor.Red), Diameter);
+            var colors = GradientPairMap.Resolve(GradientPair.FromInk(TintaColor.Red));
+            return (InkCursorRenderer.Render(InkCursorFactory.FillOf(tip), Diameter, Light, Dark), colors.Start, colors.End);
+        });
+        int size = InkCursorRenderer.SizeFor(Diameter);
+
+        var topLeft = Pixel(pixels, size, (size / 2) - 4, (size / 2) - 4);
+        var bottomRight = Pixel(pixels, size, (size / 2) + 4, (size / 2) + 4);
+        Distance(topLeft, start).Should().BeLessThan(Distance(topLeft, end));
+        Distance(bottomRight, end).Should().BeLessThan(Distance(bottomRight, start));
+    }
+
+    [Fact]
     public void The_cursor_file_has_one_image_with_the_hotspot_in_the_center()
     {
         const int Size = 16;
