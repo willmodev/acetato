@@ -366,33 +366,47 @@ Escenario: Deshacer y limpiar afectan al texto
 
 ---
 
-#### HU-14 — Seleccionar y mover anotaciones
+#### HU-14 — Mover anotaciones
 - **Épica:** EP-02 · **Prioridad:** Could · **Estimación:** 8
 - **Narrativa:**
-  Como usuario, quiero seleccionar un trazo o forma ya dibujado para moverlo o borrarlo, para corregir sin deshacer todo lo posterior.
+  Como usuario, quiero agarrar un trazo, forma o texto ya dibujado para moverlo o borrarlo, para corregir sin deshacer todo lo posterior.
 
 **Criterios de aceptación**
 ```
-Escenario: Seleccionar una anotación
-  Dado que seleccioné la herramienta "seleccionar"
-  Cuando hago clic o trazo un lazo sobre un trazo existente
-  Entonces ese trazo queda marcado como seleccionado.
+Escenario: Agarrar y mover con la mano
+  Dado que seleccioné la herramienta "mover"
+  Cuando aprieto sobre un trazo, forma o texto y arrastro
+  Entonces se reubica en el mismo gesto
+  Y el resto permanece intacto.
 
-Escenario: Mover la selección
-  Dado que tengo un trazo seleccionado
-  Cuando lo arrastro
-  Entonces el trazo se reubica
-  Y el resto de los trazos permanece intacto.
+Escenario: Mover varios con el lazo
+  Dado que seleccioné la herramienta "mover"
+  Cuando arrastro desde un sitio vacío rodeando varias anotaciones
+  Entonces quedan seleccionadas
+  Y al arrastrarlas se mueven juntas.
+
+Escenario: Mover con Ctrl desde cualquier herramienta
+  Dado que tengo activa una herramienta de dibujo
+  Cuando mantengo Ctrl y arrastro una anotación
+  Entonces se reubica sin dibujar nada
+  Y al soltar sigo con la misma herramienta.
 
 Escenario: Borrar la selección
-  Dado que tengo un trazo seleccionado
-  Cuando presiono la tecla de borrar
+  Dado que tengo anotaciones seleccionadas con la herramienta "mover"
+  Cuando presiono Supr
   Entonces solo se elimina lo seleccionado
   Y el resto permanece.
-```
-> **Cambio por HU-24.** El botón con el icono `mouse-pointer-2` pasó a ser **Puntero** (salir del modo dibujo). Seleccionar tendrá su propio botón e icono cuando se implemente; `ToolKind.Select` sigue reservado.
 
-**Notas técnicas:** `ToolKind.Select` e `Icon.Select` ya existen (placeholder). Encaja con el modo nativo `InkCanvasEditingMode.Select` de WPF (lazo + mover + redimensionar + borrar selección), mapeable en `OverlayViewModel.ToEditingMode`. Mover/borrar deberían integrarse con `UndoStack` / Rehacer (HU-17) para ser deshacibles.
+Escenario: Deshacer un movimiento o un borrado
+  Dado que moví o borré anotaciones
+  Cuando deshago
+  Entonces vuelven a donde estaban.
+```
+> **Cambio por HU-24.** El botón con el icono `mouse-pointer-2` pasó a ser **Puntero** (salir del modo dibujo).
+>
+> **Cambio por SPEC 11 (2026-11-01).** «Seleccionar» pasó a ser **«Mover»**, con icono de mano y Ctrl mantenido, como ScreenBrush. Se eligió tras comparar siete apps de dibujar en pantalla (Zoom, Teams, Epic Pen, ppInk, ScreenBrush, Presentify, ZoomIt); la comparación está en el spec.
+
+**Notas técnicas:** Spec en [`specs/11-elipse-mover-y-vidrio.md`](./specs/11-elipse-mover-y-vidrio.md). Botón «Mover» (`ToolKind.Move`, `Icon.Move` = Lucide *hand*), primero de las herramientas, atajo `Ctrl+M`, fuera del ciclo. El asa de la barra pasa a «Mover barra». `Supr` es un atajo fijo que solo se registra en modo dibujo con Mover activa. Sin tiradores de tamaño. Mover y borrar se integran con **Deshacer**, que pasa a revertir cualquier acción (también el Borrador). Fuera de alcance: cambiar tamaño, girar, copiar/pegar, mover entre monitores y lazo con Ctrl.
 
 ---
 
@@ -442,11 +456,13 @@ Escenario: La elipse es un único trazo
   Entonces la elipse se quita entera
   Y respeta el color y grosor activos.
 ```
-**Notas técnicas:** `ToolKind.Ellipse` ya está en el enum (sin uso). Requiere: caso `Ellipse` en `ShapeBuilder.Build` (polilínea que aproxima la elipse, cerrada — mismo patrón que `Rectangle`), añadir `Ellipse` a `ShapeDrawingBehavior.IsShapeTool`, entrada en la barra con `Icon.Ellipse` (Lucide *circle*) e incorporarla al `ToolRing`. Bajo riesgo: reutiliza el pipeline de formas existente.
+**Notas técnicas:** Spec en [`specs/11-elipse-mover-y-vidrio.md`](./specs/11-elipse-mover-y-vidrio.md). Caso `Ellipse` en `ShapeBuilder.Build` (polilínea cerrada, un punto cada ~4 DIP de perímetro, entre 24 y 180), `Ellipse` en `ShapeDrawingBehavior.IsShapeTool`, botón después de Rectángulo con `Icon.Ellipse` (Lucide *circle*), atajo `Ctrl+O` y en el `ToolRing` después de Rectángulo. Con **Mayús**, círculo (`ShapeConstraint.Square`). Bajo riesgo: reutiliza el pipeline de formas existente.
 
 ---
 
 #### HU-17 — Rehacer el último trazo deshecho
+> **Descartada (2026-11-01).** El usuario no quiere Rehacer. No se implementa (ver [`specs/11-elipse-mover-y-vidrio.md`](./specs/11-elipse-mover-y-vidrio.md)).
+
 - **Épica:** EP-02 · **Prioridad:** Could · **Estimación:** 3
 - **Narrativa:**
   Como usuario, quiero rehacer un trazo que deshice, para recuperarlo si me arrepentí.
@@ -491,6 +507,8 @@ Escenario: Degradación elegante
   Y los popovers y las esquinas redondeadas siguen funcionando.
 ```
 **Notas técnicas:** hoy el `DwmSetWindowAttribute(DWMWA_SYSTEMBACKDROP_TYPE)` es best-effort y **no compone** con `AllowsTransparency=True` (esquinas redondeadas). Trade-off a evaluar: el acrílico real exige quitar `AllowsTransparency`, lo que afecta esquinas redondeadas y los `Popup` de color/grosor → riesgo. Consultar el design system (`/acetato-design`) para el look glass de marca.
+
+> **SPEC 11 (2026-11-01).** Se resuelve con una **prueba de 1 día** en rama aparte y seis condiciones de adopción (acrílico con la barra inactiva, sin robar el foco, popovers/plegado/arrastre intactos, fuera de los recortes, encima del dibujo y radio de Windows aceptado). Resultado: *pendiente de prueba manual*. El experimento está en la rama `spike-18-vidrio-real` (sin integrar). Ver [`specs/11-elipse-mover-y-vidrio.md`](./specs/11-elipse-mover-y-vidrio.md).
 
 ---
 
@@ -945,5 +963,5 @@ Una historia se considera **terminada** cuando:
 3. **Iteración 2:** HU-08 (integración con el sistema).
 4. **Backlog futuro:** HU-09, HU-10, HU-11, HU-12.
 5. **Iteración 5 — pulido de herramientas:** primero las rápidas HU-15, HU-16, HU-17
-   (láser, elipse, rehacer); luego las mayores HU-13, HU-14 (texto, seleccionar);
+   (láser, elipse, rehacer —descartada—); luego las mayores HU-13, HU-14 (texto, mover);
    HU-18 (blur acrílico real) al final como pulido visual.

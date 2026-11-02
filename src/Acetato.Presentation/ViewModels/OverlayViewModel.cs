@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Ink;
 using System.Windows.Media;
+using Acetato.Application.Abstractions;
 using Acetato.Application.Drawing;
 using Acetato.Domain;
 using Acetato.Presentation.Overlay;
@@ -58,6 +59,12 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
     /// </summary>
     public InkCursorTip CursorTip => new(SolidInkColor, ActiveGradient, _settings.Thickness);
 
+    /// <summary>
+    /// Estado de Ctrl para mover con Ctrl desde cualquier herramienta (SPEC 11). Enlazado a
+    /// <c>MoveToolBehavior.KeyState</c>.
+    /// </summary>
+    public IModifierKeyState KeyState { get; }
+
     /// <summary>Tamaño de fuente del texto, derivado del grosor activo (HU-13).</summary>
     public double ActiveFontSize => FontScale.FromThicknessIndex(_settings.ThicknessIndex);
 
@@ -69,9 +76,10 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private InkCanvasEditingMode _editingMode = InkCanvasEditingMode.None;
 
-    public OverlayViewModel(IDrawingSettings settings)
+    public OverlayViewModel(IDrawingSettings settings, IModifierKeyState? keyState = null)
     {
         _settings = settings;
+        KeyState = keyState ?? WpfModifierKeyState.Instance;
         _settings.Changed += OnSettingsChanged;
         _history = new AnnotationHistory(Strokes);
         SyncAttributes();
@@ -84,6 +92,13 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
 
     /// <summary>Registra un texto recién fijado en el historial de esta pane (HU-13).</summary>
     public void RecordText(InkCanvas canvas, UIElement element) => _history.RecordText(canvas, element);
+
+    /// <summary>Registra un arrastre de la mano o de Ctrl en el historial de esta pane (SPEC 11).</summary>
+    internal void RecordMove(AnnotationsMoved moved) => _history.Record(moved);
+
+    /// <summary>Borra trazos y textos seleccionados como una sola acción que Deshacer revierte (SPEC 11).</summary>
+    internal void DeleteSelection(InkCanvas canvas, IReadOnlyList<Stroke> strokes, IReadOnlyList<UIElement> elements) =>
+        _history.DeleteSelection(canvas, strokes, elements);
 
     /// <summary>
     /// Un trazo se fijó en degradado: sortea el par del siguiente (HU-19). Enlazado a
@@ -100,7 +115,10 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void DecreaseThickness() => _settings.DecreaseThickness();
 
-    /// <summary>Deshace la última anotación (trazo o texto) de esta pantalla (HU-07/HU-13).</summary>
+    /// <summary>
+    /// Deshace la última acción de esta pantalla: un trazo o texto dibujado, o lo quitado
+    /// con el Borrador (HU-07/HU-13, SPEC 11).
+    /// </summary>
     [RelayCommand]
     private void Undo() => _history.UndoLast();
 
@@ -124,11 +142,14 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
     {
         ActiveTool = _settings.SelectedTool;
         EditingMode = ToEditingMode(_settings.SelectedTool);
+        // Solo con el Borrador, quitar un trazo es una acción que Deshacer revierte (SPEC 11).
+        _history.RecordsErasures = _settings.SelectedTool == ToolKind.Eraser;
     }
 
     private static InkCanvasEditingMode ToEditingMode(ToolKind tool) => tool switch
     {
         ToolKind.Eraser => InkCanvasEditingMode.EraseByStroke,
+        ToolKind.Move => InkCanvasEditingMode.Select, // el lazo de la mano (SPEC 11)
         _ => InkCanvasEditingMode.None, // lápiz y flecha (captura propia, HU-20), formas, texto y láser: los dibuja su behavior
     };
 

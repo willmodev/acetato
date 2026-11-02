@@ -23,17 +23,20 @@ internal static class HotkeyActionLabels
         [HotkeyAction.Undo] = "Deshacer",
         [HotkeyAction.Clear] = "Limpiar todo",
         [HotkeyAction.CycleTool] = "Siguiente herramienta",
+        [HotkeyAction.SelectMoveTool] = "Mover",
         [HotkeyAction.SelectPencilTool] = "Lápiz",
         [HotkeyAction.SelectLaserTool] = "Láser",
         [HotkeyAction.SelectEraserTool] = "Borrador",
         [HotkeyAction.SelectLineTool] = "Línea",
         [HotkeyAction.SelectArrowTool] = "Flecha",
         [HotkeyAction.SelectRectangleTool] = "Rectángulo",
+        [HotkeyAction.SelectEllipseTool] = "Elipse",
         [HotkeyAction.SelectTextTool] = "Texto",
         [HotkeyAction.ThicknessUp] = "Más grueso",
         [HotkeyAction.ThicknessDown] = "Más fino",
         [HotkeyAction.Capture] = "Recortar",
         [HotkeyAction.EnterPointerMode] = "Puntero",
+        [HotkeyAction.DeleteSelection] = "Borrar selección",
     };
 
     /// <summary>Nombre de la acción.</summary>

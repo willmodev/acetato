@@ -48,6 +48,9 @@ public sealed class OverlayBroadcaster
     /// <summary>Deshace el último trazo de la pantalla bajo el cursor (HU-07/HU-09).</summary>
     public void Undo() => ActiveCanvas()?.Undo();
 
+    /// <summary>Borra lo seleccionado con Mover en la pantalla bajo el cursor (SPEC 11).</summary>
+    public void DeleteSelection() => ActiveCanvas()?.DeleteSelection();
+
     /// <summary>
     /// Confirma el texto en edición de cualquier pantalla (HU-24). Devuelve si
     /// había alguno: así Esc confirma primero y solo después sale del dibujo.

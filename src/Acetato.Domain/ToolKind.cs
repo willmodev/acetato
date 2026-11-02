@@ -6,7 +6,7 @@ namespace Acetato.Domain;
 /// </summary>
 public enum ToolKind
 {
-    Select,
+    Move,
     Pencil,
     Laser,
     Eraser,

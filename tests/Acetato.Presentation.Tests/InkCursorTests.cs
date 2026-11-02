@@ -171,6 +171,7 @@ public sealed class InkCursorTests
     [InlineData(ToolKind.Line)]
     [InlineData(ToolKind.Arrow)]
     [InlineData(ToolKind.Rectangle)]
+    [InlineData(ToolKind.Ellipse)]
     public void Drawing_tools_use_the_ink_circle_instead_of_the_cross(ToolKind tool)
     {
         var (cursor, expected) = WpfTestHost.Run(() =>

@@ -54,14 +54,17 @@ internal sealed class HotkeyActionRouter
         [HotkeyAction.Capture] = broadcaster.LaunchScreenClip,
         [HotkeyAction.SelectTextTool] = () => broadcaster.SelectTool(ToolKind.Text),
         [HotkeyAction.SelectLaserTool] = () => broadcaster.SelectTool(ToolKind.Laser),
+        [HotkeyAction.SelectMoveTool] = () => broadcaster.SelectTool(ToolKind.Move),
         [HotkeyAction.SelectPencilTool] = () => broadcaster.SelectTool(ToolKind.Pencil),
         [HotkeyAction.SelectEraserTool] = () => broadcaster.SelectTool(ToolKind.Eraser),
         [HotkeyAction.SelectLineTool] = () => broadcaster.SelectTool(ToolKind.Line),
         [HotkeyAction.SelectArrowTool] = () => broadcaster.SelectTool(ToolKind.Arrow),
         [HotkeyAction.SelectRectangleTool] = () => broadcaster.SelectTool(ToolKind.Rectangle),
+        [HotkeyAction.SelectEllipseTool] = () => broadcaster.SelectTool(ToolKind.Ellipse),
         [HotkeyAction.ThicknessUp] = broadcaster.IncreaseThickness,
         [HotkeyAction.ThicknessDown] = broadcaster.DecreaseThickness,
         [HotkeyAction.EnterPointerMode] = () => EnterPointerMode(controller, broadcaster),
+        [HotkeyAction.DeleteSelection] = broadcaster.DeleteSelection,
     };
 
     // Plegar barra (HU-25): con la capa oculta la barra no se ve, así que no hace nada.

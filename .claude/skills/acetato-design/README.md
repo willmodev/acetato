@@ -57,9 +57,9 @@ with its XAML key.
 There is almost no copy in Acetato — that is the point. Text appears only in
 **tooltips and the Settings window.** Rules:
 
-- **Language: Spanish (es-ES).** Toolbar labels, in bar order: *Mover,
-  Ocultar barra (Mostrar barra when collapsed), Puntero, Lápiz, Láser, Borrador, Línea, Flecha, Rectángulo, Texto, Color,
-  Grosor, Deshacer, Limpiar todo, Recortar, Ajustes, Cerrar.*
+- **Language: Spanish (es-ES).** Toolbar labels, in bar order: *Mover barra,
+  Ocultar barra (Mostrar barra when collapsed), Puntero, Mover, Lápiz, Láser, Borrador, Línea, Flecha, Rectángulo, Elipse,
+  Texto, Color, Grosor, Deshacer, Limpiar todo, Recortar, Ajustes, Cerrar.*
 - **Voice: none.** The product does not "speak". No first or second person, no
   marketing voice, no encouragement. Labels *name* a thing; they never narrate.
 - **One or two words, max.** A tooltip is a noun (*Lápiz*) or a short verb
@@ -75,7 +75,7 @@ There is almost no copy in Acetato — that is the point. Text appears only in
   Spanish and joined with `+`: `Lápiz  Ctrl+P`, `Limpiar todo  Ctrl+Retroceso`,
   `Cerrar  Ctrl+Alt+D`, `Puntero  Esc`, `Ocultar barra  Ctrl+Alt+H`. Key names: `Ctrl`, `Alt`, `Mayús`, `Win`,
   `Espacio`, `Retroceso`, `Supr`, `RePág`, `AvPág`, `Inicio`, `Fin`, `Esc`. Actions without a
-  shortcut (Mover, Color, Grosor, Ajustes) show the name only.
+  shortcut (Mover barra, Color, Grosor, Ajustes) show the name only.
 - **Settings messages** are short and concrete: *Ya la usa Lápiz*, *En uso por
   otra aplicación*, *Tecla no admitida*, *Usa Ctrl, Alt o Win*, *Mayús necesita
   otro modificador*, *Reservado por Windows*, *No disponible*, *Sin atajo*,
@@ -103,8 +103,10 @@ the shortcut being captured in Settings. `--danger` appears only in Settings
 messages. Inks never appear as UI chrome.
 
 **Transparency & blur.** Today the bar and popovers are **translucent without
-blur** (`AllowsTransparency` windows). Real Acrylic/Mica blur behind the bar is
-backlog **HU-18**; when it lands it goes under the same `--chrome-glass`. Previews
+blur** (`AllowsTransparency` windows). Real Windows 11 Acrylic behind the bar
+(**HU-18**) is being tested in a separate branch: it is adopted only if it shows
+while the bar is inactive and breaks nothing, and Windows then sets the corner
+radius (about 8px). Previews
 here render without blur to match the app. Settings is a normal opaque window on
 `--chrome-solid`.
 
@@ -208,7 +210,7 @@ saves at once; there is no Save button.
   **Gradient mode** with `Ctrl+7` or the round 7th swatch: each stroke takes a
   random neon pair (never the previous one) and keeps it; the gradient runs from
   the first to the last point (closed shapes: bounding-box diagonal). Applies to
-  pencil, line, arrow and rectangle; picking a solid ink leaves the mode.
+  pencil, line, arrow, rectangle and ellipse; picking a solid ink leaves the mode.
 - **Tintas degradadas (HU-27)** — switch in *Ajustes → Dibujo*, off by
   default, remembered between sessions. When on, every solid ink paints a
   gradient from itself to its fixed neighbor on the color wheel (`--ink-*-end`):
@@ -226,13 +228,27 @@ saves at once; there is no Save button.
 - **Pencil / Arrow:** smoothed freehand. Arrow adds an open two-wing head on
   release, aimed by the final stretch, 3 × thickness long.
 - **Rectangle:** drag; rounded corners at 2 × thickness (max half the short side).
+- **Ellipse (HU-16):** drag; inscribed in the drag box; with `Mayús`, a circle.
+  One stroke, with ink, thickness, gradient (diagonal, like the rectangle) and
+  the ink cursor. `Ctrl+O`.
 - **Text:** click to place; multiline (Enter = new line), Esc or click outside
   confirms. Size from `--annot-*`, weight 600, last solid ink; empty placeholder
   *Texto* in `--fg-3`, no border.
 - **Laser:** dot with a 22px halo and a trail that fades in 2 s; last solid ink;
   leaves nothing behind.
-- **Eraser** removes whole strokes. **Undo** (`Ctrl+Z`) and **Clear**
-  (`Ctrl+Retroceso`) work on whole strokes too. There is no Redo yet (HU-17).
+- **Eraser** removes whole strokes. **Clear** (`Ctrl+Retroceso`) too, and it
+  cannot be undone.
+- **Move (HU-14):** first tool of the bar, hand icon (`hand`), `Ctrl+M`. Press
+  on a stroke, shape or text and drag: it moves in the same gesture and stays
+  selected. From empty space, a lasso picks several. `Supr` deletes the
+  selection. No resize handles. Cursor: open hand, closed (`grab`) while
+  dragging, light stroke with a dark edge. The selection box is Windows' own
+  (no brand style); it drops on tool change, pointer mode and hiding the layer.
+- **Hold Ctrl** and drag moves a drawing from any tool, without drawing or
+  selecting; the cursor turns into the hand. Same model as ScreenBrush.
+- **Undo** (`Ctrl+Z`) reverts the last action: drawing, erasing with the Eraser
+  (the stroke returns to its layer), moving, or deleting with `Supr`. **No
+  Redo**: it was dropped (HU-17).
 - `--ink-halo-*` are defined but the app does not paint halos yet.
 - **Ink cursor (HU-26).** With Lápiz, Línea, Flecha or Rectángulo the pointer is
   a filled circle: the active ink (in gradient mode, the pair of the next stroke;
@@ -258,16 +274,19 @@ saves at once; there is no Save button.
 
   | Action | XAML key | Lucide |
   |--------|----------|--------|
-  | Mover | `Icon.Grip` | `grip-vertical` (filled) |
+  | Mover barra | `Icon.Grip` | `grip-vertical` (filled) |
   | Ocultar barra (bar expanded) | `Icon.Eye` | `eye` |
   | Mostrar barra (bar collapsed) | `Icon.EyeOff` | `eye-off` |
-  | Puntero | `Icon.Select` | `mouse-pointer-2` |
+  | Puntero | `Icon.Pointer` | `mouse-pointer-2` |
+  | Mover | `Icon.Move` | `hand` |
+  | Mover, cursor while dragging | `Icon.Grab` | `grab` |
   | Lápiz | `Icon.Pencil` | `pencil` |
   | Láser | `Icon.Laser` | `locate` |
   | Borrador | `Icon.Eraser` | `eraser` |
   | Línea | `Icon.Line` | `minus` |
   | Flecha | `Icon.Arrow` | `arrow-up-right` |
   | Rectángulo | `Icon.Rectangle` | `square` |
+  | Elipse | `Icon.Ellipse` | `circle` |
   | Texto | `Icon.Text` | `type` |
   | Deshacer | `Icon.Undo` | `undo-2` |
   | Limpiar todo | `Icon.Clear` | `trash-2` |
@@ -276,11 +295,9 @@ saves at once; there is no Save button.
   | Cerrar, Quitar | `Icon.Close` | `x` |
   | Restaurar | `Icon.Reset` | `rotate-ccw` |
 
-- *Seleccionar* (HU-14, select and move strokes) will need its own icon: the
-  `mouse-pointer-2` glyph now belongs to *Puntero*.
-- **Reserved** (SVGs ready, no feature yet — keep them off the bar): `circle`
-  (Elipse, HU-16), `redo-2` (Rehacer, HU-17), `highlighter`, `palette`, `pin`,
-  `pipette`.
+- **Reserved** (SVGs ready, no feature yet — keep them off the bar): `highlighter`,
+  `palette`, `pin`, `pipette`. `circle` became Elipse (HU-16); `redo-2` was
+  removed, Redo was dropped (HU-17).
 - **Color** and **Grosor** are not icons: Color shows the active ink (its pair
   with *Tintas degradadas*, or the gradient sample) as an 18px circle with a `--highlight` ring; Grosor is a
   custom **3-stacked-lines glyph** (1.5 / 2.5 / 4px).

@@ -19,13 +19,19 @@ namespace Acetato.Presentation.Behaviors;
 /// </summary>
 public static class ToolCursorBehavior
 {
+    // Herramientas que pintan tinta: su cursor es el círculo de tinta (HU-26).
+    private static readonly HashSet<ToolKind> InkTools =
+    [
+        ToolKind.Pencil, ToolKind.Arrow, ToolKind.Line, ToolKind.Rectangle, ToolKind.Ellipse,
+    ];
+
     /// <summary>Herramienta activa (enlazada al ViewModel del overlay).</summary>
     public static readonly DependencyProperty ToolProperty =
         DependencyProperty.RegisterAttached(
             "Tool",
             typeof(ToolKind),
             typeof(ToolCursorBehavior),
-            new PropertyMetadata(ToolKind.Select, OnCursorInputChanged));
+            new PropertyMetadata(ToolKind.Move, OnCursorInputChanged));
 
     /// <summary>Tinta y grosor del círculo (HU-26), enlazados al ViewModel del overlay.</summary>
     public static readonly DependencyProperty TipProperty =
@@ -65,10 +71,10 @@ public static class ToolCursorBehavior
     /// </summary>
     internal static Cursor? CursorFor(ToolKind tool, InkCursorTip? tip, double scale) => tool switch
     {
-        ToolKind.Pencil or ToolKind.Arrow or ToolKind.Line or ToolKind.Rectangle =>
-            tip is null ? Cursors.Cross : InkCursorFactory.For(tip, scale),
         ToolKind.Text => Cursors.IBeam,
         ToolKind.Laser => Cursors.None,
+        ToolKind.Move => HandCursorFactory.Open(scale),
+        _ when InkTools.Contains(tool) => tip is null ? Cursors.Cross : InkCursorFactory.For(tip, scale),
         _ => null,
     };
 
@@ -90,10 +96,15 @@ public static class ToolCursorBehavior
     // Recalcula con la escala del monitor donde ya está la pane (HU-09/HU-26).
     private static void OnRefresh(object sender, RoutedEventArgs e) => Apply((InkCanvas)sender);
 
+    /// <summary>Vuelve a poner el cursor de la herramienta (al soltar Ctrl tras la mano, SPEC 11).</summary>
+    internal static void Refresh(InkCanvas canvas) => Apply(canvas);
+
     private static void Apply(InkCanvas canvas)
     {
         var cursor = CursorFor(GetTool(canvas), GetTip(canvas), VisualTreeHelper.GetDpi(canvas).DpiScaleX);
         canvas.Cursor = cursor;
         canvas.ForceCursor = cursor is not null;
+        // En modo selección (Mover) el lienzo pone sus propios cursores si no se le pide el nuestro.
+        canvas.UseCustomCursor = cursor is not null;
     }
 }

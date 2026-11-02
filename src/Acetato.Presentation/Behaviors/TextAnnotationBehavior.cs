@@ -64,6 +64,9 @@ public static class TextAnnotationBehavior
         return true;
     }
 
+    /// <summary>Hay un texto en edición en <paramref name="canvas"/> (lo consulta Mover con Ctrl, SPEC 11).</summary>
+    internal static bool IsEditing(InkCanvas canvas) => canvas.GetValue(ActiveEditProperty) is TextEdit;
+
     private static void OnToolChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         if (d is not InkCanvas canvas)

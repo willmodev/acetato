@@ -47,6 +47,7 @@
         <InkCanvas x:Name="InkSurface"
                    Background="#01000000"
                    EditingMode="{Binding EditingMode}"
+                   ResizeEnabled="False"
                    Strokes="{Binding Strokes}"
                    DefaultDrawingAttributes="{Binding ActiveAttributes}"
                    behaviors:ThicknessWheelBehavior.IncreaseCommand="{Binding IncreaseThicknessCommand}"
@@ -59,6 +60,8 @@
                    behaviors:InkGradient.Pair="{Binding ActiveGradient}"
                    behaviors:InkGradient.UsedCommand="{Binding GradientUsedCommand}"
                    behaviors:TextAnnotationBehavior.Tool="{Binding ActiveTool}"
+                   behaviors:MoveToolBehavior.Tool="{Binding ActiveTool}"
+                   behaviors:MoveToolBehavior.KeyState="{Binding KeyState}"
                    behaviors:LaserPointerBehavior.Tool="{Binding ActiveTool}"
                    behaviors:LaserPointerBehavior.Layer="{Binding ElementName=LaserLayer}" />
         <overlay:LiveStrokeLayer x:Name="LiveLayer" IsHitTestVisible="False" />

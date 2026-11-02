@@ -15,11 +15,13 @@ public sealed class HotkeyActionLabelsTests
     }
 
     [Theory]
+    [InlineData(HotkeyAction.SelectMoveTool, "Mover")]
     [InlineData(HotkeyAction.SelectPencilTool, "Lápiz")]
     [InlineData(HotkeyAction.SelectEraserTool, "Borrador")]
     [InlineData(HotkeyAction.SelectLineTool, "Línea")]
     [InlineData(HotkeyAction.SelectArrowTool, "Flecha")]
     [InlineData(HotkeyAction.SelectRectangleTool, "Rectángulo")]
+    [InlineData(HotkeyAction.SelectEllipseTool, "Elipse")]
     [InlineData(HotkeyAction.ThicknessUp, "Más grueso")]
     [InlineData(HotkeyAction.ThicknessDown, "Más fino")]
     public void The_actions_of_HU_22_have_their_spanish_label(HotkeyAction action, string expected)

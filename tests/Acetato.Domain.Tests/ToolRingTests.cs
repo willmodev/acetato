@@ -11,7 +11,7 @@ public sealed class ToolRingTests
     {
         ToolRing.Order.Should().Equal(
             ToolKind.Pencil, ToolKind.Laser, ToolKind.Line, ToolKind.Arrow,
-            ToolKind.Rectangle, ToolKind.Text, ToolKind.Eraser);
+            ToolKind.Rectangle, ToolKind.Ellipse, ToolKind.Text, ToolKind.Eraser);
     }
 
     [Fact]
@@ -22,9 +22,15 @@ public sealed class ToolRingTests
     }
 
     [Fact]
+    public void Next_cycles_from_the_rectangle_to_the_ellipse_and_then_to_text()
+    {
+        ToolRing.Next(ToolKind.Rectangle).Should().Be(ToolKind.Ellipse);
+        ToolRing.Next(ToolKind.Ellipse).Should().Be(ToolKind.Text);
+    }
+
+    [Fact]
     public void Next_cycles_through_text_before_the_eraser()
     {
-        ToolRing.Next(ToolKind.Rectangle).Should().Be(ToolKind.Text);
         ToolRing.Next(ToolKind.Text).Should().Be(ToolKind.Eraser);
     }
 
@@ -37,6 +43,6 @@ public sealed class ToolRingTests
     [Fact]
     public void Next_from_a_tool_outside_the_ring_returns_the_first()
     {
-        ToolRing.Next(ToolKind.Select).Should().Be(ToolKind.Pencil);
+        ToolRing.Next(ToolKind.Move).Should().Be(ToolKind.Pencil);
     }
 }

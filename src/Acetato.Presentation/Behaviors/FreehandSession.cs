@@ -106,17 +106,15 @@ internal sealed class FreehandSession
 
     // Cada llamada usa una colección de puntos (y atributos) nueva: un Stroke se suscribe
     // a los cambios de ambos, así que compartirlos entre trazos acumularía manejadores.
-    private Stroke? BuildStroke(IReadOnlyList<StrokePoint> path, ArrowHead? head)
+    private StyledStroke? BuildStroke(IReadOnlyList<StrokePoint> path, ArrowHead? head)
     {
         if (path.Count == 0)
         {
             return null;
         }
 
-        var stylusPoints = ToStylusPoints(path);
-        return _gradient is null && head is null
-            ? new Stroke(stylusPoints, _attributes.Clone())
-            : new StyledStroke(stylusPoints, _attributes.Clone(), head, _gradient);
+        // Siempre StyledStroke, también el plano: así no se pinta en blanco al seleccionarlo (SPEC 11).
+        return new StyledStroke(ToStylusPoints(path), _attributes.Clone(), head, _gradient);
     }
 
     private static StylusPointCollection ToStylusPoints(IReadOnlyList<StrokePoint> path)

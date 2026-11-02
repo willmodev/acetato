@@ -53,6 +53,20 @@ public sealed class OverlayBroadcasterTests
     }
 
     [Fact]
+    public void DeleteSelection_targets_only_the_canvas_under_the_cursor()
+    {
+        var primary = Canvas(new MonitorInfo(0, 0, 1920, 1080, true));
+        var secondary = Canvas(new MonitorInfo(1920, 0, 1280, 1024, false));
+        _provider.Canvases.Returns([primary, secondary]);
+        _cursor.GetCursorPosition().Returns((100, 100)); // sobre el principal
+
+        CreateBroadcaster().DeleteSelection();
+
+        primary.Received(1).DeleteSelection();
+        secondary.DidNotReceive().DeleteSelection();
+    }
+
+    [Fact]
     public void TryCommitText_commits_on_every_canvas_and_reports_if_any_was_editing()
     {
         var idle = Canvas(new MonitorInfo(0, 0, 1920, 1080, true));

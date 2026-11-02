@@ -17,20 +17,23 @@ public sealed class OverlayPaneFactory : IOverlayPaneFactory
     private readonly IDrawingSettings _settings;
     private readonly IOverlayWindowStyler _styler;
     private readonly IOverlayWindowPlacer _placer;
+    private readonly IModifierKeyState _keyState;
 
     public OverlayPaneFactory(
         IDrawingSettings settings,
         IOverlayWindowStyler styler,
-        IOverlayWindowPlacer placer)
+        IOverlayWindowPlacer placer,
+        IModifierKeyState keyState)
     {
         _settings = settings;
         _styler = styler;
         _placer = placer;
+        _keyState = keyState;
     }
 
     public OverlayPane Create(MonitorInfo monitor)
     {
-        var viewModel = new OverlayViewModel(_settings);
+        var viewModel = new OverlayViewModel(_settings, _keyState);
         var window = new OverlayWindow { DataContext = viewModel };
         return new OverlayPane(window, viewModel, _styler, _placer, monitor);
     }

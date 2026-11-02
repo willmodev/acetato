@@ -12,7 +12,7 @@ public sealed class HotkeyCatalogTests
     public void Every_action_has_exactly_one_definition_or_a_fixed_chord()
     {
         HotkeyCatalog.All.Select(definition => definition.Action)
-            .Concat(FixedHotkeys.Drawing.Select(assignment => assignment.Action))
+            .Concat(FixedHotkeys.All.Select(assignment => assignment.Action))
             .Should().BeEquivalentTo(Enum.GetValues<HotkeyAction>())
             .And.OnlyHaveUniqueItems();
     }
@@ -65,12 +65,14 @@ public sealed class HotkeyCatalogTests
                 (HotkeyAction.Undo, "Ctrl+Z"),
                 (HotkeyAction.Clear, "Ctrl+Back"),
                 (HotkeyAction.CycleTool, "Ctrl+Space"),
+                (HotkeyAction.SelectMoveTool, "Ctrl+M"),
                 (HotkeyAction.SelectPencilTool, "Ctrl+P"),
                 (HotkeyAction.SelectLaserTool, "Ctrl+L"),
                 (HotkeyAction.SelectEraserTool, "Ctrl+B"),
                 (HotkeyAction.SelectLineTool, "Ctrl+I"),
                 (HotkeyAction.SelectArrowTool, "Ctrl+F"),
                 (HotkeyAction.SelectRectangleTool, "Ctrl+R"),
+                (HotkeyAction.SelectEllipseTool, "Ctrl+O"),
                 (HotkeyAction.SelectTextTool, "Ctrl+T"),
                 (HotkeyAction.ThicknessUp, "Ctrl+PageUp"),
                 (HotkeyAction.ThicknessDown, "Ctrl+PageDown"),
@@ -78,11 +80,13 @@ public sealed class HotkeyCatalogTests
     }
 
     [Theory]
+    [InlineData(HotkeyAction.SelectMoveTool)]
     [InlineData(HotkeyAction.SelectPencilTool)]
     [InlineData(HotkeyAction.SelectEraserTool)]
     [InlineData(HotkeyAction.SelectLineTool)]
     [InlineData(HotkeyAction.SelectArrowTool)]
     [InlineData(HotkeyAction.SelectRectangleTool)]
+    [InlineData(HotkeyAction.SelectEllipseTool)]
     [InlineData(HotkeyAction.ThicknessUp)]
     [InlineData(HotkeyAction.ThicknessDown)]
     public void The_actions_of_HU_22_are_only_active_while_drawing(HotkeyAction action)

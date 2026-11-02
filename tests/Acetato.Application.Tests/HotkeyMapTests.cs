@@ -45,6 +45,17 @@ public sealed class HotkeyMapTests
     }
 
     [Fact]
+    public void The_ellipse_is_left_without_chord_if_the_user_already_gave_ctrl_o_to_another_action()
+    {
+        var ctrlO = DefaultOf(HotkeyAction.SelectEllipseTool);
+
+        var map = HotkeyMap.Defaults.With(HotkeyAction.Capture, ctrlO);
+
+        map.ChordOf(HotkeyAction.SelectEllipseTool).Should().BeNull();
+        map.OwnerOf(ctrlO).Should().Be(HotkeyAction.Capture);
+    }
+
+    [Fact]
     public void With_null_leaves_the_action_without_chord()
     {
         var map = HotkeyMap.Defaults.With(HotkeyAction.Capture, null);

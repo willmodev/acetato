@@ -15,8 +15,14 @@
     <!-- eye-off (Mostrar barra, HU-25) -->
     <StreamGeometry x:Key="Icon.EyeOff">M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49 M14.084 14.158a3 3 0 0 1-4.242-4.242 M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143 M2 2 l20 20</StreamGeometry>
 
-    <!-- mouse-pointer-2 (Seleccionar) -->
-    <StreamGeometry x:Key="Icon.Select">M4.037 4.688a.495.495 0 0 1 .651-.651l16 6.5a.5.5 0 0 1-.063.947l-6.124 1.58a2 2 0 0 0-1.438 1.435l-1.579 6.126a.5.5 0 0 1-.947.063z</StreamGeometry>
+    <!-- mouse-pointer-2 (Puntero, HU-24) -->
+    <StreamGeometry x:Key="Icon.Pointer">M4.037 4.688a.495.495 0 0 1 .651-.651l16 6.5a.5.5 0 0 1-.063.947l-6.124 1.58a2 2 0 0 0-1.438 1.435l-1.579 6.126a.5.5 0 0 1-.947.063z</StreamGeometry>
+
+    <!-- hand (Mover, HU-14) -->
+    <StreamGeometry x:Key="Icon.Move">M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2 M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2 M10 10.5V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8 M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15</StreamGeometry>
+
+    <!-- grab (cursor de Mover mientras se arrastra, HU-14) -->
+    <StreamGeometry x:Key="Icon.Grab">M18 11.5V9a2 2 0 0 0-2-2a2 2 0 0 0-2 2v1.4 M14 10V8a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2 M10 9.9V9a2 2 0 0 0-2-2a2 2 0 0 0-2 2v5 M6 14a2 2 0 0 0-2-2a2 2 0 0 0-2 2 M18 11a2 2 0 1 1 4 0v3a8 8 0 0 1-8 8h-4a8 8 0 0 1-8-8 2 2 0 1 1 4 0</StreamGeometry>
 
     <!-- pencil (Lápiz) -->
     <StreamGeometry x:Key="Icon.Pencil">M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z M15 5 l4 4</StreamGeometry>
@@ -35,6 +41,9 @@
 
     <!-- square (Rectángulo) -->
     <StreamGeometry x:Key="Icon.Rectangle">M5 3 L19 3 A2 2 0 0 1 21 5 L21 19 A2 2 0 0 1 19 21 L5 21 A2 2 0 0 1 3 19 L3 5 A2 2 0 0 1 5 3 Z</StreamGeometry>
+
+    <!-- circle (Elipse, HU-16) -->
+    <StreamGeometry x:Key="Icon.Ellipse">M2 12 A10 10 0 1 0 22 12 A10 10 0 1 0 2 12 Z</StreamGeometry>
 
     <!-- type (Texto) -->
     <StreamGeometry x:Key="Icon.Text">M12 4v16 M4 7V5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2 M9 20h6</StreamGeometry>

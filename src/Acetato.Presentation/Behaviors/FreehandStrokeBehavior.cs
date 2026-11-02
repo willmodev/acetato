@@ -28,7 +28,7 @@ public static class FreehandStrokeBehavior
             "Tool",
             typeof(ToolKind),
             typeof(FreehandStrokeBehavior),
-            new PropertyMetadata(ToolKind.Select, OnToolChanged));
+            new PropertyMetadata(ToolKind.Move, OnToolChanged));
 
     /// <summary>Capa donde se pinta el trazo en curso (encima del InkCanvas).</summary>
     public static readonly DependencyProperty LayerProperty =

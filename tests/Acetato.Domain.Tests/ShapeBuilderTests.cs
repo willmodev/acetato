@@ -132,6 +132,73 @@ public sealed class ShapeBuilderTests
         points.Should().Equal(start, end);
     }
 
+    [Fact]
+    public void Ellipse_is_closed()
+    {
+        var points = ShapeBuilder.Build(ToolKind.Ellipse, new StrokePoint(0, 0), new StrokePoint(200, 100), Thickness);
+
+        points[0].Should().Be(points[^1]);
+    }
+
+    [Fact]
+    public void Ellipse_points_lie_on_the_ellipse_inscribed_in_the_drag()
+    {
+        var points = ShapeBuilder.Build(ToolKind.Ellipse, new StrokePoint(0, 0), new StrokePoint(200, 100), Thickness);
+
+        // (x - 100)² / 100² + (y - 50)² / 50² = 1
+        foreach (var point in points)
+        {
+            double dx = (point.X - 100d) / 100d;
+            double dy = (point.Y - 50d) / 50d;
+            ((dx * dx) + (dy * dy)).Should().BeApproximately(1d, Tolerance);
+        }
+    }
+
+    [Fact]
+    public void Ellipse_touches_the_four_sides_of_the_drag()
+    {
+        var points = ShapeBuilder.Build(ToolKind.Ellipse, new StrokePoint(0, 0), new StrokePoint(200, 100), Thickness);
+
+        points.Min(p => p.X).Should().BeApproximately(0d, 0.5d);
+        points.Max(p => p.X).Should().BeApproximately(200d, 0.5d);
+        points.Min(p => p.Y).Should().BeApproximately(0d, 0.5d);
+        points.Max(p => p.Y).Should().BeApproximately(100d, 0.5d);
+    }
+
+    [Fact]
+    public void Ellipse_uses_one_point_every_four_dip_of_perimeter()
+    {
+        // Círculo de radio 100: perímetro ≈ 628 DIP → 158 tramos + el punto de cierre.
+        var points = ShapeBuilder.Build(ToolKind.Ellipse, new StrokePoint(0, 0), new StrokePoint(200, 200), Thickness);
+
+        points.Should().HaveCount(158 + 1);
+    }
+
+    [Fact]
+    public void A_small_ellipse_keeps_the_minimum_of_points()
+    {
+        var points = ShapeBuilder.Build(ToolKind.Ellipse, new StrokePoint(0, 0), new StrokePoint(10, 6), Thickness);
+
+        points.Should().HaveCount(24 + 1);
+    }
+
+    [Fact]
+    public void A_huge_ellipse_is_capped_at_the_maximum_of_points()
+    {
+        var points = ShapeBuilder.Build(ToolKind.Ellipse, new StrokePoint(0, 0), new StrokePoint(3000, 2000), Thickness);
+
+        points.Should().HaveCount(180 + 1);
+    }
+
+    [Fact]
+    public void Ellipse_is_the_same_whatever_the_drag_direction()
+    {
+        var forward = ShapeBuilder.Build(ToolKind.Ellipse, new StrokePoint(0, 0), new StrokePoint(200, 100), Thickness);
+        var backward = ShapeBuilder.Build(ToolKind.Ellipse, new StrokePoint(200, 100), new StrokePoint(0, 0), Thickness);
+
+        backward.Should().Equal(forward);
+    }
+
     // El primer punto del rectángulo es donde termina el borde superior (derecha - radio).
     private static double RadiusOf(IReadOnlyList<StrokePoint> points, double right) => right - points[0].X;
 }

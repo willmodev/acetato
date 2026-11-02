@@ -79,7 +79,7 @@
                             </Style.Triggers>
                         </Style>
                     </Button.Style>
-                    <Path Data="{StaticResource Icon.Select}">
+                    <Path Data="{StaticResource Icon.Pointer}">
                         <Path.Style>
                             <Style TargetType="Path" BasedOn="{StaticResource ToolGlyph}">
                                 <Style.Triggers>

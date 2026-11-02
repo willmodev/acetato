@@ -5,13 +5,13 @@ namespace Acetato.Application.Hotkeys;
 /// <summary>
 /// Calcula qué atajos deben estar registrados (HU-21): siempre los del grupo
 /// <see cref="HotkeyScope.Always"/>, y los de <see cref="HotkeyScope.DrawingMode"/>
-/// solo si se piden, junto con los fijos de dibujo (HU-24). Las acciones sin
-/// atajo se omiten.
+/// solo si se piden, junto con los fijos de dibujo (HU-24) y, con la herramienta
+/// Mover, el Supr de la selección (SPEC 11). Las acciones sin atajo se omiten.
 /// </summary>
 internal static class ActiveHotkeys
 {
     /// <summary>Asignaciones activas, en el orden del catálogo.</summary>
-    public static List<HotkeyAssignment> Select(HotkeyMap map, bool includeDrawing) =>
+    public static List<HotkeyAssignment> Select(HotkeyMap map, bool includeDrawing, bool moveToolActive) =>
     [
         .. HotkeyCatalog.All
             .Where(definition => includeDrawing || definition.Scope == HotkeyScope.Always)
@@ -19,5 +19,6 @@ internal static class ActiveHotkeys
             .Where(entry => entry.Chord.HasValue)
             .Select(entry => new HotkeyAssignment(entry.Action, entry.Chord!.Value)),
         .. includeDrawing ? FixedHotkeys.Drawing : [],
+        .. includeDrawing && moveToolActive ? FixedHotkeys.Selection : [],
     ];
 }

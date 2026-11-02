@@ -56,6 +56,9 @@ public enum HotkeyAction
     /// <summary>Seleccionar la herramienta Láser (HU-15).</summary>
     SelectLaserTool,
 
+    /// <summary>Seleccionar la herramienta Mover (HU-14).</summary>
+    SelectMoveTool,
+
     /// <summary>Seleccionar la herramienta Lápiz (HU-22).</summary>
     SelectPencilTool,
 
@@ -71,6 +74,9 @@ public enum HotkeyAction
     /// <summary>Seleccionar la herramienta Rectángulo (HU-22).</summary>
     SelectRectangleTool,
 
+    /// <summary>Seleccionar la herramienta Elipse (HU-16).</summary>
+    SelectEllipseTool,
+
     /// <summary>Subir el grosor un paso, con tope en el más grueso (HU-22).</summary>
     ThicknessUp,
 
@@ -85,4 +91,10 @@ public enum HotkeyAction
 
     /// <summary>Plegar o desplegar la barra con el ojo (HU-25).</summary>
     ToggleToolbarCollapsed,
+
+    /// <summary>
+    /// Borrar lo seleccionado con la herramienta Mover (SPEC 11). Su atajo es fijo
+    /// (<see cref="Hotkeys.FixedHotkeys"/>): no está en el catálogo ni en Ajustes.
+    /// </summary>
+    DeleteSelection,
 }

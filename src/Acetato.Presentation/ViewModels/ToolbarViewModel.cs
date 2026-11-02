@@ -69,7 +69,7 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
         var shortcuts = chrome.Shortcuts;
         Tools = BuildTools(shortcuts);
         PointerHint = shortcuts.Hint("Puntero", HotkeyAction.EnterPointerMode);
-        MoveHint = shortcuts.Hint("Mover");
+        MoveHint = shortcuts.Hint("Mover barra");
         HideBarHint = shortcuts.Hint("Ocultar barra", HotkeyAction.ToggleToolbarCollapsed);
         ShowBarHint = shortcuts.Hint("Mostrar barra", HotkeyAction.ToggleToolbarCollapsed);
         ColorHint = shortcuts.Hint("Color");
@@ -245,12 +245,14 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
     // Puntero no es una herramienta (HU-24): es un botón aparte, antes de estas.
     private static List<ToolItem> BuildTools(ToolbarShortcuts shortcuts) =>
     [
+        new(ToolKind.Move, shortcuts.Hint("Mover", HotkeyAction.SelectMoveTool), Glyph("Icon.Move"), true),
         new(ToolKind.Pencil, shortcuts.Hint("Lápiz", HotkeyAction.SelectPencilTool), Glyph("Icon.Pencil"), true),
         new(ToolKind.Laser, shortcuts.Hint("Láser", HotkeyAction.SelectLaserTool), Glyph("Icon.Laser"), true),
         new(ToolKind.Eraser, shortcuts.Hint("Borrador", HotkeyAction.SelectEraserTool), Glyph("Icon.Eraser"), true),
         new(ToolKind.Line, shortcuts.Hint("Línea", HotkeyAction.SelectLineTool), Glyph("Icon.Line"), true),
         new(ToolKind.Arrow, shortcuts.Hint("Flecha", HotkeyAction.SelectArrowTool), Glyph("Icon.Arrow"), true),
         new(ToolKind.Rectangle, shortcuts.Hint("Rectángulo", HotkeyAction.SelectRectangleTool), Glyph("Icon.Rectangle"), true),
+        new(ToolKind.Ellipse, shortcuts.Hint("Elipse", HotkeyAction.SelectEllipseTool), Glyph("Icon.Ellipse"), true),
         new(ToolKind.Text, shortcuts.Hint("Texto", HotkeyAction.SelectTextTool), Glyph("Icon.Text"), true),
     ];
 
