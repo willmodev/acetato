@@ -943,6 +943,63 @@ Escenario: Lo ya dibujado
 ```
 **Notas técnicas:** Spec en [`specs/10-tintas-degradadas.md`](./specs/10-tintas-degradadas.md). Un solo tipo `GradientPair` (neón o tinta → vecina) recorre la tubería del degradado. La opción se guarda en la sección `drawing` de `settings.json`, que conserva los atajos. Fuera de alcance: elegir la vecina a mano, un atajo para el interruptor y degradado en Texto o Láser.
 
+#### HU-28 — Redimensionar lo seleccionado
+- **Épica:** EP-02 · **Prioridad:** Could · **Estimación:** 5
+- **Narrativa:**
+  Como presentador, quiero agrandar o achicar lo que seleccioné con Mover, para corregir un dibujo sin borrarlo y hacerlo de nuevo.
+
+**Criterios de aceptación**
+```
+Escenario: Crecer parejo
+  Dado que «Transformación libre» está apagado en Ajustes
+  Y seleccioné un círculo con Mover
+  Cuando jalo cualquiera de sus tiradores
+  Entonces crece o se encoge sin dejar de ser círculo
+  Y el grosor de su línea no cambia.
+
+Escenario: Estirar libre
+  Dado que «Transformación libre» está encendido
+  Cuando jalo el tirador del lado derecho de un círculo
+  Entonces se estira solo a lo ancho y queda un óvalo
+  Y el grosor de su línea no cambia.
+
+Escenario: Flecha y texto
+  Dado que seleccioné una flecha y un texto
+  Cuando los agrando
+  Entonces la flecha se alarga y su punta conserva su tamaño
+  Y la letra del texto crece sin deformarse.
+
+Escenario: Deshacer
+  Dado que cambié el tamaño de una selección
+  Cuando pulso Ctrl+Z
+  Entonces vuelve a su tamaño y su sitio.
+```
+**Notas técnicas:** Spec en [`specs/12-redimensionar-y-recordar-ajustes.md`](./specs/12-redimensionar-y-recordar-ajustes.md). Usa los tiradores del lienzo de Windows; el arrastre lo hace Acetato para ver el cambio en vivo y forzar la proporción. La punta de la flecha se rehace con `ArrowHeadBuilder`. El interruptor se guarda en la sección `drawing`. Fuera de alcance: rotar, escalar el grosor y redimensionar con Ctrl.
+
+#### HU-29 — Recordar la última sesión
+- **Épica:** EP-03 · **Prioridad:** Could · **Estimación:** 3
+- **Narrativa:**
+  Como presentador, quiero que Acetato abra con la tinta, el grosor, la herramienta y la barra como los dejé, para no configurarlo cada vez.
+
+**Criterios de aceptación**
+```
+Escenario: Dibujo
+  Dado que elegí tinta azul, el grosor más grueso y la Flecha
+  Cuando cierro y vuelvo a abrir Acetato
+  Entonces sigue la tinta azul, el grosor más grueso y la Flecha.
+
+Escenario: Barra
+  Dado que arrastré la barra y la plegué con el ojo
+  Cuando cierro y vuelvo a abrir Acetato
+  Entonces la barra aparece plegada donde la dejé.
+
+Escenario: Monitor ausente
+  Dado que dejé la barra en un monitor que ya no está conectado
+  Cuando abro Acetato
+  Entonces la barra aparece arriba al centro del monitor del cursor.
+```
+**Notas técnicas:** Spec en [`specs/12-redimensionar-y-recordar-ajustes.md`](./specs/12-redimensionar-y-recordar-ajustes.md). Sección `session` de `settings.json`. La posición va en píxeles físicos con su monitor y se guarda al salir; lo demás, al cambiar. Fuera de alcance: recordar los dibujos y el modo puntero.
+
 ---
 
 ## Definition of Done (global)
