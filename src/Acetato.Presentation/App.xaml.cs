@@ -150,11 +150,14 @@ public partial class App : System.Windows.Application
         services.AddSingleton<IScreenClipLauncher, WindowsScreenClipLauncher>();
     }
 
-    // Estado del trazo con las opciones de dibujo guardadas: Tintas degradadas (HU-27).
+    // Estado del trazo con las opciones de dibujo guardadas: Tintas degradadas (HU-27) y
+    // Transformación libre (HU-28).
     private static DrawingSettings CreateDrawingSettings(IServiceProvider services)
     {
         var settings = new DrawingSettings(services.GetRequiredService<IRandomSource>());
-        settings.SetInkPairs(services.GetRequiredService<IDrawingPreferencesStore>().Load().InkPairs);
+        var preferences = services.GetRequiredService<IDrawingPreferencesStore>().Load();
+        settings.SetInkPairs(preferences.InkPairs);
+        settings.SetFreeResize(preferences.FreeResize);
         return settings;
     }
 

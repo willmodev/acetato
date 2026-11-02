@@ -73,6 +73,22 @@ public sealed class JsonDrawingPreferencesStoreTests : IDisposable
     }
 
     [Fact]
+    public void Round_trip_keeps_free_resize_next_to_ink_pairs()
+    {
+        CreateStore().Save(new DrawingPreferences(InkPairs: true, FreeResize: true));
+
+        CreateStore().Load().Should().Be(new DrawingPreferences(InkPairs: true, FreeResize: true));
+    }
+
+    [Fact]
+    public void A_file_from_before_free_resize_keeps_ink_pairs_and_starts_even()
+    {
+        WriteSettings("{ \"version\": 1, \"drawing\": { \"inkPairs\": true } }");
+
+        CreateStore().Load().Should().Be(new DrawingPreferences(InkPairs: true, FreeResize: false));
+    }
+
+    [Fact]
     public void An_unreadable_file_starts_off_and_is_left_for_the_hotkey_store()
     {
         WriteSettings("{ not json");

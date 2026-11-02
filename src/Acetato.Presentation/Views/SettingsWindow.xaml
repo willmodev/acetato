@@ -75,6 +75,17 @@
                                   AutomationProperties.Name="Tintas degradadas" />
                 </Grid>
                 <TextBlock Style="{StaticResource SettingsHint}" Text="Cada tinta pasa a un tono vecino" />
+                <Grid MinHeight="30">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Style="{StaticResource SettingsRowLabel}" Text="Transformación libre" />
+                    <ToggleButton Grid.Column="1" Style="{StaticResource SettingsSwitch}"
+                                  IsChecked="{Binding FreeResize}"
+                                  AutomationProperties.Name="Transformación libre" />
+                </Grid>
+                <TextBlock Style="{StaticResource SettingsHint}" Text="Estira según el tirador. Apagada, crece parejo" />
 
                 <TextBlock Style="{StaticResource SettingsCaption}" Text="Siempre activos" />
                 <ItemsControl ItemsSource="{Binding AlwaysRows}" ItemTemplate="{StaticResource HotkeyRowTemplate}"

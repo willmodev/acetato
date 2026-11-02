@@ -51,6 +51,15 @@ public interface IDrawingSettings
     /// <summary>Enciende o apaga Tintas degradadas (HU-27).</summary>
     public void SetInkPairs(bool enabled);
 
+    /// <summary>
+    /// Transformación libre: al redimensionar una selección cada eje se estira por su lado;
+    /// apagada, crece parejo (HU-28).
+    /// </summary>
+    public bool FreeResize { get; }
+
+    /// <summary>Enciende o apaga Transformación libre (HU-28).</summary>
+    public void SetFreeResize(bool enabled);
+
     /// <summary>Sube un paso de grosor; en el máximo se mantiene (HU-06).</summary>
     public void IncreaseThickness();
 

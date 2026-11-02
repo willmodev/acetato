@@ -44,22 +44,39 @@ internal sealed class StyledStroke : Stroke
         new StyledStroke(StylusPoints.Clone(), DrawingAttributes.Clone(), Head, Gradient);
 
     /// <summary>
-    /// Mueve el trazo (herramienta Mover, SPEC 11) con su punta y su degradado. La punta y
-    /// el pincel se actualizan ANTES que los puntos: el cambio de puntos repinta el trazo,
-    /// y ese repintado ya debe ver la punta en su sitio y el eje del degradado nuevo.
+    /// Mueve o cambia el tamaño del trazo (Mover, SPEC 11 y HU-28) con su punta y su
+    /// degradado. Al moverlo, la punta se desplaza igual. Al cambiar el tamaño, la punta se
+    /// rehace sobre los puntos nuevos: conserva el tamaño que le da el grosor y apunta en
+    /// la dirección nueva, en vez de estirarse. La punta y el pincel se actualizan ANTES
+    /// que los puntos: el cambio de puntos repinta el trazo, y ese repintado ya debe ver la
+    /// punta en su sitio y el eje del degradado nuevo.
     /// </summary>
     public override void Transform(Matrix transformMatrix, bool applyToStylusTip)
     {
         if (Head is { } head)
         {
-            Head = new ArrowHead(
-                Apply(transformMatrix, head.Left),
-                Apply(transformMatrix, head.Tip),
-                Apply(transformMatrix, head.Right));
+            Head = IsTranslation(transformMatrix)
+                ? Translate(transformMatrix, head)
+                : RebuildHead(transformMatrix) ?? Translate(transformMatrix, head);
         }
 
         _gradientBrush = null;
         base.Transform(transformMatrix, applyToStylusTip);
+    }
+
+    // Matriz que solo desplaza (sin escala, giro ni sesgo).
+    private static bool IsTranslation(Matrix matrix) =>
+        matrix.M11.Equals(1d) && matrix.M22.Equals(1d) && matrix.M12.Equals(0d) && matrix.M21.Equals(0d);
+
+    private static ArrowHead Translate(Matrix matrix, ArrowHead head) =>
+        new(Apply(matrix, head.Left), Apply(matrix, head.Tip), Apply(matrix, head.Right));
+
+    // Punta construida sobre los puntos ya transformados, con el grosor del trazo (el
+    // mismo cálculo que al dibujarla). null si el trazo quedó más corto que la punta.
+    private ArrowHead? RebuildHead(Matrix matrix)
+    {
+        var path = StylusPoints.ToStrokePoints().Select(point => Apply(matrix, point)).ToList();
+        return ArrowHeadBuilder.TryBuild(path, PenThickness(DrawingAttributes), out var head) ? head : null;
     }
 
     /// <summary>
