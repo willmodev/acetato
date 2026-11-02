@@ -4,6 +4,7 @@ using Acetato.Application.Abstractions;
 using Acetato.Application.Drawing;
 using Acetato.Application.Hotkeys;
 using Acetato.Application.Overlay;
+using Acetato.Application.Session;
 using Acetato.Domain;
 using Acetato.Infrastructure.Capture;
 using Acetato.Infrastructure.Hotkeys;
@@ -37,6 +38,8 @@ public partial class App : System.Windows.Application
         base.OnStartup(e);
 
         _services = BuildServiceProvider();
+        // Como se cerró (HU-29): antes de la barra y de los atajos, que siguen la herramienta.
+        _services.GetRequiredService<SessionMemory>().Start();
         InitializeToolbar();
         WireHotkeys();
         InitializeTrayIcon();
@@ -120,11 +123,13 @@ public partial class App : System.Windows.Application
         }
     }
 
-    // Orden (HU-20): atajos → servicios → icono de bandeja. El icono se quita al
-    // final: mientras se vea, la app sigue cerrándose (antes se quitaba primero y
-    // ocultaba que el proceso quedaba vivo).
+    // Orden (HU-20): sesión → atajos → servicios → icono de bandeja. La sesión se guarda
+    // primero, con el sitio de la barra, que solo se escribe aquí (HU-29). El icono se
+    // quita al final: mientras se vea, la app sigue cerrándose (antes se quitaba primero
+    // y ocultaba que el proceso quedaba vivo).
     protected override void OnExit(ExitEventArgs e)
     {
+        _services?.GetService<SessionMemory>()?.Save();
         _hotkeys?.Unregister();
         _services?.Dispose();
         _trayIcon?.Dispose();
@@ -171,6 +176,8 @@ public partial class App : System.Windows.Application
         services.AddSingleton<IGlobalHotkeyService, Win32GlobalHotkeyService>();
         services.AddSingleton<IHotkeySettingsStore>(_ => new JsonHotkeySettingsStore());
         services.AddSingleton<IDrawingPreferencesStore>(_ => new JsonDrawingPreferencesStore());
+        services.AddSingleton<ILastSessionStore>(_ => new JsonLastSessionStore());
+        services.AddSingleton<IToolbarWindowPlacer, Win32ToolbarWindowPlacer>();
         services.AddSingleton<IHotkeyNotifier, ToastHotkeyNotifier>();
         services.AddSingleton<IMonitorService, Win32MonitorService>();
         services.AddSingleton<ICursorPositionProvider, Win32CursorPositionProvider>();
@@ -195,6 +202,8 @@ public partial class App : System.Windows.Application
         // contenedor para evitar el ciclo) y su superficie. El estado plegado
         // (HU-25) es único: lo comparten la barra y el atajo.
         services.AddSingleton<IToolbarLayout, ToolbarLayout>();
+        services.AddSingleton<ToolbarPlacementServices>();
+        services.AddSingleton<SessionMemory>();
         services.AddSingleton<ToolbarShortcuts>();
         services.AddSingleton<ToolbarChrome>();
         services.AddSingleton<ToolbarViewModel>();

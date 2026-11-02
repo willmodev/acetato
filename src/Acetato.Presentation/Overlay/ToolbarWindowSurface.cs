@@ -12,7 +12,8 @@ namespace Acetato.Presentation.Overlay;
 /// cursor (HU-09), centrada en horizontal y arriba, para que aparezca donde el
 /// usuario está trabajando. El usuario puede reubicarla arrastrando el grip; al
 /// pasar a otro monitor se reamarra a la pane de ese monitor para no quedar
-/// tapada por su lienzo.
+/// tapada por su lienzo. Una vez arrastrada, vuelve a ese sitio cada vez que se
+/// muestra, también tras reiniciar, mientras su monitor siga conectado (HU-29).
 /// </summary>
 public sealed class ToolbarWindowSurface : IToolbarSurface
 {
@@ -23,18 +24,27 @@ public sealed class ToolbarWindowSurface : IToolbarSurface
     private readonly IMonitorService _monitors;
     private readonly ICursorPositionProvider _cursor;
     private readonly IOverlayCanvasProvider _canvases;
+    private readonly IToolbarLayout _layout;
+    private readonly IToolbarWindowPlacer _placer;
     private nint _ownerPane;
+
+    // La propia barra se está colocando: esos movimientos no son un arrastre del usuario.
+    private bool _placing;
 
     public ToolbarWindowSurface(
         ToolbarWindow window,
         IMonitorService monitors,
         ICursorPositionProvider cursor,
-        IOverlayCanvasProvider canvases)
+        IOverlayCanvasProvider canvases,
+        ToolbarPlacementServices placement)
     {
+        ArgumentNullException.ThrowIfNull(placement);
         _window = window;
         _monitors = monitors;
         _cursor = cursor;
         _canvases = canvases;
+        _layout = placement.Layout;
+        _placer = placement.Placer;
         _window.LocationChanged += OnLocationChanged;
     }
 
@@ -43,6 +53,40 @@ public sealed class ToolbarWindowSurface : IToolbarSurface
     public nint Handle => new WindowInteropHelper(_window).Handle;
 
     public void Show()
+    {
+        _placing = true;
+        try
+        {
+            var monitors = _monitors.GetMonitors();
+            if (_layout.Placement is { } placement && placement.FindHome(monitors) is { } home)
+            {
+                ShowAt(placement, home, DisplayMetrics.PrimaryScale(monitors));
+            }
+            else
+            {
+                ShowCentered();
+            }
+        }
+        finally
+        {
+            _placing = false;
+        }
+    }
+
+    // Donde la dejó el usuario. Se siembra en DIP para que WPF la cree cerca y luego se
+    // lleva al píxel exacto en coordenadas físicas, que no dependen de la escala.
+    private void ShowAt(ToolbarPlacement placement, MonitorInfo home, double scale)
+    {
+        _window.WindowStartupLocation = WindowStartupLocation.Manual;
+        _window.Left = DipConverter.ToDip(placement.X, scale);
+        _window.Top = DipConverter.ToDip(placement.Y, scale);
+        _window.Show();
+        OwnToPaneOf(home);
+        _placer.MoveTo(Handle, placement.X, placement.Y);
+    }
+
+    // Sitio de siempre: arriba y al centro del monitor del cursor.
+    private void ShowCentered()
     {
         var (monitor, scale) = ResolveActiveMonitor();
         double left = DipConverter.ToDip(monitor.X, scale);
@@ -96,6 +140,7 @@ public sealed class ToolbarWindowSurface : IToolbarSurface
         }
 
         var monitors = _monitors.GetMonitors();
+        RememberPlacement(monitors);
         var (x, y) = _cursor.GetCursorPosition();
         var pane = FindPaneHandle(monitors[MonitorPicker.IndexAt(monitors, x, y)]);
         if (pane == nint.Zero || pane == _ownerPane)
@@ -105,6 +150,20 @@ public sealed class ToolbarWindowSurface : IToolbarSurface
 
         _ownerPane = pane;
         new WindowInteropHelper(_window).Owner = pane;
+    }
+
+    // Un arrastre del usuario: recuerda la esquina de la barra y el monitor de su centro.
+    private void RememberPlacement(IReadOnlyList<MonitorInfo> monitors)
+    {
+        if (_placing || _placer.GetBounds(Handle) is not { } bounds)
+        {
+            return;
+        }
+
+        int centerX = bounds.X + (bounds.Width / 2);
+        int centerY = bounds.Y + (bounds.Height / 2);
+        var monitor = monitors[MonitorPicker.IndexAt(monitors, centerX, centerY)];
+        _layout.Remember(new ToolbarPlacement(monitor, bounds.X, bounds.Y));
     }
 
     private nint FindPaneHandle(MonitorInfo monitor)
