@@ -1,6 +1,6 @@
 /* Acetato floating toolbar — shared component styles for preview cards.
    Mirrors ToolbarStyles.xaml / ToolbarWindow.xaml via colors_and_type.css.
-   No blur yet (HU-18), no inner highlight, no glow on the active tool. */
+   No blur (Acrylic dropped, HU-18), no inner highlight, no glow on the active tool. */
 
 .bar {
   display: inline-flex;

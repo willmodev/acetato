@@ -52,8 +52,8 @@ then open `ui_kits/toolbar/index.html`. Everything is fake but live:
 | `App.jsx` | State, configurable shortcuts, visibility and drawing mode, the backdrop slide. |
 
 ## Notes for native devs
-- **Glass** = `--chrome-glass` fill, **no blur yet** (HU-18 will add
-  Acrylic/Mica behind it). Settings is opaque on `--chrome-solid`.
+- **Glass** = `--chrome-glass` fill, **no blur** (real Acrylic was tested
+  and dropped, HU-18). Settings is opaque on `--chrome-solid`.
 - **Icons** are [Lucide](https://lucide.dev) line icons at 20px / 2px stroke; the
   app ships them as `StreamGeometry` in `Icons.xaml` (see the root README).
 - **Accent** marks only what is selected: active tool, chosen thickness, chosen
