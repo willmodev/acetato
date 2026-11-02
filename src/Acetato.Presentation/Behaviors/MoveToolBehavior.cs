@@ -24,7 +24,8 @@ namespace Acetato.Presentation.Behaviors;
 /// lienzo, así el clic con Ctrl llega aquí antes que al Lápiz, las formas, el láser, el
 /// texto o el Borrador, y marcarlo como manejado los deja fuera. El arrastre lo hace
 /// <see cref="AnnotationDrag"/> y se registra en el historial de la pane. Bloquea Cortar,
-/// Copiar, Pegar y Supr del lienzo, que el historial no controla.
+/// Copiar, Pegar y Supr del lienzo, que el historial no controla. Con Mover, un clic en un
+/// tirador de la selección cambia su tamaño (HU-28, <see cref="SelectionResizeBehavior"/>).
 /// </summary>
 public static class MoveToolBehavior
 {
@@ -121,6 +122,7 @@ public static class MoveToolBehavior
 
         Hook(canvas);
         EndHover(canvas);
+        SelectionResizeBehavior.EndHover(canvas);
         if ((ToolKind)e.NewValue != ToolKind.Move)
         {
             ClearSelection(canvas);
@@ -148,9 +150,9 @@ public static class MoveToolBehavior
         host.PreviewMouseLeftButtonUp += (_, e) => OnMouseUp(canvas, e);
         host.PreviewKeyDown += (_, e) => OnKeyDown(canvas, e);
         host.PreviewKeyUp += (_, e) => OnKeyUp(canvas, e);
-        canvas.MouseLeave += (_, _) => EndHover(canvas);
+        canvas.MouseLeave += (_, _) => OnMouseLeave(canvas);
         // Si el arrastre se corta (Alt+Tab, Esc, la capa se oculta), se cierra como al soltar.
-        canvas.LostMouseCapture += (_, _) => EndDrag(canvas);
+        canvas.LostMouseCapture += (_, _) => EndGesture(canvas);
     }
 
     private static void OnCanvasLoaded(object sender, RoutedEventArgs e) => Hook((InkCanvas)sender);
@@ -177,6 +179,13 @@ public static class MoveToolBehavior
     private static void OnMouseDown(InkCanvas canvas, MouseButtonEventArgs e)
     {
         var point = e.GetPosition(canvas);
+        // Un tirador de la selección cambia su tamaño (HU-28) en vez de moverla.
+        if (SelectionResizeBehavior.TryStart(canvas, point))
+        {
+            e.Handled = true;
+            return;
+        }
+
         var decision = Decide(canvas, point);
         if (!decision.Handles)
         {
@@ -218,6 +227,12 @@ public static class MoveToolBehavior
 
     private static void OnMouseMove(InkCanvas canvas, MouseEventArgs e)
     {
+        if (SelectionResizeBehavior.MoveTo(canvas, e.GetPosition(canvas)))
+        {
+            e.Handled = true;
+            return;
+        }
+
         if (canvas.GetValue(SessionProperty) is MoveSession session)
         {
             var point = e.GetPosition(canvas);
@@ -227,11 +242,21 @@ public static class MoveToolBehavior
             return;
         }
 
+        SelectionResizeBehavior.UpdateHover(canvas, e.GetPosition(canvas));
         // Con Ctrl a la vista, el movimiento no llega a las herramientas (p. ej. el láser).
         e.Handled = UpdateHover(canvas);
     }
 
-    private static void OnMouseUp(InkCanvas canvas, MouseButtonEventArgs e) => e.Handled = EndDrag(canvas);
+    private static void OnMouseUp(InkCanvas canvas, MouseButtonEventArgs e) => e.Handled = EndGesture(canvas);
+
+    private static void OnMouseLeave(InkCanvas canvas)
+    {
+        EndHover(canvas);
+        SelectionResizeBehavior.EndHover(canvas);
+    }
+
+    // Cierra el gesto en curso, sea un cambio de tamaño o un arrastre. Devuelve si había uno.
+    private static bool EndGesture(InkCanvas canvas) => SelectionResizeBehavior.End(canvas) || EndDrag(canvas);
 
     // Cierra el arrastre: lo registra en el historial y quita la mano cerrada. Devuelve si
     // había uno. La sesión se suelta antes de liberar el mouse, porque liberarlo vuelve a

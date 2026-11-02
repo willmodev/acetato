@@ -125,6 +125,20 @@ public sealed class SettingsViewModelTests : IDisposable
     }
 
     [Fact]
+    public void Turning_on_free_resize_applies_it_and_saves_it_with_ink_pairs()
+    {
+        _drawing.SetInkPairs(true);
+        var raised = new List<string?>();
+        _settings.PropertyChanged += (_, e) => raised.Add(e.PropertyName);
+
+        _settings.FreeResize = true;
+
+        _drawing.FreeResize.Should().BeTrue();
+        _preferences.Received(1).Save(new DrawingPreferences(InkPairs: true, FreeResize: true));
+        raised.Should().Contain(nameof(SettingsViewModel.FreeResize));
+    }
+
+    [Fact]
     public void Setting_the_same_value_does_not_save_again()
     {
         _settings.InkPairs = false;

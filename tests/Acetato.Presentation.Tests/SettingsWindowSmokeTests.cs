@@ -28,14 +28,20 @@ public sealed class SettingsWindowSmokeTests
     }
 
     [Fact]
-    public void Settings_window_shows_the_drawing_block_with_its_switch_and_hint()
+    public void Settings_window_shows_the_drawing_block_with_its_switches_and_hints()
     {
         var (texts, switches) = WpfTestHost.Run(() => WithContent(content => (
             VisualTree.Descendants<TextBlock>(content).Select(text => text.Text).ToList(),
             VisualTree.Descendants<ToggleButton>(content).Count())));
 
-        texts.Should().ContainInOrder("Dibujo", "Tintas degradadas", "Cada tinta pasa a un tono vecino", "Siempre activos");
-        switches.Should().Be(1);
+        texts.Should().ContainInOrder(
+            "Dibujo",
+            "Tintas degradadas",
+            "Cada tinta pasa a un tono vecino",
+            "Transformación libre",
+            "Estira según el tirador. Apagada, crece parejo",
+            "Siempre activos");
+        switches.Should().Be(2);
     }
 
     // Carga la ventana, hace el layout de su contenido y lee lo que pide el test.

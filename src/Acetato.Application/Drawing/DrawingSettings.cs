@@ -98,6 +98,19 @@ public sealed class DrawingSettings : IDrawingSettings
         RaiseChanged();
     }
 
+    public bool FreeResize { get; private set; }
+
+    public void SetFreeResize(bool enabled)
+    {
+        if (FreeResize == enabled)
+        {
+            return;
+        }
+
+        FreeResize = enabled;
+        RaiseChanged();
+    }
+
     public void IncreaseThickness() => MoveThicknessTo(ThicknessScale.Next(_thicknessIndex));
 
     public void DecreaseThickness() => MoveThicknessTo(ThicknessScale.Previous(_thicknessIndex));

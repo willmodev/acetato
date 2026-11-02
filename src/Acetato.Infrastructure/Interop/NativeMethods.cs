@@ -60,8 +60,10 @@ internal static partial class NativeMethods
     internal const int SmCxScreen = 0;
     internal const int SmCyScreen = 1;
 
-    // Comando de presentación para SetWindowPlacement: maximizar (HU-09).
+    // Comandos de presentación para SetWindowPlacement: maximizar (HU-09) y mostrar
+    // sin activar, para llevar la barra a su sitio sin robar el foco (HU-29).
     internal const uint SwShowMaximized = 3;
+    internal const uint SwShowNoActivate = 4;
 
     // Afinidad de presentación: la barra queda visible pero fuera de toda captura (HU-12).
     internal const uint WdaExcludeFromCapture = 0x00000011;
@@ -124,4 +126,14 @@ internal static partial class NativeMethods
     [LibraryImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     internal static partial bool SetWindowPlacement(nint hWnd, ref WindowPlacementNative lpwndpl);
+
+    // Posición actual (coordenadas del área de trabajo si la ventana no es de herramientas).
+    [LibraryImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static partial bool GetWindowPlacement(nint hWnd, ref WindowPlacementNative lpwndpl);
+
+    // Recuadro de la ventana en píxeles físicos de pantalla (HU-29, sitio de la barra).
+    [LibraryImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static partial bool GetWindowRect(nint hWnd, out Rect lpRect);
 }

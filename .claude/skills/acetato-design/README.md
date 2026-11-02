@@ -154,7 +154,10 @@ infinite loops, no decorative animation. The only custom motion is the laser
 trail fading out over `--laser-life` (2 s).
 
 **Layout rules.** The bar is a single floating element, draggable by the grip at
-its lead edge, always on top, never in the taskbar, never stealing focus.
+its lead edge, always on top, never in the taskbar, never stealing focus. Once
+dragged, it comes back to that spot when shown and after a restart, while its
+monitor is still connected (HU-29); otherwise it opens top-center on the
+cursor's monitor.
 
 **Drawing mode and pointer mode (HU-24).** The app opens with the layer and the
 bar visible, in drawing mode with *Lápiz*; the tray icon stays.
@@ -185,8 +188,7 @@ an eye button that collapses the bar:
 - Shortcut `Ctrl+Alt+H` (*Plegar barra* in Settings, group *Siempre activos*):
   works in drawing and pointer mode, does nothing while the layer is hidden. If
   the user already gave `Ctrl+Alt+H` to another action, that one keeps it.
-- Memory only for the session: hiding and showing the layer keeps the bar as it
-  was; a restart always brings it back expanded.
+- Remembered between sessions (HU-29): if it was collapsed, it starts collapsed.
 - No animation beyond the instant resize.
 Popovers open directly below their trigger; tooltips too. Settings is the only
 other window (480 × 600, own draggable title, *Cerrar* button, *Restaurar todo*
@@ -223,6 +225,13 @@ saves at once; there is no Save button.
   on, it wins. Strokes already drawn keep their colors when the switch changes.
   No shortcut. Saved in the `drawing` section of `settings.json`.
   Neighbor hex values are a first pass, to be tuned by eye in the app.
+- **Transformación libre (HU-28)** — second switch in *Ajustes → Dibujo*, hint
+  *Estira según el tirador. Apagada, crece parejo*. Off by default; decides how
+  Mover's handles resize (see Move below). Saved next to *Tintas degradadas*.
+- **Remembered between sessions (HU-29):** last ink, Gradient mode, thickness,
+  tool (whichever it was), collapsed bar and the bar's dragged spot. Saved in
+  the `session` section of `settings.json`; *Restaurar todo* leaves it alone.
+  Drawings are not remembered.
 - **Thickness** steps `--thick-1…5` (3, 5, 8, 12, 18px), starting at 3.
   `Ctrl+RePág` / `Ctrl+AvPág` move one step and stop at the ends.
 - **Pencil / Arrow:** smoothed freehand. Arrow adds an open two-wing head on
@@ -241,13 +250,20 @@ saves at once; there is no Save button.
 - **Move (HU-14):** first tool of the bar, hand icon (`hand`), `Ctrl+M`. Press
   on a stroke, shape or text and drag: it moves in the same gesture and stays
   selected. From empty space, a lasso picks several. `Supr` deletes the
-  selection. No resize handles. Cursor: open hand, closed (`grab`) while
+  selection. Cursor: open hand, closed (`grab`) while
   dragging, light stroke with a dark edge. The selection box is Windows' own
   (no brand style); it drops on tool change, pointer mode and hiding the layer.
+- **Resize (HU-28):** the selection shows Windows' 8 handles (4 corners, 4
+  sides) with Windows' double arrow over each. Dragging one resizes live. With
+  *Transformación libre* off (default) it grows evenly from any handle, never
+  distorted; on, it stretches by the handle (a side moves only its axis).
+  **Thickness never changes.** An arrow rebuilds its head at its usual size;
+  a text scales its letter without distortion. A side never goes below 8 DIP.
+  No handles with Ctrl from another tool.
 - **Hold Ctrl** and drag moves a drawing from any tool, without drawing or
   selecting; the cursor turns into the hand. Same model as ScreenBrush.
 - **Undo** (`Ctrl+Z`) reverts the last action: drawing, erasing with the Eraser
-  (the stroke returns to its layer), moving, or deleting with `Supr`. **No
+  (the stroke returns to its layer), moving, resizing, or deleting with `Supr`. **No
   Redo**: it was dropped (HU-17).
 - `--ink-halo-*` are defined but the app does not paint halos yet.
 - **Ink cursor (HU-26).** With Lápiz, Línea, Flecha or Rectángulo the pointer is

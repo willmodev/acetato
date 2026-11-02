@@ -65,6 +65,12 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
     /// </summary>
     public IModifierKeyState KeyState { get; }
 
+    /// <summary>
+    /// Transformación libre al redimensionar una selección (HU-28). Enlazado a
+    /// <c>SelectionResizeBehavior.Free</c>.
+    /// </summary>
+    public bool FreeResize => _settings.FreeResize;
+
     /// <summary>Tamaño de fuente del texto, derivado del grosor activo (HU-13).</summary>
     public double ActiveFontSize => FontScale.FromThicknessIndex(_settings.ThicknessIndex);
 
@@ -96,6 +102,9 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
     /// <summary>Registra un arrastre de la mano o de Ctrl en el historial de esta pane (SPEC 11).</summary>
     internal void RecordMove(AnnotationsMoved moved) => _history.Record(moved);
 
+    /// <summary>Registra un cambio de tamaño de la selección en el historial de esta pane (HU-28).</summary>
+    internal void RecordResize(AnnotationsResized resized) => _history.Record(resized);
+
     /// <summary>Borra trazos y textos seleccionados como una sola acción que Deshacer revierte (SPEC 11).</summary>
     internal void DeleteSelection(InkCanvas canvas, IReadOnlyList<Stroke> strokes, IReadOnlyList<UIElement> elements) =>
         _history.DeleteSelection(canvas, strokes, elements);
@@ -126,6 +135,7 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
     {
         OnPropertyChanged(nameof(ActiveGradient));
         OnPropertyChanged(nameof(CursorTip));
+        OnPropertyChanged(nameof(FreeResize));
         SyncAttributes();
         SyncTool();
     }

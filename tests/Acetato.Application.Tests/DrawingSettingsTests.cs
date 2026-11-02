@@ -388,4 +388,20 @@ public sealed class DrawingSettingsTests
         raised.Should().Be(2);
         settings.InkPairsEnabled.Should().BeFalse();
     }
+
+    [Fact]
+    public void Free_resize_starts_off_and_raises_changed_only_when_it_changes()
+    {
+        var settings = CreateSettings();
+        var raised = 0;
+        settings.Changed += (_, _) => raised++;
+        bool initial = settings.FreeResize;
+
+        settings.SetFreeResize(true);
+        settings.SetFreeResize(true);
+
+        initial.Should().BeFalse();
+        raised.Should().Be(1);
+        settings.FreeResize.Should().BeTrue();
+    }
 }

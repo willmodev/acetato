@@ -58,6 +58,7 @@ function SettingsWindow({ chords, setChords, inkPairs, setInkPairs, onClose }) {
   const Icon = window.Icon;
   const defs = window.ACETATO_HOTKEYS;
   const [capturing, setCapturing] = useSt(null);  // action being captured
+  const [freeResize, setFreeResize] = useSt(false); // Transformación libre (HU-28), off by default
   const [pending, setPending] = useSt(null);      // { action, chord, owner, message }
   const [confirmAll, setConfirmAll] = useSt(false);
 
@@ -115,6 +116,8 @@ function SettingsWindow({ chords, setChords, inkPairs, setInkPairs, onClose }) {
         <div className="settings-cap">Dibujo</div>
         <SwitchRow label="Tintas degradadas" hint="Cada tinta pasa a un tono vecino"
                    checked={inkPairs} onChange={setInkPairs} />
+        <SwitchRow label="Transformación libre" hint="Estira según el tirador. Apagada, crece parejo"
+                   checked={freeResize} onChange={setFreeResize} />
         <div className="settings-cap">Siempre activos</div>
         {defs.filter(d => d.scope === 'always').map(renderRow)}
         <div className="settings-cap">Solo al dibujar</div>

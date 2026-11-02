@@ -26,7 +26,7 @@ then open `ui_kits/toolbar/index.html`. Everything is fake but live:
 - **Láser** — fading trail (2 s) with a halo; leaves nothing behind.
 - **Borrador** removes whole strokes. **Deshacer / Limpiar todo** as in the app.
 - **Recortar** — only shows a hint: the app opens Windows' Snipping Tool.
-- **Ajustes** — the *Dibujo* switch (*Tintas degradadas*) and the
+- **Ajustes** — the *Dibujo* switches (*Tintas degradadas*, *Transformación libre*) and the
   shortcut list: click a key to capture, conflicts offer
   *Reemplazar / Cancelar*, per-row *Restaurar* / *Quitar*, *Restaurar todo* with
   inline confirmation.

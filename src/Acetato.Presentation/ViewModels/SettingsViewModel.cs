@@ -70,7 +70,27 @@ internal sealed partial class SettingsViewModel : ObservableObject, IDisposable
             }
 
             _drawing.SetInkPairs(value);
-            _preferences.Save(new DrawingPreferences(value));
+            SavePreferences();
+            OnPropertyChanged();
+        }
+    }
+
+    /// <summary>
+    /// Transformación libre (HU-28): al redimensionar, cada eje se estira por su lado.
+    /// Se aplica al momento y se guarda. Restaurar los atajos no la cambia.
+    /// </summary>
+    public bool FreeResize
+    {
+        get => _drawing.FreeResize;
+        set
+        {
+            if (value == _drawing.FreeResize)
+            {
+                return;
+            }
+
+            _drawing.SetFreeResize(value);
+            SavePreferences();
             OnPropertyChanged();
         }
     }
@@ -113,6 +133,10 @@ internal sealed partial class SettingsViewModel : ObservableObject, IDisposable
 
     [RelayCommand]
     private void CancelResetAll() => IsConfirmingResetAll = false;
+
+    // Guarda el bloque Dibujo entero: cada opción conserva la otra.
+    private void SavePreferences() =>
+        _preferences.Save(new DrawingPreferences(_drawing.InkPairsEnabled, _drawing.FreeResize));
 
     private List<HotkeyRowViewModel> RowsOf(HotkeyScope scope) =>
         [.. _rows.Where(row => HotkeyCatalog.Of(row.Action).Scope == scope)];
