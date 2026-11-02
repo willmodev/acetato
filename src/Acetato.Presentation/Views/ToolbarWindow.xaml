@@ -24,9 +24,11 @@
       Margen transparente para la sombra (BlurRadius 34, caída 10 hacia abajo). Sin él,
       la ventana mide justo lo que la barra y la sombra solo cabe en las esquinas fuera
       del radio: se ve un rectángulo oscuro detrás de las esquinas redondeadas. Los
-      píxeles del margen sin sombra son alfa 0: los clics pasan a lo de abajo.
+      píxeles con sombra tienen algo de alfa y Windows los daría por parte de la barra:
+      IsHitArea deja que solo la barra reciba el mouse y el resto pase al lienzo.
     -->
     <Border Margin="36,28,36,48"
+            b:HitAreaBehavior.IsHitArea="True"
             Background="{StaticResource Chrome.Glass}"
             CornerRadius="{StaticResource Radius.Toolbar}"
             BorderBrush="{StaticResource Stroke.Outer}"
