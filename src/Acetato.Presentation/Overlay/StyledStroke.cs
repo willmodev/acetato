@@ -12,7 +12,8 @@ namespace Acetato.Presentation.Overlay;
 /// como una polilínea aparte (extremos y uniones redondeados). Así la punta no pasa por
 /// el suavizado del lápiz, que deformaría el vértice, y la flecha sigue siendo UN solo
 /// trazo para el historial y el borrador. Conserva su par de degradado para siempre.
-/// Al moverlo (SPEC 11) la punta y el degradado lo acompañan.
+/// Al moverlo (SPEC 11) la punta y el degradado lo acompañan, y seleccionado conserva su
+/// color; por eso todos los trazos del overlay son de este tipo, también los planos.
 /// </summary>
 internal sealed class StyledStroke : Stroke
 {
@@ -80,20 +81,18 @@ internal sealed class StyledStroke : Stroke
         return Rect.Union(bounds, headBounds);
     }
 
+    /// <summary>
+    /// Pinta el cuerpo (con su par de degradado o con su tinta plana) y la punta. No delega
+    /// en <c>Stroke.DrawCore</c>: con el trazo seleccionado, ese método lo pinta «hueco»,
+    /// blanco por dentro. Así lo elegido con Mover conserva su color (SPEC 11).
+    /// </summary>
     protected override void DrawCore(DrawingContext drawingContext, DrawingAttributes drawingAttributes)
     {
         ArgumentNullException.ThrowIfNull(drawingContext);
         ArgumentNullException.ThrowIfNull(drawingAttributes);
 
         var gradientBrush = GradientBrush();
-        if (gradientBrush is null)
-        {
-            base.DrawCore(drawingContext, drawingAttributes);
-        }
-        else
-        {
-            drawingContext.DrawGeometry(gradientBrush, pen: null, GetGeometry(drawingAttributes));
-        }
+        drawingContext.DrawGeometry(gradientBrush ?? SolidBrush(drawingAttributes), pen: null, GetGeometry(drawingAttributes));
 
         if (Head is { } head)
         {

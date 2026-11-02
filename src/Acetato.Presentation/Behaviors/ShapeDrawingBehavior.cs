@@ -127,7 +127,7 @@ public static class ShapeDrawingBehavior
         session.Preview = stroke;
     }
 
-    private static Stroke BuildStroke(IReadOnlyList<StrokePoint> points, DrawingAttributes baseAttributes, GradientPair? gradient)
+    private static StyledStroke BuildStroke(IReadOnlyList<StrokePoint> points, DrawingAttributes baseAttributes, GradientPair? gradient)
     {
         var stylusPoints = new StylusPointCollection(points.Count);
         foreach (var point in points)
@@ -137,9 +137,8 @@ public static class ShapeDrawingBehavior
 
         var attributes = baseAttributes.Clone();
         attributes.FitToCurve = false; // las formas son rectas, sin suavizado
-        return gradient is null
-            ? new Stroke(stylusPoints, attributes)
-            : new StyledStroke(stylusPoints, attributes, head: null, gradient);
+        // Siempre StyledStroke, también la plana: así no se pinta en blanco al seleccionarla (SPEC 11).
+        return new StyledStroke(stylusPoints, attributes, head: null, gradient);
     }
 
     private static StrokePoint ToStrokePoint(Point point) => new(point.X, point.Y);

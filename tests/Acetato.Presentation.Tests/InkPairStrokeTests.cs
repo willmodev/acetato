@@ -28,12 +28,12 @@ public sealed class InkPairStrokeTests
             overlay.GradientUsedCommand.Execute(null);
             var second = Draw(overlay);
             settings.SetInkPairs(false);
-            return (First: first.Gradient, Second: second.Gradient, Flat: DrawAny(overlay) is StyledStroke);
+            return (First: first.Gradient, Second: second.Gradient, Flat: Draw(overlay).Gradient is null);
         });
 
         gradients.First.Should().Be(GradientPair.FromInk(TintaColor.Red));
         gradients.Second.Should().Be(gradients.First);
-        gradients.Flat.Should().BeFalse();
+        gradients.Flat.Should().BeTrue();
     }
 
     private static StyledStroke Draw(OverlayViewModel overlay) => (StyledStroke)DrawAny(overlay);
