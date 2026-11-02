@@ -489,6 +489,8 @@ Escenario: Rehacer sin nada que rehacer
 ---
 
 #### HU-18 — Blur acrílico/Mica real en la barra
+> **Descartada (2026-11-02).** La prueba de SPEC 11 falló el primer criterio: con la barra inactiva (nunca se activa, para no robar el foco) Windows 11 no pinta el acrílico, sino un fondo gris oscuro opaco. El usuario prefiere el vidrio translúcido actual (`Chrome.Glass`). La rama `spike-18-vidrio-real` no se integra; la barra queda como estaba.
+
 - **Épica:** EP-03 · **Prioridad:** Could · **Estimación:** 5
 - **Narrativa:**
   Como usuario, quiero que la barra tenga un fondo con desenfoque real (acrílico), para que se sienta nativa de Windows 11 y discreta sobre cualquier fondo.
@@ -508,7 +510,7 @@ Escenario: Degradación elegante
 ```
 **Notas técnicas:** hoy el `DwmSetWindowAttribute(DWMWA_SYSTEMBACKDROP_TYPE)` es best-effort y **no compone** con `AllowsTransparency=True` (esquinas redondeadas). Trade-off a evaluar: el acrílico real exige quitar `AllowsTransparency`, lo que afecta esquinas redondeadas y los `Popup` de color/grosor → riesgo. Consultar el design system (`/acetato-design`) para el look glass de marca.
 
-> **SPEC 11 (2026-11-01).** Se resuelve con una **prueba de 1 día** en rama aparte y seis condiciones de adopción (acrílico con la barra inactiva, sin robar el foco, popovers/plegado/arrastre intactos, fuera de los recortes, encima del dibujo y radio de Windows aceptado). Resultado: *pendiente de prueba manual*. El experimento está en la rama `spike-18-vidrio-real` (sin integrar). Ver [`specs/11-elipse-mover-y-vidrio.md`](./specs/11-elipse-mover-y-vidrio.md).
+> **SPEC 11 (2026-11-01).** Se resuelve con una **prueba de 1 día** en rama aparte y seis condiciones de adopción (acrílico con la barra inactiva, sin robar el foco, popovers/plegado/arrastre intactos, fuera de los recortes, encima del dibujo y radio de Windows aceptado). Resultado (2026-11-02): **descartada**, ver la nota al inicio de esta historia. Ver [`specs/11-elipse-mover-y-vidrio.md`](./specs/11-elipse-mover-y-vidrio.md).
 
 ---
 

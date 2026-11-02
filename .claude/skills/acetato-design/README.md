@@ -103,10 +103,10 @@ the shortcut being captured in Settings. `--danger` appears only in Settings
 messages. Inks never appear as UI chrome.
 
 **Transparency & blur.** Today the bar and popovers are **translucent without
-blur** (`AllowsTransparency` windows). Real Windows 11 Acrylic behind the bar
-(**HU-18**) is being tested in a separate branch: it is adopted only if it shows
-while the bar is inactive and breaks nothing, and Windows then sets the corner
-radius (about 8px). Previews
+blur** (`AllowsTransparency` windows). That is final: real Windows 11 Acrylic
+behind the bar (**HU-18**) was tested and dropped, because with the bar inactive
+(it never activates, so it never steals focus) Windows paints an opaque dark
+grey instead of glass. Previews
 here render without blur to match the app. Settings is a normal opaque window on
 `--chrome-solid`.
 

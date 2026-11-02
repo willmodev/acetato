@@ -30,8 +30,8 @@ public sealed class Win32ToolbarWindowStyler : IToolbarWindowStyler
         // Best-effort: en builds sin soporte simplemente no surte efecto.
         NativeMethods.SetWindowDisplayAffinity(windowHandle, NativeMethods.WdaExcludeFromCapture);
 
-        // Sin fondo acrílico de DWM: en una ventana layered con transparencia lo pinta
-        // sobre el rectángulo entero (fondo claro fuera de las esquinas redondeadas) y no
-        // da un desenfoque real. El vidrio lo pone la marca (Chrome.Glass). Ver HU-18.
+        // Sin fondo acrílico de DWM (HU-18, descartada): en una ventana layered lo pinta
+        // sobre el rectángulo entero, y sin layered la barra inactiva sale gris opaca.
+        // El vidrio lo pone la marca (Chrome.Glass).
     }
 }

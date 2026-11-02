@@ -1,6 +1,6 @@
 # SPEC 11 — Elipse, Mover y vidrio real (HU-16, HU-14, HU-18)
 
-> **Estado:** Aprobado · **Depende de:** HU-11 (formas), SPEC 01 (HU-13) — historial unificado, SPEC 05 (HU-21) — atajos configurables, SPEC 06 (HU-22) — atajos por herramienta, SPEC 08 (HU-24) — modo puntero y Esc fijo, SPEC 09 (HU-26) — cursor de tinta · **Fecha:** 2026-11-01
+> **Estado:** Implementado (vidrio real descartado, HU-18) · **Depende de:** HU-11 (formas), SPEC 01 (HU-13) — historial unificado, SPEC 05 (HU-21) — atajos configurables, SPEC 06 (HU-22) — atajos por herramienta, SPEC 08 (HU-24) — modo puntero y Esc fijo, SPEC 09 (HU-26) — cursor de tinta · **Fecha:** 2026-11-01
 > **Objetivo:** Cerrar las funciones pendientes del backlog: dibujar elipses, agarrar con una mano lo ya dibujado para moverlo o borrarlo (también con Ctrl desde cualquier herramienta), que Deshacer revierta cualquier acción y probar, con un límite de tiempo, el vidrio real en la barra.
 
 ---
@@ -248,7 +248,7 @@ Fuentes: [Zoom](https://support.zoom.com/hc/en/article?id=zm_kb&sysparm_article=
 
 ## Criterios de aceptación
 
-> **Avance (2026-11-01).** Pasos 1 a 9 y 11 implementados en la rama `spec-11-elipse-mover-y-vidrio`; build `-warnaserror` y tests en verde. La prueba del vidrio (paso 10) quedó lista en la rama aparte `spike-18-vidrio-real`, sin integrar. **Nada se probó todavía en la app real** (no se lanzó sin permiso del usuario): las casillas siguen sin marcar hasta esa prueba.
+> **Avance (2026-11-01).** Pasos 1 a 9 y 11 implementados en la rama `spec-11-elipse-mover-y-vidrio`; build `-warnaserror` y tests en verde. La prueba del vidrio (paso 10) quedó lista en la rama aparte `spike-18-vidrio-real`, sin integrar. **Probado por el usuario en la app real (2026-11-02):** Elipse, Mover, Deshacer y General, conforme. La prueba del vidrio (2026-11-02) falló el criterio 1: con la barra inactiva Windows pinta un gris oscuro opaco, no acrílico. HU-18 queda descartada y la rama `spike-18-vidrio-real` no se integra.
 >
 > **Cubierto por tests automáticos:** la elipse (puntos, cierre, mínimo y máximo, dirección, círculo con Mayús, ciclo, atajo y botón); Deshacer de dibujo, Borrador (a su capa), movimientos y `Supr`; la punta y el degradado de una flecha movida; qué hace cada clic con la mano y con Ctrl (arrastra, pasa al lazo o se queda el clic); `Supr` solo con Mover en modo dibujo y fuera de Ajustes; la selección se suelta al cambiar de herramienta; atajos `Ctrl+M` y `Ctrl+O` y su cesión si ya están usados.
 >
@@ -263,60 +263,60 @@ Fuentes: [Zoom](https://support.zoom.com/hc/en/article?id=zm_kb&sysparm_article=
 
 **Elipse**
 
-- [ ] La barra muestra «Elipse» después de Rectángulo, con el icono de círculo y su atajo en el tooltip.
-- [ ] Arrastrar dibuja una elipse dentro del recuadro del arrastre, en cualquier dirección.
-- [ ] Con Mayús pulsada sale un círculo.
-- [ ] La previsualización sigue al cursor mientras se arrastra.
-- [ ] La elipse usa la tinta, el grosor y el degradado activos; el cursor es el círculo de tinta.
-- [ ] Un solo Deshacer quita la elipse entera; el Borrador también.
-- [ ] `Ctrl+O` elige Elipse en modo dibujo y se puede cambiar en Ajustes.
-- [ ] `Ctrl+Espacio` pasa de Rectángulo a Elipse y de Elipse a Texto.
+- [x] La barra muestra «Elipse» después de Rectángulo, con el icono de círculo y su atajo en el tooltip.
+- [x] Arrastrar dibuja una elipse dentro del recuadro del arrastre, en cualquier dirección.
+- [x] Con Mayús pulsada sale un círculo.
+- [x] La previsualización sigue al cursor mientras se arrastra.
+- [x] La elipse usa la tinta, el grosor y el degradado activos; el cursor es el círculo de tinta.
+- [x] Un solo Deshacer quita la elipse entera; el Borrador también.
+- [x] `Ctrl+O` elige Elipse en modo dibujo y se puede cambiar en Ajustes.
+- [x] `Ctrl+Espacio` pasa de Rectángulo a Elipse y de Elipse a Texto.
 
 **Mover con el botón**
 
-- [ ] La barra muestra «Mover» con el icono de mano, primera entre las herramientas. El Puntero sigue con su flecha y el asa dice «Mover barra».
-- [ ] Apretar sobre un trazo, una forma o un texto y arrastrar lo mueve en el acto; al soltar queda seleccionado.
-- [ ] Arrastrar desde un sitio vacío dibuja un lazo; lo que queda dentro se mueve junto.
-- [ ] Lo que no se movió no cambia.
-- [ ] Una flecha movida conserva su punta y su degradado.
-- [ ] La selección no tiene tiradores de tamaño.
-- [ ] El cursor es una mano abierta, y cerrada mientras se arrastra.
-- [ ] `Supr` borra solo lo seleccionado.
-- [ ] Con otra herramienta activa, o en modo puntero, `Supr` no hace nada en Acetato y llega a la app de abajo.
-- [ ] Mientras se escribe un texto, `Supr` borra letras.
-- [ ] Cambiar de herramienta, pulsar `Esc`, ocultar la capa o pulsar Limpiar todo quita la selección.
-- [ ] `Ctrl+M` elige Mover en modo dibujo y se puede cambiar en Ajustes; `Supr` no aparece en Ajustes.
-- [ ] Funciona igual en cada monitor, cada uno con su selección.
+- [x] La barra muestra «Mover» con el icono de mano, primera entre las herramientas. El Puntero sigue con su flecha y el asa dice «Mover barra».
+- [x] Apretar sobre un trazo, una forma o un texto y arrastrar lo mueve en el acto; al soltar queda seleccionado.
+- [x] Arrastrar desde un sitio vacío dibuja un lazo; lo que queda dentro se mueve junto.
+- [x] Lo que no se movió no cambia.
+- [x] Una flecha movida conserva su punta y su degradado.
+- [x] La selección no tiene tiradores de tamaño.
+- [x] El cursor es una mano abierta, y cerrada mientras se arrastra.
+- [x] `Supr` borra solo lo seleccionado.
+- [x] Con otra herramienta activa, o en modo puntero, `Supr` no hace nada en Acetato y llega a la app de abajo.
+- [x] Mientras se escribe un texto, `Supr` borra letras.
+- [x] Cambiar de herramienta, pulsar `Esc`, ocultar la capa o pulsar Limpiar todo quita la selección.
+- [x] `Ctrl+M` elige Mover en modo dibujo y se puede cambiar en Ajustes; `Supr` no aparece en Ajustes.
+- [x] Funciona igual en cada monitor, cada uno con su selección.
 
 **Mover con Ctrl**
 
-- [ ] Con cualquier herramienta de dibujo, mantener Ctrl y arrastrar un trazo, una forma o un texto lo mueve sin dibujar ni borrar nada.
-- [ ] Al soltar, la herramienta sigue siendo la misma y no queda nada seleccionado.
-- [ ] Con Ctrl, apretar en un sitio vacío no dibuja nada.
-- [ ] Con Ctrl pulsada, el cursor es una mano; al soltar Ctrl vuelve el de la herramienta.
-- [ ] Los atajos `Ctrl+tecla` (colores, Deshacer, herramientas) siguen funcionando igual.
+- [x] Con cualquier herramienta de dibujo, mantener Ctrl y arrastrar un trazo, una forma o un texto lo mueve sin dibujar ni borrar nada.
+- [x] Al soltar, la herramienta sigue siendo la misma y no queda nada seleccionado.
+- [x] Con Ctrl, apretar en un sitio vacío no dibuja nada.
+- [x] Con Ctrl pulsada, el cursor es una mano; al soltar Ctrl vuelve el de la herramienta.
+- [x] Los atajos `Ctrl+tecla` (colores, Deshacer, herramientas) siguen funcionando igual.
 
 **Deshacer**
 
-- [ ] Tras borrar un trazo con el Borrador, `Ctrl+Z` lo devuelve en su sitio y en su misma capa.
-- [ ] Tras mover algo (con la mano o con Ctrl), `Ctrl+Z` lo devuelve a donde estaba.
-- [ ] Tras borrar una selección con `Supr`, `Ctrl+Z` la devuelve entera.
-- [ ] Dibujar, mover y borrar mezclados se deshacen en orden inverso, uno por `Ctrl+Z`.
-- [ ] Tras Limpiar todo, `Ctrl+Z` no hace nada.
-- [ ] Deshacer sin nada que deshacer no da error.
+- [x] Tras borrar un trazo con el Borrador, `Ctrl+Z` lo devuelve en su sitio y en su misma capa.
+- [x] Tras mover algo (con la mano o con Ctrl), `Ctrl+Z` lo devuelve a donde estaba.
+- [x] Tras borrar una selección con `Supr`, `Ctrl+Z` la devuelve entera.
+- [x] Dibujar, mover y borrar mezclados se deshacen en orden inverso, uno por `Ctrl+Z`.
+- [x] Tras Limpiar todo, `Ctrl+Z` no hace nada.
+- [x] Deshacer sin nada que deshacer no da error.
 
 **Vidrio real**
 
-- [ ] La prueba se hizo y su resultado (adoptado o descartado, con el motivo) está en `BACKLOG.md`.
-- [ ] Si se adoptó: en Windows 11 la barra muestra acrílico estando inactiva, no roba el foco, los popovers, el plegado y el arrastre funcionan, sigue fuera de los recortes y encima del dibujo; en Windows 10 queda el vidrio actual.
+- [x] La prueba se hizo y su resultado (adoptado o descartado, con el motivo) está en `BACKLOG.md`.
+- [x] ~~Si se adoptó: en Windows 11 la barra muestra acrílico estando inactiva, no roba el foco, los popovers, el plegado y el arrastre funcionan, sigue fuera de los recortes y encima del dibujo; en Windows 10 queda el vidrio actual.~~ No aplica: se descartó.
 
 **General**
 
-- [ ] `dotnet build -warnaserror` y `dotnet test` en verde.
-- [ ] Un `settings.json` existente conserva sus atajos y recibe `Ctrl+M` y `Ctrl+O` si están libres.
-- [ ] Sin subida de memoria tras activar y desactivar la capa 20 veces con selección.
-- [ ] `BACKLOG.md` marca HU-17 como descartada.
-- [ ] Las dos copias del design system describen Elipse, Mover y el nuevo Deshacer, sin Rehacer pendiente.
+- [x] `dotnet build -warnaserror` y `dotnet test` en verde.
+- [x] Un `settings.json` existente conserva sus atajos y recibe `Ctrl+M` y `Ctrl+O` si están libres.
+- [x] Sin subida de memoria tras activar y desactivar la capa 20 veces con selección.
+- [x] `BACKLOG.md` marca HU-17 como descartada.
+- [x] Las dos copias del design system describen Elipse, Mover y el nuevo Deshacer, sin Rehacer pendiente.
 
 ---
 

@@ -66,7 +66,7 @@ iconos del design system).
 | HU-23 recortar pantalla | abrir el recorte de Windows | Infrastructure + Application |
 
 ## Decisiones
-- **WPF** sobre WinForms: transparencia real, Acrylic/Mica, DPI Per-Monitor V2, render
+- **WPF** sobre WinForms: transparencia real, DPI Per-Monitor V2, render
   acelerado e `InkCanvas` para trazos; los tokens del design system mapean ≈ 1:1 a
   `ResourceDictionary`.
 - **Render del dibujo:** empezar con primitivas WPF / `InkCanvas`; si la latencia objetivo

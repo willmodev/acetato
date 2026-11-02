@@ -58,7 +58,7 @@ html, body { margin: 0; height: 100%; font-family: var(--font-ui); -webkit-font-
 }
 .text-draft::placeholder { color: var(--fg-3); }
 
-/* ---- Floating toolbar (ToolbarWindow.xaml). No blur yet (HU-18). ---- */
+/* ---- Floating toolbar (ToolbarWindow.xaml). No blur (Acrylic dropped, HU-18). ---- */
 .bar {
   position: absolute;
   display: inline-flex;

@@ -85,8 +85,8 @@ Si algo excede el límite → **extraer** (método/clase/archivo). Los umbrales 
 - El **acento teal** marca **solo** la herramienta activa.
 - Iconos: línea Lucide (2px / 20px). Origen SVG en
   `.claude/skills/acetato-design/assets/icons/`; portar a `Resources/Icons.xaml` (Geometry).
-- Glass = `Chrome.Glass` + blur (Acrylic/Mica vía DWM); fallback opaco `Chrome.Solid` si no
-  hay composición.
+- Glass = `Chrome.Glass` translúcido, **sin blur**. El acrílico real de DWM se probó y se
+  descartó (HU-18): con la barra inactiva Windows lo pinta gris opaco.
 
 ## Comandos
 ```pwsh
