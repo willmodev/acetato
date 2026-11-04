@@ -2,6 +2,7 @@ using System.IO;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using Microsoft.Extensions.Logging;
 
 namespace Acetato.Infrastructure.Settings;
 
@@ -10,9 +11,10 @@ namespace Acetato.Infrastructure.Settings;
 /// opciones de dibujo (HU-27): <c>{ "version": 1, "hotkeys": { … }, "drawing": { … } }</c>.
 /// Cada almacén escribe SOLO su sección y conserva las demás, así guardar los atajos no
 /// borra las opciones de dibujo ni al revés. La escritura es atómica (archivo temporal y
-/// luego reemplazo) y nunca lanza: el cambio ya está aplicado en memoria.
+/// luego reemplazo) y nunca lanza: el cambio ya está aplicado en memoria. Lo que falla
+/// se anota como advertencia en el registro (HU-32).
 /// </summary>
-internal sealed class SettingsFile
+internal sealed partial class SettingsFile
 {
     private const int CurrentVersion = 1;
     private const string VersionKey = "version";
@@ -26,9 +28,15 @@ internal sealed class SettingsFile
     private static readonly JsonSerializerOptions Indented = new() { WriteIndented = true };
 
     private readonly string _directory;
+    private readonly ILogger _logger;
 
     /// <param name="directory">Carpeta del archivo (los tests pasan una temporal).</param>
-    public SettingsFile(string directory) => _directory = directory;
+    /// <param name="logger">Registro del almacén que usa el archivo.</param>
+    public SettingsFile(string directory, ILogger logger)
+    {
+        _directory = directory;
+        _logger = logger;
+    }
 
     /// <summary>Carpeta de la app en %AppData%.</summary>
     public static string DefaultDirectory =>
@@ -45,6 +53,7 @@ internal sealed class SettingsFile
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
+            LogReadFailed(ex);
             return null;
         }
     }
@@ -84,6 +93,7 @@ internal sealed class SettingsFile
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
             // Best-effort: el cambio ya está aplicado en memoria; solo no se recordará.
+            LogWriteFailed(key, ex);
         }
     }
 
@@ -97,6 +107,18 @@ internal sealed class SettingsFile
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
             // Si no se puede renombrar, el siguiente guardado lo sobrescribe.
+            LogMoveAsideFailed(ex);
         }
     }
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "No se pudo leer settings.json: se usan los valores predeterminados")]
+    private partial void LogReadFailed(Exception exception);
+
+    [LoggerMessage(
+        Level = LogLevel.Warning,
+        Message = "No se pudo guardar la sección {Section} de settings.json: el cambio no se recordará")]
+    private partial void LogWriteFailed(string section, Exception exception);
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "No se pudo apartar settings.json dañado: el siguiente guardado lo reemplaza")]
+    private partial void LogMoveAsideFailed(Exception exception);
 }

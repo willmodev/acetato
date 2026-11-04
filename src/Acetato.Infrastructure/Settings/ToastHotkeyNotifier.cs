@@ -2,20 +2,27 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using Acetato.Application.Abstractions;
 using CommunityToolkit.WinUI.Notifications;
+using Microsoft.Extensions.Logging;
 
 namespace Acetato.Infrastructure.Settings;
 
 /// <summary>
 /// Notificación de Windows con los problemas de atajos al arrancar (HU-21). Lleva
 /// el argumento <c>action=settings</c> y solo atiende ese argumento en el evento
-/// global de activación de CommunityToolkit.
+/// global de activación de CommunityToolkit. Si el aviso no sale, se anota (HU-32).
 /// </summary>
-public sealed class ToastHotkeyNotifier : IHotkeyNotifier, IDisposable
+public sealed partial class ToastHotkeyNotifier : IHotkeyNotifier, IDisposable
 {
     private const string ActionArgument = "action";
     private const string SettingsValue = "settings";
 
-    public ToastHotkeyNotifier() => ToastNotificationManagerCompat.OnActivated += OnToastActivated;
+    private readonly ILogger _logger;
+
+    public ToastHotkeyNotifier(ILogger<ToastHotkeyNotifier> logger)
+    {
+        _logger = logger;
+        ToastNotificationManagerCompat.OnActivated += OnToastActivated;
+    }
 
     public event EventHandler? SettingsRequested;
 
@@ -39,6 +46,7 @@ public sealed class ToastHotkeyNotifier : IHotkeyNotifier, IDisposable
         catch (Exception ex) when (ex is COMException or InvalidOperationException)
         {
             // Best-effort: la fila «No disponible» en Ajustes sigue avisando.
+            LogToastFailed(ex);
         }
     }
 
@@ -73,4 +81,7 @@ public sealed class ToastHotkeyNotifier : IHotkeyNotifier, IDisposable
             SettingsRequested?.Invoke(this, EventArgs.Empty);
         }
     }
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "No salió el aviso de Windows de los atajos")]
+    private partial void LogToastFailed(Exception exception);
 }

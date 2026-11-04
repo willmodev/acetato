@@ -121,7 +121,8 @@
         </Setter>
     </Style>
 
-    <!-- Botón de texto discreto (Reemplazar, Cancelar). -->
+    <!-- Botón de texto discreto (Reemplazar, Cancelar, Copiar versión). Desactivado (Reportar
+         problema mientras arma el .zip), en Fg.Disabled y sin mano. -->
     <Style x:Key="SettingsTextButton" TargetType="Button">
         <Setter Property="Foreground" Value="{StaticResource Fg.Primary}" />
         <Setter Property="FontSize" Value="{StaticResource Text.Label}" />
@@ -138,6 +139,10 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Bg" Property="Background" Value="{StaticResource Fill.Hover}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{StaticResource Fg.Disabled}" />
+                            <Setter Property="Cursor" Value="Arrow" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

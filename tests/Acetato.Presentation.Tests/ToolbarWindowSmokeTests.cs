@@ -8,6 +8,7 @@ using Acetato.Presentation.Settings;
 using Acetato.Presentation.ViewModels;
 using Acetato.Presentation.Views;
 using FluentAssertions;
+using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using Xunit;
 
@@ -57,9 +58,12 @@ public sealed class ToolbarWindowSmokeTests
             Substitute.For<IOverlayCanvasProvider>(),
             Substitute.For<ICursorPositionProvider>(),
             settings,
-            Substitute.For<IScreenClipLauncher>(),
+            new ScreenClipServices(Substitute.For<IScreenClipLauncher>(), NullLogger<OverlayBroadcaster>.Instance),
             controller);
-        var chrome = new ToolbarChrome(dragHandler, new SettingsWindowLauncher(controller, coordinator, dragHandler, settings, Substitute.For<IDrawingPreferencesStore>()), shortcuts, new ToolbarLayout());
+        var chrome = new ToolbarChrome(dragHandler, new SettingsWindowLauncher(
+            controller,
+            new SettingsViewModelFactory(
+                coordinator, dragHandler, settings, Substitute.For<IDrawingPreferencesStore>(), TestAbout.Services())), shortcuts, new ToolbarLayout());
         using var viewModel = new ToolbarViewModel(broadcaster, settings, controller, chrome);
         var window = new ToolbarWindow();
         var content = (FrameworkElement)window.Content;

@@ -5,6 +5,7 @@ using Acetato.Application.Hotkeys;
 using Acetato.Domain;
 using Acetato.Infrastructure.Settings;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Xunit;
 
 namespace Acetato.Infrastructure.Tests;
@@ -63,6 +64,30 @@ public sealed class JsonHotkeySettingsStoreTests : IDisposable
         load.Map.Overrides.Should().BeEmpty();
         File.Exists(SettingsPath).Should().BeFalse();
         File.ReadAllText(CorruptPath).Should().Be(json);
+    }
+
+    [Fact]
+    public void Corrupt_file_leaves_a_warning_in_the_log()
+    {
+        WriteSettings("{ esto no es JSON");
+        var log = new RecordingLogger<JsonHotkeySettingsStore>();
+
+        new JsonHotkeySettingsStore(_directory, log).Load();
+
+        log.Entries.Should().ContainSingle()
+            .Which.Level.Should().Be(LogLevel.Warning);
+        log.Entries[0].Message.Should().Contain("settings.json está dañado");
+    }
+
+    [Fact]
+    public void Valid_file_leaves_nothing_in_the_log()
+    {
+        WriteSettings("""{ "version": 1, "hotkeys": { "Undo": "Alt+Z" } }""");
+        var log = new RecordingLogger<JsonHotkeySettingsStore>();
+
+        new JsonHotkeySettingsStore(_directory, log).Load();
+
+        log.Entries.Should().BeEmpty();
     }
 
     [Fact]

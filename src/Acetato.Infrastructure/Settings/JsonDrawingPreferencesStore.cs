@@ -1,4 +1,6 @@
 using Acetato.Application.Abstractions;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Acetato.Infrastructure.Settings;
 
@@ -13,13 +15,20 @@ public sealed class JsonDrawingPreferencesStore : IDrawingPreferencesStore
     private readonly SettingsFile _file;
 
     /// <summary>Usa la carpeta de la app en %AppData%.</summary>
-    public JsonDrawingPreferencesStore()
-        : this(SettingsFile.DefaultDirectory)
+    public JsonDrawingPreferencesStore(ILogger<JsonDrawingPreferencesStore> logger)
+        : this(SettingsFile.DefaultDirectory, logger)
+    {
+    }
+
+    /// <summary>Usa <paramref name="directory"/> sin registro (tests).</summary>
+    public JsonDrawingPreferencesStore(string directory)
+        : this(directory, NullLogger<JsonDrawingPreferencesStore>.Instance)
     {
     }
 
     /// <summary>Usa <paramref name="directory"/> (los tests pasan una carpeta temporal).</summary>
-    public JsonDrawingPreferencesStore(string directory) => _file = new SettingsFile(directory);
+    public JsonDrawingPreferencesStore(string directory, ILogger<JsonDrawingPreferencesStore> logger) =>
+        _file = new SettingsFile(directory, logger);
 
     public DrawingPreferences Load() =>
         _file.ReadRoot() is { } root ? DrawingPreferencesJson.Read(root) : DrawingPreferences.Defaults;

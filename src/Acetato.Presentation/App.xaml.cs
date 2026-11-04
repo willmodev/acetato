@@ -12,12 +12,15 @@ using Acetato.Infrastructure.Input;
 using Acetato.Infrastructure.Monitors;
 using Acetato.Infrastructure.Overlay;
 using Acetato.Infrastructure.Settings;
+using Acetato.Presentation.Diagnostics;
+using Acetato.Presentation.Lifetime;
 using Acetato.Presentation.Overlay;
 using Acetato.Presentation.Settings;
 using Acetato.Presentation.ViewModels;
 using Acetato.Presentation.Views;
 using H.NotifyIcon;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Acetato.Presentation;
 
@@ -28,22 +31,79 @@ namespace Acetato.Presentation;
 /// </summary>
 public partial class App : System.Windows.Application
 {
+    // Nombre de la copia única (HU-31) en la sesión de Windows.
+    private const string InstanceName = "Acetato";
+
+    private AppDiagnostics? _diagnostics;
+    private SingleInstanceGate? _instance;
     private ServiceProvider? _services;
     private IGlobalHotkeyService? _hotkeys;
     private HotkeyActionRouter? _router;
     private TaskbarIcon? _trayIcon;
 
+    // Orden (HU-32): registro → manejador de errores → una sola copia (HU-31) → arranque
+    // de siempre → «Inicio».
+    // El arranque entero va envuelto: un error aquí, antes de que exista la barra, es fatal.
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
 
-        _services = BuildServiceProvider();
+        try
+        {
+            _diagnostics = AppDiagnostics.Start(this);
+            if (!EnterSingleInstance(_diagnostics))
+            {
+                Shutdown();
+                return;
+            }
+
+            StartApplication(_diagnostics);
+        }
+        catch (Exception ex)
+        {
+            // Anota, muestra el mensaje y cierra. Si otro cierre ya está en curso, el
+            // error sigue su camino y termina el proceso igual.
+            FailStartup(ex);
+            throw;
+        }
+    }
+
+    private void StartApplication(AppDiagnostics diagnostics)
+    {
+        _services = BuildServiceProvider(diagnostics);
         // Como se cerró (HU-29): antes de la barra y de los atajos, que siguen la herramienta.
         _services.GetRequiredService<SessionMemory>().Start();
         InitializeToolbar();
         WireHotkeys();
         InitializeTrayIcon();
         ShowOverlay();
+        WireActivationFromSecondCopy();
+        diagnostics.LogStartup(_services);
+    }
+
+    // Si ya había otra copia abierta, le avisa y esta se cierra sin mostrar nada (HU-31).
+    private bool EnterSingleInstance(AppDiagnostics diagnostics)
+    {
+        _instance = diagnostics.CreateSingleInstanceGate(InstanceName);
+        return _instance.TryEnter();
+    }
+
+    // Abrir Acetato otra vez hace lo mismo que «Activar dibujo» de la bandeja.
+    private void WireActivationFromSecondCopy()
+    {
+        var tray = _services!.GetRequiredService<TrayViewModel>();
+        _instance!.OnActivationRequested(Dispatcher, tray.ActivateDrawingCommand);
+    }
+
+    // Sin registro abierto todavía, solo queda el mensaje y el cierre.
+    private void FailStartup(Exception exception)
+    {
+        if (_diagnostics is null)
+        {
+            new FatalExit(log: null).Exit(exception);
+        }
+
+        _diagnostics.FailStartup(exception);
     }
 
     // Arranque listo para dibujar (HU-24). Va al final: el coordinador ya sigue
@@ -123,22 +183,27 @@ public partial class App : System.Windows.Application
         }
     }
 
-    // Orden (HU-20): sesión → atajos → servicios → icono de bandeja. La sesión se guarda
-    // primero, con el sitio de la barra, que solo se escribe aquí (HU-29). El icono se
-    // quita al final: mientras se vea, la app sigue cerrándose (antes se quitaba primero
-    // y ocultaba que el proceso quedaba vivo).
+    // Orden (HU-20): sesión → atajos → servicios → icono de bandeja → registro. La sesión
+    // se guarda primero, con el sitio de la barra, que solo se escribe aquí (HU-29). El
+    // icono se quita casi al final: mientras se vea, la app sigue cerrándose (antes se
+    // quitaba primero y ocultaba que el proceso quedaba vivo). El registro se vacía al
+    // último, para anotar lo que falle al cerrar (HU-32).
     protected override void OnExit(ExitEventArgs e)
     {
         _services?.GetService<SessionMemory>()?.Save();
         _hotkeys?.Unregister();
         _services?.Dispose();
         _trayIcon?.Dispose();
+        _instance?.Dispose();
+        _diagnostics?.LogNormalExit();
+        _diagnostics?.Dispose();
         base.OnExit(e);
     }
 
-    private static ServiceProvider BuildServiceProvider()
+    private static ServiceProvider BuildServiceProvider(AppDiagnostics diagnostics)
     {
         var services = new ServiceCollection();
+        diagnostics.Register(services);
         RegisterDrawingAndScreenClip(services);
         RegisterInfrastructure(services);
         RegisterOverlay(services);
@@ -153,6 +218,7 @@ public partial class App : System.Windows.Application
         services.AddSingleton<IDrawingSettings>(CreateDrawingSettings);
         services.AddSingleton(TimeProvider.System);
         services.AddSingleton<IScreenClipLauncher, WindowsScreenClipLauncher>();
+        services.AddSingleton<ScreenClipServices>();
     }
 
     // Estado del trazo con las opciones de dibujo guardadas: Tintas degradadas (HU-27) y
@@ -174,15 +240,17 @@ public partial class App : System.Windows.Application
         services.AddSingleton<IToolbarWindowStyler, Win32ToolbarWindowStyler>();
         services.AddSingleton<IWindowDragHandler, Win32WindowDragHandler>();
         services.AddSingleton<IGlobalHotkeyService, Win32GlobalHotkeyService>();
-        services.AddSingleton<IHotkeySettingsStore>(_ => new JsonHotkeySettingsStore());
-        services.AddSingleton<IDrawingPreferencesStore>(_ => new JsonDrawingPreferencesStore());
-        services.AddSingleton<ILastSessionStore>(_ => new JsonLastSessionStore());
+        services.AddSingleton<IHotkeySettingsStore>(sp => new JsonHotkeySettingsStore(Logger<JsonHotkeySettingsStore>(sp)));
+        services.AddSingleton<IDrawingPreferencesStore>(sp => new JsonDrawingPreferencesStore(Logger<JsonDrawingPreferencesStore>(sp)));
+        services.AddSingleton<ILastSessionStore>(sp => new JsonLastSessionStore(Logger<JsonLastSessionStore>(sp)));
         services.AddSingleton<IToolbarWindowPlacer, Win32ToolbarWindowPlacer>();
         services.AddSingleton<IHotkeyNotifier, ToastHotkeyNotifier>();
         services.AddSingleton<IMonitorService, Win32MonitorService>();
         services.AddSingleton<ICursorPositionProvider, Win32CursorPositionProvider>();
         services.AddSingleton<IModifierKeyState, Win32ModifierKeyState>();
     }
+
+    private static ILogger<T> Logger<T>(IServiceProvider services) => services.GetRequiredService<ILogger<T>>();
 
     // Overlay multi-monitor (HU-09), barra (HU-10) y orquestación.
     private static void RegisterOverlay(IServiceCollection services)
@@ -196,6 +264,9 @@ public partial class App : System.Windows.Application
         services.AddSingleton<OverlayBroadcaster>();
         services.AddSingleton<IOverlayController, OverlayController>();
         services.AddSingleton<HotkeyCoordinator>();
+        services.AddSingleton<IClipboardWriter, ClipboardWriter>();
+        services.AddSingleton<SettingsAboutServices>();
+        services.AddSingleton<SettingsViewModelFactory>();
         services.AddSingleton<SettingsWindowLauncher>();
 
         // Barra flotante (HU-10): VM, ventana (DataContext se asigna fuera del

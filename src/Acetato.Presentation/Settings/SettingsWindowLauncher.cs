@@ -1,8 +1,5 @@
 using System.Windows;
 using Acetato.Application.Abstractions;
-using Acetato.Application.Drawing;
-using Acetato.Application.Hotkeys;
-using Acetato.Presentation.ViewModels;
 using Acetato.Presentation.Views;
 
 namespace Acetato.Presentation.Settings;
@@ -17,24 +14,13 @@ namespace Acetato.Presentation.Settings;
 public sealed class SettingsWindowLauncher
 {
     private readonly IOverlayController _overlay;
-    private readonly HotkeyCoordinator _coordinator;
-    private readonly IWindowDragHandler _dragHandler;
-    private readonly IDrawingSettings _drawing;
-    private readonly IDrawingPreferencesStore _preferences;
+    private readonly SettingsViewModelFactory _viewModels;
     private SettingsWindow? _window;
 
-    public SettingsWindowLauncher(
-        IOverlayController overlay,
-        HotkeyCoordinator coordinator,
-        IWindowDragHandler dragHandler,
-        IDrawingSettings drawing,
-        IDrawingPreferencesStore preferences)
+    public SettingsWindowLauncher(IOverlayController overlay, SettingsViewModelFactory viewModels)
     {
         _overlay = overlay;
-        _coordinator = coordinator;
-        _dragHandler = dragHandler;
-        _drawing = drawing;
-        _preferences = preferences;
+        _viewModels = viewModels;
     }
 
     /// <summary>Abre la ventana o trae al frente la que ya existe.</summary>
@@ -57,7 +43,7 @@ public sealed class SettingsWindowLauncher
 
     private SettingsWindow CreateWindow()
     {
-        var viewModel = new SettingsViewModel(_coordinator, _dragHandler, _drawing, _preferences);
+        var viewModel = _viewModels.Create();
         var window = new SettingsWindow { DataContext = viewModel };
         viewModel.CloseRequested += (_, _) => window.Close();
         window.Closed += (_, _) =>

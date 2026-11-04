@@ -1000,6 +1000,92 @@ Escenario: Monitor ausente
 ```
 **Notas técnicas:** Spec en [`specs/12-redimensionar-y-recordar-ajustes.md`](./specs/12-redimensionar-y-recordar-ajustes.md). Sección `session` de `settings.json`. La posición va en píxeles físicos con su monitor y se guarda al salir; lo demás, al cambiar. Fuera de alcance: recordar los dibujos y el modo puntero.
 
+#### HU-30 — Correr sobre .NET 10
+- **Épica:** EP-03 · **Prioridad:** Must · **Estimación:** 2
+- **Narrativa:**
+  Como usuario, quiero que Acetato corra sobre una versión de .NET con soporte, para seguir recibiendo parches de seguridad después del 10-11-2026.
+
+**Criterios de aceptación**
+```
+Escenario: Mismo comportamiento
+  Dado que Acetato se compila con .NET 10
+  Cuando lo abro y dibujo
+  Entonces todo funciona igual que con .NET 9.
+
+Escenario: Build limpio
+  Dado el repositorio actualizado
+  Cuando ejecuto dotnet build -warnaserror y dotnet test
+  Entonces ambos terminan en verde sin reglas suprimidas nuevas.
+```
+**Notas técnicas:** Spec en [`specs/13-base-para-produccion.md`](./specs/13-base-para-produccion.md). Los 8 proyectos a `net10.0` / `net10.0-windows10.0.19041.0`, `global.json` al SDK 10 y `Microsoft.Extensions.*` a 10.0.x. Solo se actualizan los paquetes que .NET 10 exige.
+
+#### HU-31 — Una sola copia abierta
+- **Épica:** EP-03 · **Prioridad:** Should · **Estimación:** 2
+- **Narrativa:**
+  Como presentador, quiero que abrir Acetato cuando ya está abierto me lleve al modo dibujo, para no quedarme con una copia sin atajos.
+
+**Criterios de aceptación**
+```
+Escenario: Abrir dos veces
+  Dado que Acetato ya está abierto con la barra oculta
+  Cuando lo abro otra vez
+  Entonces no queda un segundo proceso abierto
+  Y la barra aparece en modo dibujo
+  Y los atajos siguen funcionando.
+
+Escenario: Dos usuarios de Windows
+  Dado que otro usuario tiene Acetato abierto en su sesión del mismo equipo
+  Cuando lo abro en mi sesión
+  Entonces se abre normalmente.
+```
+**Notas técnicas:** Spec en [`specs/13-base-para-produccion.md`](./specs/13-base-para-produccion.md). Mutex y señal con nombre en `Local\`; la segunda copia avisa a la primera y sale. Sin P/Invoke.
+
+#### HU-32 — Registro y manejo de errores
+- **Épica:** EP-03 · **Prioridad:** Should · **Estimación:** 5
+- **Narrativa:**
+  Como usuario que paga, quiero que un fallo no me cierre Acetato sin aviso y que quede anotado, para que soporte pueda ayudarme.
+
+**Criterios de aceptación**
+```
+Escenario: Error menor
+  Dado que ocurre un error inesperado en la interfaz
+  Cuando sigo usando Acetato
+  Entonces la app sigue abierta
+  Y veo un aviso de Windows solo la primera vez en la sesión
+  Y el error queda en el registro del día.
+
+Escenario: Error grave
+  Dado que ocurre un error del que Acetato no puede recuperarse
+  Entonces veo un mensaje de que se va a cerrar
+  Y el error queda en el registro.
+
+Escenario: Retención
+  Dado que hay registros de 9 días distintos
+  Cuando abro Acetato
+  Entonces quedan solo los últimos 7.
+```
+**Notas técnicas:** Spec en [`specs/13-base-para-produccion.md`](./specs/13-base-para-produccion.md). Serilog en `%LocalAppData%\Acetato\logs`, un archivo por día. Tres errores de interfaz en 10 s cierran la app. Nada sale del equipo. Fuera de alcance: enviar errores a un servidor.
+
+#### HU-33 — Acerca de y Reportar problema
+- **Épica:** EP-03 · **Prioridad:** Should · **Estimación:** 3
+- **Narrativa:**
+  Como usuario, quiero ver la versión de Acetato y armar un reporte con un clic, para enviarle a soporte todo lo que necesita.
+
+**Criterios de aceptación**
+```
+Escenario: Versión
+  Dado que abro Ajustes
+  Entonces veo «Acetato 0.9.0» en el bloque «Acerca de»
+  Y «Copiar versión» la deja en el portapapeles.
+
+Escenario: Reporte
+  Dado que pulso «Reportar problema»
+  Entonces aparece un .zip en el escritorio con los registros, settings.json y la información del sistema
+  Y se abre el Explorador con el archivo seleccionado
+  Y ningún archivo contiene mi nombre de usuario ni el nombre del equipo.
+```
+**Notas técnicas:** Spec en [`specs/13-base-para-produccion.md`](./specs/13-base-para-produccion.md). Versión `0.9.0` en `Directory.Build.props`; la completa (con el commit) va al registro y al reporte. Fuera de alcance: «Acerca de» en la bandeja o en la barra, buscar actualizaciones.
+
 ---
 
 ## Definition of Done (global)

@@ -44,12 +44,32 @@ public sealed class SettingsWindowSmokeTests
         switches.Should().Be(2);
     }
 
+    [Fact]
+    public void Settings_window_ends_with_the_about_block()
+    {
+        var (texts, buttons) = WpfTestHost.Run(() => WithContent(content => (
+            VisualTree.Descendants<TextBlock>(content).Select(text => text.Text).ToList(),
+            VisualTree.Descendants<Button>(content).Select(button => button.Content as string).ToList())));
+
+        texts.Should().ContainInOrder(
+            "Solo al dibujar",
+            "Acerca de",
+            "Acetato 0.9.0",
+            "Crea un .zip en el escritorio para enviarlo a soporte");
+        texts[^1].Should().Be("Crea un .zip en el escritorio para enviarlo a soporte");
+        buttons.Should().Contain(["Copiar versión", "Reportar problema"]);
+    }
+
     // Carga la ventana, hace el layout de su contenido y lee lo que pide el test.
     private static T WithContent<T>(Func<FrameworkElement, T> read)
     {
         using var coordinator = TestCoordinators.Started();
         using var settings = new SettingsViewModel(
-            coordinator, Substitute.For<IWindowDragHandler>(), new DrawingSettings(), Substitute.For<IDrawingPreferencesStore>());
+            coordinator,
+            Substitute.For<IWindowDragHandler>(),
+            new DrawingSettings(),
+            Substitute.For<IDrawingPreferencesStore>(),
+            TestAbout.Services());
         var window = new SettingsWindow();
 
         // Una ventana sin mostrar no hace layout: se mide su contenido suelto,

@@ -1,9 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <RootNamespace>Acetato.Application</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Solo la interfaz ILogger (HU-32): quién escribe el registro lo decide Infrastructure. -->
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Acetato.Domain\Acetato.Domain.csproj" />

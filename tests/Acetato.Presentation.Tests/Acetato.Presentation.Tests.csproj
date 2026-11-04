@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <!-- Mismo TFM que Presentation (WPF + WinRT de Infrastructure) -->
-    <TargetFramework>net9.0-windows10.0.19041.0</TargetFramework>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
     <RootNamespace>Acetato.Presentation.Tests</RootNamespace>
     <UseWPF>true</UseWPF>
     <!-- Como en la app: el layout de WPF necesita globalización real. -->

@@ -29,7 +29,8 @@ then open `ui_kits/toolbar/index.html`. Everything is fake but live:
 - **Ajustes** — the *Dibujo* switches (*Tintas degradadas*, *Transformación libre*) and the
   shortcut list: click a key to capture, conflicts offer
   *Reemplazar / Cancelar*, per-row *Restaurar* / *Quitar*, *Restaurar todo* with
-  inline confirmation.
+  inline confirmation. Last, *Acerca de*: *Acetato 0.9.0* with *Copiar versión*,
+  and *Reportar problema* (the kit only simulates the wait and the saved hint).
 - **Cerrar** (`Ctrl+Alt+D`) hides everything; `Ctrl+Alt+E` toggles drawing mode
   (clicks pass through to the slide).
 - **Ocultar barra** (eye, right after the grip) folds the bar to grip + eye;
