@@ -12,6 +12,7 @@ using Acetato.Infrastructure.Input;
 using Acetato.Infrastructure.Monitors;
 using Acetato.Infrastructure.Overlay;
 using Acetato.Infrastructure.Settings;
+using Acetato.Presentation.Diagnostics;
 using Acetato.Presentation.Overlay;
 using Acetato.Presentation.Settings;
 using Acetato.Presentation.ViewModels;
@@ -28,6 +29,7 @@ namespace Acetato.Presentation;
 /// </summary>
 public partial class App : System.Windows.Application
 {
+    private AppDiagnostics? _diagnostics;
     private ServiceProvider? _services;
     private IGlobalHotkeyService? _hotkeys;
     private HotkeyActionRouter? _router;
@@ -37,13 +39,15 @@ public partial class App : System.Windows.Application
     {
         base.OnStartup(e);
 
-        _services = BuildServiceProvider();
+        _diagnostics = AppDiagnostics.Start();
+        _services = BuildServiceProvider(_diagnostics);
         // Como se cerró (HU-29): antes de la barra y de los atajos, que siguen la herramienta.
         _services.GetRequiredService<SessionMemory>().Start();
         InitializeToolbar();
         WireHotkeys();
         InitializeTrayIcon();
         ShowOverlay();
+        _diagnostics.LogStartup(_services);
     }
 
     // Arranque listo para dibujar (HU-24). Va al final: el coordinador ya sigue
@@ -123,22 +127,26 @@ public partial class App : System.Windows.Application
         }
     }
 
-    // Orden (HU-20): sesión → atajos → servicios → icono de bandeja. La sesión se guarda
-    // primero, con el sitio de la barra, que solo se escribe aquí (HU-29). El icono se
-    // quita al final: mientras se vea, la app sigue cerrándose (antes se quitaba primero
-    // y ocultaba que el proceso quedaba vivo).
+    // Orden (HU-20): sesión → atajos → servicios → icono de bandeja → registro. La sesión
+    // se guarda primero, con el sitio de la barra, que solo se escribe aquí (HU-29). El
+    // icono se quita casi al final: mientras se vea, la app sigue cerrándose (antes se
+    // quitaba primero y ocultaba que el proceso quedaba vivo). El registro se vacía al
+    // último, para anotar lo que falle al cerrar (HU-32).
     protected override void OnExit(ExitEventArgs e)
     {
         _services?.GetService<SessionMemory>()?.Save();
         _hotkeys?.Unregister();
         _services?.Dispose();
         _trayIcon?.Dispose();
+        _diagnostics?.LogNormalExit();
+        _diagnostics?.Dispose();
         base.OnExit(e);
     }
 
-    private static ServiceProvider BuildServiceProvider()
+    private static ServiceProvider BuildServiceProvider(AppDiagnostics diagnostics)
     {
         var services = new ServiceCollection();
+        diagnostics.Register(services);
         RegisterDrawingAndScreenClip(services);
         RegisterInfrastructure(services);
         RegisterOverlay(services);

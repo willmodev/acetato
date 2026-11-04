@@ -21,4 +21,12 @@
     <PackageReference Include="CommunityToolkit.WinUI.Notifications" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Registro en archivo (HU-32): Serilog escribe detrás de ILogger. -->
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="Serilog" />
+    <PackageReference Include="Serilog.Sinks.File" />
+    <PackageReference Include="Serilog.Extensions.Logging" />
+  </ItemGroup>
+
 </Project>

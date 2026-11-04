@@ -6,6 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Solo la interfaz ILogger (HU-32): quién escribe el registro lo decide Infrastructure. -->
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Acetato.Domain\Acetato.Domain.csproj" />
   </ItemGroup>
 
