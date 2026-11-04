@@ -163,6 +163,9 @@ html, body { margin: 0; height: 100%; font-family: var(--font-ui); -webkit-font-
 .textbtn { padding: 3px var(--s-2); margin-left: 6px; border: none; background: transparent; color: var(--fg-1);
            font-family: var(--font-ui); font-size: 11px; border-radius: var(--r-swatch); cursor: pointer; }
 .textbtn:hover { background: var(--hover); }
+.textbtn:disabled { color: var(--fg-3); background: transparent; cursor: default; }
+/* Text button that opens a row (Reportar problema): its text lines up with the labels. */
+.textbtn--lead { justify-self: start; margin-left: calc(-1 * var(--s-2)); }
 .settings-foot { height: 48px; flex: none; display: flex; align-items: center; justify-content: space-between;
                  padding: 0 14px 0 var(--s-5); }
 

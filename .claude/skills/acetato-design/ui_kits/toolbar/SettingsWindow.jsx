@@ -59,6 +59,13 @@ function SettingsWindow({ chords, setChords, inkPairs, setInkPairs, onClose }) {
   const defs = window.ACETATO_HOTKEYS;
   const [capturing, setCapturing] = useSt(null);  // action being captured
   const [freeResize, setFreeResize] = useSt(false); // Transformación libre (HU-28), off by default
+  // Reportar problema (HU-33): the kit only simulates the wait; the app builds the .zip.
+  const [reporting, setReporting] = useSt(false);
+  const [reportHint, setReportHint] = useSt('Crea un .zip en el escritorio para enviarlo a soporte');
+  const report = () => {
+    setReporting(true);
+    setTimeout(() => { setReporting(false); setReportHint('Reporte guardado en el escritorio'); }, 900);
+  };
   const [pending, setPending] = useSt(null);      // { action, chord, owner, message }
   const [confirmAll, setConfirmAll] = useSt(false);
 
@@ -122,6 +129,15 @@ function SettingsWindow({ chords, setChords, inkPairs, setInkPairs, onClose }) {
         {defs.filter(d => d.scope === 'always').map(renderRow)}
         <div className="settings-cap">Solo al dibujar</div>
         {defs.filter(d => d.scope === 'drawing').map(renderRow)}
+        <div className="settings-cap">Acerca de</div>
+        <div className="row row--switch">
+          <span className="row-label">Acetato 0.9.0</span>
+          <button className="textbtn" onClick={() => navigator.clipboard?.writeText('0.9.0')}>Copiar versión</button>
+        </div>
+        <div className="row row--switch">
+          <button className="textbtn textbtn--lead" disabled={reporting} onClick={report}>Reportar problema</button>
+          <span className="row-hint">{reportHint}</span>
+        </div>
       </div>
       <div className="hr"></div>
       <div className="settings-foot">

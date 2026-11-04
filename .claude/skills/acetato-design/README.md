@@ -1,6 +1,6 @@
 # Acetato — Design System
 
-**Acetato** is a native **Windows desktop app (C#/.NET 9, WPF)** that lays a
+**Acetato** is a native **Windows desktop app (C#/.NET 10, WPF)** that lays a
 transparent, click-through layer over *any* application so the user can draw and
 annotate on top of it — live, during presentations and tutorials. The name means
 *acetate* (the clear film you used to write on with overhead projectors); the
@@ -65,7 +65,7 @@ There is almost no copy in Acetato — that is the point. Text appears only in
 - **One or two words, max.** A tooltip is a noun (*Lápiz*) or a short verb
   phrase (*Limpiar todo*). Never a sentence inside the toolbar.
 - **Casing: Sentence case** (*Limpiar todo*, not *Limpiar Todo*). Settings block
-  headings too (*Dibujo*, *Siempre activos*, *Solo al dibujar*).
+  headings too (*Dibujo*, *Siempre activos*, *Solo al dibujar*, *Acerca de*).
 - **Settings hints** (one line under an option, `--fg-3`, 11px) may be a short
   phrase with no final period: *Cada tinta pasa a un tono vecino*. Only in
   Settings, never in the toolbar.
@@ -80,6 +80,9 @@ There is almost no copy in Acetato — that is the point. Text appears only in
   otra aplicación*, *Tecla no admitida*, *Usa Ctrl, Alt o Win*, *Mayús necesita
   otro modificador*, *Reservado por Windows*, *No disponible*, *Sin atajo*,
   *Pulsa la combinación…*
+- **Two full sentences, and only two:** the error notice and the closing
+  message (see *Errors and About* below). They are the only exceptions to "one
+  or two words", because the user has to understand what happened.
 - **Vibe:** calm, instrumental, invisible. When in doubt, remove the word.
 
 Examples (good): `Flecha`, `Grosor`, `Limpiar todo`, `Restaurar todo`.
@@ -194,6 +197,32 @@ Popovers open directly below their trigger; tooltips too. Settings is the only
 other window (480 × 600, own draggable title, *Cerrar* button, *Restaurar todo*
 footer with inline confirmation — never a system dialog). *Restaurar todo*
 resets shortcuts only, not the *Dibujo* options.
+
+**Acerca de** (HU-33) is Settings' last block, after the shortcuts: a row with
+*Acetato 0.9.0* (the screen version, without the commit code) and the text
+button *Copiar versión* on the right (copies `0.9.0`). Below it, the text button
+*Reportar problema*, left-aligned with the row labels, and its hint (`--fg-3`,
+11px): *Crea un .zip en el escritorio para enviarlo a soporte*. While the .zip is
+being built the button is disabled (`--fg-3`, no hover, no hand cursor). When it
+ends the hint reads *Reporte guardado en el escritorio* and Explorer opens with
+the file selected; if it fails, *No se pudo crear el reporte*, still `--fg-3`
+(it is not a shortcut error, so no `--danger`). No new colors, no accent.
+
+**Errors and About (HU-32).** Acetato logs every error locally and asks nothing
+of the user while it can stay open.
+
+- **Error notice.** After the first interface error of the session Acetato
+  stays open and a **native Windows notification** appears, with no buttons and
+  no click action. Title *Algo falló, pero Acetato sigue abierto*; text *Si se
+  repite, usa Ajustes › Reportar problema*. Once per session; later errors are
+  only logged. With Windows notifications off, nothing else happens. Windows
+  draws it: no Acetato tokens.
+- **Closing message.** For an unrecoverable error (or three interface errors in
+  under 10 s), a standard Windows message box with the error icon and OK:
+  *Acetato tuvo un problema y se va a cerrar. Se guardó un registro.* Then
+  Acetato closes. It is the only system dialog Acetato shows.
+- Neither the log nor the report keeps what was drawn, annotation text or
+  what is on screen.
 
 **Settings switch** (`SettingsSwitch`, HU-27). For on/off options in the
 *Dibujo* block: a 32 × 18 pill (`--switch-w/h`; in the app `Size.Switch.*` and

@@ -30,6 +30,7 @@
   .switch::after { content: ""; width: 12px; height: 12px; border-radius: var(--r-pill); background: var(--fg-2); }
   .switch--on { justify-content: flex-end; background: var(--accent-fill); border-color: var(--accent-ring); }
   .switch--on::after { background: var(--accent); }
+  .tb--lead { justify-self: start; margin-left: calc(-1 * var(--s-2)); }
   .foot { height: 48px; display: flex; align-items: center; justify-content: flex-end; padding: 0 14px 0 var(--s-5); }
 </style>
 </head>
@@ -50,6 +51,9 @@
       <div class="row"><span class="lbl">Flecha</span><span class="cap-key">Ctrl+P</span><span class="ib" title="Restaurar"><i data-lucide="rotate-ccw"></i></span><span class="ib" title="Quitar"><i data-lucide="x"></i></span><div class="msg"><span>Ya la usa Lápiz</span><span><b class="tb">Reemplazar</b><b class="tb">Cancelar</b></span></div></div>
       <div class="row"><span class="lbl">Recortar</span><span class="cap-key">Ctrl+S</span><span></span><span class="ib" title="Quitar"><i data-lucide="x"></i></span><div class="msg"><span>No disponible</span></div></div>
       <div class="row"><span class="lbl">Siguiente herramienta</span><span class="cap-key">Sin atajo</span><span class="ib" title="Restaurar"><i data-lucide="rotate-ccw"></i></span><span></span></div>
+      <div class="blk">Acerca de</div>
+      <div class="row row--switch"><span class="lbl">Acetato 0.9.0</span><b class="tb">Copiar versión</b></div>
+      <div class="row row--switch"><b class="tb tb--lead">Reportar problema</b><span class="hint">Crea un .zip en el escritorio para enviarlo a soporte</span></div>
     </div>
     <div class="hr"></div>
     <div class="foot"><b class="tb">Restaurar todo</b></div>
