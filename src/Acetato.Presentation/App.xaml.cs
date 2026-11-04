@@ -13,6 +13,7 @@ using Acetato.Infrastructure.Monitors;
 using Acetato.Infrastructure.Overlay;
 using Acetato.Infrastructure.Settings;
 using Acetato.Presentation.Diagnostics;
+using Acetato.Presentation.Lifetime;
 using Acetato.Presentation.Overlay;
 using Acetato.Presentation.Settings;
 using Acetato.Presentation.ViewModels;
@@ -30,13 +31,18 @@ namespace Acetato.Presentation;
 /// </summary>
 public partial class App : System.Windows.Application
 {
+    // Nombre de la copia única (HU-31) en la sesión de Windows.
+    private const string InstanceName = "Acetato";
+
     private AppDiagnostics? _diagnostics;
+    private SingleInstanceGate? _instance;
     private ServiceProvider? _services;
     private IGlobalHotkeyService? _hotkeys;
     private HotkeyActionRouter? _router;
     private TaskbarIcon? _trayIcon;
 
-    // Orden (HU-32): registro → manejador de errores → arranque de siempre → «Inicio».
+    // Orden (HU-32): registro → manejador de errores → una sola copia (HU-31) → arranque
+    // de siempre → «Inicio».
     // El arranque entero va envuelto: un error aquí, antes de que exista la barra, es fatal.
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -45,6 +51,12 @@ public partial class App : System.Windows.Application
         try
         {
             _diagnostics = AppDiagnostics.Start(this);
+            if (!EnterSingleInstance(_diagnostics))
+            {
+                Shutdown();
+                return;
+            }
+
             StartApplication(_diagnostics);
         }
         catch (Exception ex)
@@ -65,7 +77,22 @@ public partial class App : System.Windows.Application
         WireHotkeys();
         InitializeTrayIcon();
         ShowOverlay();
+        WireActivationFromSecondCopy();
         diagnostics.LogStartup(_services);
+    }
+
+    // Si ya había otra copia abierta, le avisa y esta se cierra sin mostrar nada (HU-31).
+    private bool EnterSingleInstance(AppDiagnostics diagnostics)
+    {
+        _instance = diagnostics.CreateSingleInstanceGate(InstanceName);
+        return _instance.TryEnter();
+    }
+
+    // Abrir Acetato otra vez hace lo mismo que «Activar dibujo» de la bandeja.
+    private void WireActivationFromSecondCopy()
+    {
+        var tray = _services!.GetRequiredService<TrayViewModel>();
+        _instance!.OnActivationRequested(Dispatcher, tray.ActivateDrawingCommand);
     }
 
     // Sin registro abierto todavía, solo queda el mensaje y el cierre.
@@ -167,6 +194,7 @@ public partial class App : System.Windows.Application
         _hotkeys?.Unregister();
         _services?.Dispose();
         _trayIcon?.Dispose();
+        _instance?.Dispose();
         _diagnostics?.LogNormalExit();
         _diagnostics?.Dispose();
         base.OnExit(e);

@@ -1,6 +1,7 @@
 using Acetato.Application.Abstractions;
 using Acetato.Application.Diagnostics;
 using Acetato.Infrastructure.Diagnostics;
+using Acetato.Presentation.Lifetime;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -49,6 +50,10 @@ internal sealed partial class AppDiagnostics : IDisposable
         services.AddLogging();
         services.AddSingleton<IAppInfo>(new AssemblyAppInfo());
     }
+
+    /// <summary>Guardia de una sola copia por sesión de Windows (HU-31), con su registro.</summary>
+    public SingleInstanceGate CreateSingleInstanceGate(string name) =>
+        new(new NamedSingleInstanceGuard(name), _loggers.CreateLogger<SingleInstanceGate>());
 
     /// <summary>Error al arrancar: se anota y Acetato se cierra con el mensaje.</summary>
     public void FailStartup(Exception exception) => _errors.HandleStartupError(exception);

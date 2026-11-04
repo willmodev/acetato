@@ -12,7 +12,8 @@ namespace Acetato.Infrastructure.Diagnostics;
 /// un archivo de texto por día (acetato-AAAAMMDD.log), los últimos 7, con tope de 10 MB
 /// por archivo (si se llena, se abre otro ese mismo día). Cada línea lleva fecha y hora,
 /// nivel, de dónde viene y el mensaje; los errores, además, el detalle técnico completo.
-/// Desechar la fábrica vacía el registro y cierra el archivo.
+/// El archivo es compartido: la copia que se cierra porque ya había otra (HU-31) anota en el
+/// mismo archivo del día. Desechar la fábrica vacía el registro y cierra el archivo.
 /// </summary>
 public static class SerilogSetup
 {
@@ -44,6 +45,7 @@ public static class SerilogSetup
                 rollingInterval: RollingInterval.Day,
                 rollOnFileSizeLimit: true,
                 retainedFileCountLimit: RetainedFiles,
+                shared: true,
                 encoding: new UTF8Encoding(encoderShouldEmitUTF8Identifier: false))
             .CreateLogger();
         return new SerilogLoggerFactory(logger, dispose: true);
