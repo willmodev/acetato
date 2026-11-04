@@ -264,6 +264,9 @@ public partial class App : System.Windows.Application
         services.AddSingleton<OverlayBroadcaster>();
         services.AddSingleton<IOverlayController, OverlayController>();
         services.AddSingleton<HotkeyCoordinator>();
+        services.AddSingleton<IClipboardWriter, ClipboardWriter>();
+        services.AddSingleton<SettingsAboutServices>();
+        services.AddSingleton<SettingsViewModelFactory>();
         services.AddSingleton<SettingsWindowLauncher>();
 
         // Barra flotante (HU-10): VM, ventana (DataContext se asigna fuera del

@@ -27,7 +27,8 @@ public sealed class SettingsViewModelTests : IDisposable
         _store.Load().Returns(new HotkeySettingsLoad(HotkeyMap.Defaults, WasCorrupt: false));
         _coordinator = new HotkeyCoordinator(_hotkeys, Substitute.For<IOverlayController>(), _store, Substitute.For<IHotkeyNotifier>());
         _coordinator.Start();
-        _settings = new SettingsViewModel(_coordinator, Substitute.For<IWindowDragHandler>(), _drawing, _preferences);
+        _settings = new SettingsViewModel(
+            _coordinator, Substitute.For<IWindowDragHandler>(), _drawing, _preferences, TestAbout.Services());
     }
 
     private HotkeyRowViewModel Row(HotkeyAction action) =>
