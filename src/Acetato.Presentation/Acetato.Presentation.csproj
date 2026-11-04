@@ -19,6 +19,8 @@
   <ItemGroup>
     <!-- Los tests de Ajustes (HU-21) prueban tipos internos (WpfKeyMap, KeyChordText…). -->
     <InternalsVisibleTo Include="Acetato.Presentation.Tests" />
+    <!-- NSubstitute crea los dobles de las interfaces internas (IFatalExit, IClipboardWriter). -->
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
 
   <ItemGroup>

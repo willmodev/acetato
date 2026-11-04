@@ -36,19 +36,47 @@ public partial class App : System.Windows.Application
     private HotkeyActionRouter? _router;
     private TaskbarIcon? _trayIcon;
 
+    // Orden (HU-32): registro → manejador de errores → arranque de siempre → «Inicio».
+    // El arranque entero va envuelto: un error aquí, antes de que exista la barra, es fatal.
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
 
-        _diagnostics = AppDiagnostics.Start();
-        _services = BuildServiceProvider(_diagnostics);
+        try
+        {
+            _diagnostics = AppDiagnostics.Start(this);
+            StartApplication(_diagnostics);
+        }
+        catch (Exception ex)
+        {
+            // Anota, muestra el mensaje y cierra. Si otro cierre ya está en curso, el
+            // error sigue su camino y termina el proceso igual.
+            FailStartup(ex);
+            throw;
+        }
+    }
+
+    private void StartApplication(AppDiagnostics diagnostics)
+    {
+        _services = BuildServiceProvider(diagnostics);
         // Como se cerró (HU-29): antes de la barra y de los atajos, que siguen la herramienta.
         _services.GetRequiredService<SessionMemory>().Start();
         InitializeToolbar();
         WireHotkeys();
         InitializeTrayIcon();
         ShowOverlay();
-        _diagnostics.LogStartup(_services);
+        diagnostics.LogStartup(_services);
+    }
+
+    // Sin registro abierto todavía, solo queda el mensaje y el cierre.
+    private void FailStartup(Exception exception)
+    {
+        if (_diagnostics is null)
+        {
+            new FatalExit(log: null).Exit(exception);
+        }
+
+        _diagnostics.FailStartup(exception);
     }
 
     // Arranque listo para dibujar (HU-24). Va al final: el coordinador ya sigue
