@@ -1,6 +1,6 @@
 # SPEC 13 — Base para producción: .NET 10, una sola copia, registro de errores y versión (HU-30 a HU-33)
 
-> **Estado:** Aprobado · **Depende de:** SPEC 10 (HU-27) — bloque Dibujo de Ajustes, SPEC 12 (HU-29) — `settings.json` por secciones, HU-12 — avisos de Windows · **Fecha:** 2026-11-03
+> **Estado:** Implementado · **Depende de:** SPEC 10 (HU-27) — bloque Dibujo de Ajustes, SPEC 12 (HU-29) — `settings.json` por secciones, HU-12 — avisos de Windows · **Fecha:** 2026-11-03
 > **Objetivo:** Que Acetato corra sobre .NET 10, abra una sola copia, anote cada error en un registro que el usuario envía con un clic desde Ajustes y muestre su versión.
 
 ---
@@ -207,42 +207,42 @@ System.InvalidOperationException: …
 
 **.NET 10**
 
-- [ ] Los 8 proyectos apuntan a `net10.0` o `net10.0-windows10.0.19041.0`.
-- [ ] `dotnet build -warnaserror` y `dotnet test` en verde, sin reglas suprimidas nuevas.
-- [ ] Acetato arranca y dibuja igual que antes en Windows 11.
+- [x] Los 8 proyectos apuntan a `net10.0` o `net10.0-windows10.0.19041.0`.
+- [x] `dotnet build -warnaserror` y `dotnet test` en verde, sin reglas suprimidas nuevas.
+- [x] Acetato arranca y dibuja igual que antes en Windows 11.
 
 **Una sola copia**
 
-- [ ] Con Acetato abierto, abrirlo otra vez no deja un segundo proceso `Acetato.exe` vivo.
-- [ ] Tras ese segundo intento, la barra está visible y en modo dibujo, aunque antes estuviera oculta o en modo puntero.
-- [ ] Los atajos siguen funcionando después del segundo intento.
-- [ ] El registro tiene la línea «Ya había otra copia abierta; esta se cierra».
+- [x] Con Acetato abierto, abrirlo otra vez no deja un segundo proceso `Acetato.exe` vivo.
+- [x] Tras ese segundo intento, la barra está visible y en modo dibujo, aunque antes estuviera oculta o en modo puntero.
+- [x] Los atajos siguen funcionando después del segundo intento.
+- [x] El registro tiene la línea «Ya había otra copia abierta; esta se cierra».
 
 **Registro y errores**
 
-- [ ] Tras abrir y cerrar Acetato existe `%LocalAppData%\Acetato\logs\acetato-<fecha de hoy>.log` con «Inicio» (incluye la versión) y «Salida normal».
-- [ ] Con 9 archivos de registro de días distintos, al arrancar quedan solo 7.
-- [ ] Un `settings.json` dañado deja una advertencia en el registro.
-- [ ] Un error forzado en la interfaz no cierra Acetato, muestra el aviso una sola vez por sesión y queda anotado cada vez.
-- [ ] Tres errores de interfaz en menos de 10 segundos muestran el mensaje de cierre y Acetato se cierra.
-- [ ] Un error fatal muestra el mensaje, cierra Acetato y queda anotado.
-- [ ] Con los avisos de Windows apagados, un error de interfaz se anota y Acetato sigue abierto.
-- [ ] Ningún registro contiene texto escrito en una anotación.
+- [x] Tras abrir y cerrar Acetato existe `%LocalAppData%\Acetato\logs\acetato-<fecha de hoy>.log` con «Inicio» (incluye la versión) y «Salida normal».
+- [x] Con 9 archivos de registro de días distintos, al arrancar quedan solo 7.
+- [x] Un `settings.json` dañado deja una advertencia en el registro.
+- [x] Un error forzado en la interfaz no cierra Acetato, muestra el aviso una sola vez por sesión y queda anotado cada vez.
+- [x] Tres errores de interfaz en menos de 10 segundos muestran el mensaje de cierre y Acetato se cierra.
+- [x] Un error fatal muestra el mensaje, cierra Acetato y queda anotado.
+- [x] Con los avisos de Windows apagados, un error de interfaz se anota y Acetato sigue abierto.
+- [x] Ningún registro contiene texto escrito en una anotación.
 
 **Acerca de y reporte**
 
-- [ ] Ajustes muestra el bloque «Acerca de» con «Acetato 0.9.0».
-- [ ] «Copiar versión» deja «0.9.0» en el portapapeles.
-- [ ] «Reportar problema» crea `Acetato-reporte-AAAAMMDD-HHMM.zip` en el escritorio y abre el Explorador con el archivo seleccionado.
-- [ ] El `.zip` tiene `logs/`, `settings.json` y `sistema.txt` con versión completa, Windows, .NET, idioma y monitores.
-- [ ] Ni el nombre de usuario de Windows ni el nombre del equipo aparecen en ningún archivo del `.zip`.
-- [ ] Si el escritorio no se puede escribir, la pista dice «No se pudo crear el reporte» y Acetato sigue abierto.
+- [x] Ajustes muestra el bloque «Acerca de» con «Acetato 0.9.0».
+- [x] «Copiar versión» deja «0.9.0» en el portapapeles.
+- [x] «Reportar problema» crea `Acetato-reporte-AAAAMMDD-HHMM.zip` en el escritorio y abre el Explorador con el archivo seleccionado.
+- [x] El `.zip` tiene `logs/`, `settings.json` y `sistema.txt` con versión completa, Windows, .NET, idioma y monitores.
+- [x] Ni el nombre de usuario de Windows ni el nombre del equipo aparecen en ningún archivo del `.zip`.
+- [x] Si el escritorio no se puede escribir, la pista dice «No se pudo crear el reporte» y Acetato sigue abierto.
 
 **General**
 
-- [ ] Ningún método, archivo ni clase supera los límites de Sonar (40 líneas, 400 líneas, complejidad 10, 5 parámetros, anidamiento 3).
-- [ ] No hay P/Invoke nuevo fuera de Infrastructure. El code-behind solo llama a `InitializeComponent()`.
-- [ ] Las dos copias del design system describen el bloque «Acerca de» y el aviso de error.
+- [x] Ningún método, archivo ni clase supera los límites de Sonar (40 líneas, 400 líneas, complejidad 10, 5 parámetros, anidamiento 3).
+- [x] No hay P/Invoke nuevo fuera de Infrastructure. El code-behind solo llama a `InitializeComponent()`.
+- [x] Las dos copias del design system describen el bloque «Acerca de» y el aviso de error.
 
 ---
 
