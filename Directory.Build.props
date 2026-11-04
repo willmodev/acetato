@@ -6,6 +6,11 @@
 <Project>
 
   <PropertyGroup>
+    <!--
+      Versión del producto (HU-33). .NET le agrega el código del commit a la versión
+      completa (0.9.0+0ba354c…): esa va al registro y al reporte; en pantalla, 0.9.0.
+    -->
+    <Version>0.9.0</Version>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
