@@ -42,13 +42,19 @@ internal sealed partial class AppDiagnostics : IDisposable
         return new AppDiagnostics(loggers, errors);
     }
 
-    /// <summary>Registra la fábrica de registros y la versión de la app en el contenedor.</summary>
+    /// <summary>
+    /// Registra en el contenedor la fábrica de registros, la versión de la app y el reporte
+    /// para soporte (HU-33).
+    /// </summary>
     public void Register(IServiceCollection services)
     {
         // La fábrica va antes de AddLogging, que solo agrega la suya si no hay otra.
         services.AddSingleton(_loggers);
         services.AddLogging();
         services.AddSingleton<IAppInfo>(new AssemblyAppInfo());
+        services.AddSingleton(ProblemReportSources.Default);
+        services.AddSingleton<IFileRevealer, ExplorerFileRevealer>();
+        services.AddSingleton<IProblemReportWriter, ZipProblemReportWriter>();
     }
 
     /// <summary>Guardia de una sola copia por sesión de Windows (HU-31), con su registro.</summary>
