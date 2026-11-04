@@ -2,6 +2,7 @@ using System.Runtime.InteropServices;
 using Acetato.Application.Abstractions;
 using Acetato.Application.Drawing;
 using Acetato.Domain;
+using Microsoft.Extensions.Logging;
 
 namespace Acetato.Application.Overlay;
 
@@ -14,25 +15,28 @@ namespace Acetato.Application.Overlay;
 /// monitores. Lo usan tanto los atajos como los botones de la
 /// barra. Agnóstico de plataforma: depende solo de puertos.
 /// </summary>
-public sealed class OverlayBroadcaster
+public sealed partial class OverlayBroadcaster
 {
     private readonly IOverlayCanvasProvider _canvases;
     private readonly ICursorPositionProvider _cursor;
     private readonly IDrawingSettings _settings;
     private readonly IScreenClipLauncher _screenClip;
     private readonly IOverlayController _overlay;
+    private readonly ILogger _logger;
 
     public OverlayBroadcaster(
         IOverlayCanvasProvider canvases,
         ICursorPositionProvider cursor,
         IDrawingSettings settings,
-        IScreenClipLauncher screenClip,
+        ScreenClipServices screenClip,
         IOverlayController overlay)
     {
+        ArgumentNullException.ThrowIfNull(screenClip);
         _canvases = canvases;
         _cursor = cursor;
         _settings = settings;
-        _screenClip = screenClip;
+        _screenClip = screenClip.Launcher;
+        _logger = screenClip.Logger;
         _overlay = overlay;
     }
 
@@ -87,7 +91,8 @@ public sealed class OverlayBroadcaster
     /// <summary>
     /// Abre el recorte de pantalla del sistema (HU-23). Antes pasa a modo puntero
     /// (HU-24): así Acetato suelta Esc y un solo Esc cancela el recorte. Si no se
-    /// puede abrir (protocolo ausente o bloqueado por política) la falla se traga.
+    /// puede abrir (protocolo ausente o bloqueado por política) la falla se anota
+    /// como advertencia (HU-32) y el atajo no hace nada más.
     /// </summary>
     public void LaunchScreenClip()
     {
@@ -100,9 +105,10 @@ public sealed class OverlayBroadcaster
         {
             _screenClip.Launch();
         }
-        catch (ExternalException)
+        catch (ExternalException ex)
         {
             // El sistema no pudo abrir el recorte: el atajo no hace nada.
+            LogScreenClipFailed(ex);
         }
     }
 
@@ -124,4 +130,7 @@ public sealed class OverlayBroadcaster
 
         return canvases[MonitorPicker.IndexAt(monitors, x, y)];
     }
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "Windows no pudo abrir el recorte de pantalla")]
+    private partial void LogScreenClipFailed(Exception exception);
 }

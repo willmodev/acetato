@@ -3,6 +3,7 @@ using Acetato.Application.Drawing;
 using Acetato.Application.Overlay;
 using Acetato.Presentation.Settings;
 using Acetato.Presentation.ViewModels;
+using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 
 namespace Acetato.Presentation.Tests;
@@ -31,7 +32,7 @@ internal static class ToolbarHost
             Substitute.For<IOverlayCanvasProvider>(),
             Substitute.For<ICursorPositionProvider>(),
             settings,
-            Substitute.For<IScreenClipLauncher>(),
+            new ScreenClipServices(Substitute.For<IScreenClipLauncher>(), NullLogger<OverlayBroadcaster>.Instance),
             controller);
         var layout = new ToolbarLayout();
         var launcher = new SettingsWindowLauncher(controller, coordinator, dragHandler, settings, Substitute.For<IDrawingPreferencesStore>());

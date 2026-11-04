@@ -19,6 +19,7 @@ using Acetato.Presentation.ViewModels;
 using Acetato.Presentation.Views;
 using H.NotifyIcon;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Acetato.Presentation;
 
@@ -161,6 +162,7 @@ public partial class App : System.Windows.Application
         services.AddSingleton<IDrawingSettings>(CreateDrawingSettings);
         services.AddSingleton(TimeProvider.System);
         services.AddSingleton<IScreenClipLauncher, WindowsScreenClipLauncher>();
+        services.AddSingleton<ScreenClipServices>();
     }
 
     // Estado del trazo con las opciones de dibujo guardadas: Tintas degradadas (HU-27) y
@@ -182,15 +184,17 @@ public partial class App : System.Windows.Application
         services.AddSingleton<IToolbarWindowStyler, Win32ToolbarWindowStyler>();
         services.AddSingleton<IWindowDragHandler, Win32WindowDragHandler>();
         services.AddSingleton<IGlobalHotkeyService, Win32GlobalHotkeyService>();
-        services.AddSingleton<IHotkeySettingsStore>(_ => new JsonHotkeySettingsStore());
-        services.AddSingleton<IDrawingPreferencesStore>(_ => new JsonDrawingPreferencesStore());
-        services.AddSingleton<ILastSessionStore>(_ => new JsonLastSessionStore());
+        services.AddSingleton<IHotkeySettingsStore>(sp => new JsonHotkeySettingsStore(Logger<JsonHotkeySettingsStore>(sp)));
+        services.AddSingleton<IDrawingPreferencesStore>(sp => new JsonDrawingPreferencesStore(Logger<JsonDrawingPreferencesStore>(sp)));
+        services.AddSingleton<ILastSessionStore>(sp => new JsonLastSessionStore(Logger<JsonLastSessionStore>(sp)));
         services.AddSingleton<IToolbarWindowPlacer, Win32ToolbarWindowPlacer>();
         services.AddSingleton<IHotkeyNotifier, ToastHotkeyNotifier>();
         services.AddSingleton<IMonitorService, Win32MonitorService>();
         services.AddSingleton<ICursorPositionProvider, Win32CursorPositionProvider>();
         services.AddSingleton<IModifierKeyState, Win32ModifierKeyState>();
     }
+
+    private static ILogger<T> Logger<T>(IServiceProvider services) => services.GetRequiredService<ILogger<T>>();
 
     // Overlay multi-monitor (HU-09), barra (HU-10) y orquestación.
     private static void RegisterOverlay(IServiceCollection services)

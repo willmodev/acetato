@@ -3,6 +3,8 @@ using Acetato.Application.Abstractions;
 using Acetato.Application.Drawing;
 using Acetato.Application.Overlay;
 using Acetato.Domain;
+using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Xunit;
 
@@ -15,8 +17,10 @@ public sealed class OverlayBroadcasterTests
     private readonly IScreenClipLauncher _screenClip = Substitute.For<IScreenClipLauncher>();
     private readonly IOverlayCanvasProvider _provider = Substitute.For<IOverlayCanvasProvider>();
     private readonly IOverlayController _overlay = Substitute.For<IOverlayController>();
+    private readonly RecordingLogger<OverlayBroadcaster> _log = new();
 
-    private OverlayBroadcaster CreateBroadcaster() => new(_provider, _cursor, _settings, _screenClip, _overlay);
+    private OverlayBroadcaster CreateBroadcaster() =>
+        new(_provider, _cursor, _settings, new ScreenClipServices(_screenClip, _log), _overlay);
 
     private static IOverlayCanvas Canvas(MonitorInfo monitor)
     {
@@ -182,7 +186,7 @@ public sealed class OverlayBroadcasterTests
     }
 
     [Fact]
-    public void LaunchScreenClip_swallows_launch_failures()
+    public void LaunchScreenClip_swallows_launch_failures_and_logs_a_warning()
     {
         _screenClip.When(launcher => launcher.Launch()).Do(_ => throw new Win32Exception("protocolo no registrado"));
 
@@ -190,5 +194,8 @@ public sealed class OverlayBroadcasterTests
         CreateBroadcaster().LaunchScreenClip();
 
         _screenClip.Received(1).Launch();
+        _log.Entries.Should().ContainSingle()
+            .Which.Should().Match<(LogLevel Level, string Message, Exception? Exception)>(entry =>
+                entry.Level == LogLevel.Warning && entry.Exception is Win32Exception);
     }
 }
