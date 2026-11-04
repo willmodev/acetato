@@ -13,10 +13,17 @@
   <!-- Producción -->
   <ItemGroup>
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.14" />
     <PackageVersion Include="H.NotifyIcon.Wpf" Version="2.3.0" />
     <PackageVersion Include="CommunityToolkit.WinUI.Notifications" Version="7.1.2" />
+    <!--
+      Fijado por seguridad (HU-30): CommunityToolkit.WinUI.Notifications trae la 4.7.0,
+      con una vulnerabilidad crítica. El SDK de .NET 10 audita también las dependencias
+      transitivas y rompe el build. La app ya la recibe de Windows Desktop; esto cubre
+      a los proyectos que no usan WPF ni Windows Forms (tests de Infrastructure).
+    -->
+    <PackageVersion Include="System.Drawing.Common" Version="10.0.14" />
   </ItemGroup>
 
   <!-- Tests -->

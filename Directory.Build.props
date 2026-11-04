@@ -1,7 +1,7 @@
 <!--
   Propiedades comunes a TODOS los proyectos de la solución.
-  El TargetFramework se fija por proyecto (net9.0 para capas no-UI,
-  net9.0-windows para Infrastructure y Presentation).
+  El TargetFramework se fija por proyecto (net10.0 para capas no-UI,
+  net10.0-windows10.0.19041.0 para Infrastructure y Presentation).
 -->
 <Project>
 
