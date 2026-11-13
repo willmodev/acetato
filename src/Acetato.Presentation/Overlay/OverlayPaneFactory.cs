@@ -8,7 +8,7 @@ namespace Acetato.Presentation.Overlay;
 
 /// <summary>
 /// Fábrica de panes del overlay (HU-09): crea una ventana con su ViewModel por
-/// monitor. Cada pane tiene sus propios trazos/undo, pero comparten el mismo
+/// monitor. Cada pane tiene sus propias hojas (trazos/undo), pero comparten el mismo
 /// <see cref="IDrawingSettings"/>, así color/grosor/herramienta se mantienen
 /// sincronizados entre pantallas. El posicionamiento físico lo aporta el placer.
 /// </summary>
@@ -33,8 +33,9 @@ public sealed class OverlayPaneFactory : IOverlayPaneFactory
 
     public OverlayPane Create(MonitorInfo monitor)
     {
-        var viewModel = new OverlayViewModel(_settings, _keyState);
-        var window = new OverlayWindow { DataContext = viewModel };
-        return new OverlayPane(window, viewModel, _styler, _placer, monitor);
+        // Dos hojas por monitor (HU-35): la de la pantalla y la de la pizarra, cada una con su historial.
+        var sheets = new OverlaySheets(new OverlayViewModel(_settings, _keyState), new OverlayViewModel(_settings, _keyState));
+        var window = new OverlayWindow { DataContext = sheets };
+        return new OverlayPane(window, sheets, _styler, _placer, monitor);
     }
 }

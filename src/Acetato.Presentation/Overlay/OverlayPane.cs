@@ -1,3 +1,4 @@
+using System.Windows.Controls;
 using System.Windows.Interop;
 using Acetato.Application.Abstractions;
 using Acetato.Domain;
@@ -8,8 +9,9 @@ using Acetato.Presentation.Views;
 namespace Acetato.Presentation.Overlay;
 
 /// <summary>
-/// Una ventana de overlay sobre un solo monitor (HU-09) con su propio
-/// <see cref="OverlayViewModel"/> (trazos/undo independientes). Implementa
+/// Una ventana de overlay sobre un solo monitor (HU-09) con sus dos hojas
+/// (<see cref="OverlaySheets"/>: la de la pantalla y la de la pizarra, HU-35), cada una con
+/// su propio <see cref="OverlayViewModel"/> (trazos/undo independientes). Implementa
 /// <see cref="IOverlayCanvas"/> para que el broadcaster dirija limpiar/deshacer
 /// por monitor. La ventana siembra su Left/Top en el monitor objetivo (para que WPF
 /// no la reubique al primario) y luego maximiza en píxeles FÍSICOS sobre ese monitor
@@ -19,7 +21,7 @@ namespace Acetato.Presentation.Overlay;
 public sealed class OverlayPane : IOverlayCanvas, IDisposable
 {
     private readonly OverlayWindow _window;
-    private readonly OverlayViewModel _viewModel;
+    private readonly OverlaySheets _sheets;
     private readonly IOverlayWindowStyler _styler;
     private readonly IOverlayWindowPlacer _placer;
     private bool _stylesApplied;
@@ -27,13 +29,13 @@ public sealed class OverlayPane : IOverlayCanvas, IDisposable
 
     public OverlayPane(
         OverlayWindow window,
-        OverlayViewModel viewModel,
+        OverlaySheets sheets,
         IOverlayWindowStyler styler,
         IOverlayWindowPlacer placer,
         MonitorInfo monitor)
     {
         _window = window;
-        _viewModel = viewModel;
+        _sheets = sheets;
         _styler = styler;
         _placer = placer;
         Monitor = monitor;
@@ -70,7 +72,7 @@ public sealed class OverlayPane : IOverlayCanvas, IDisposable
 
     public void Hide()
     {
-        MoveToolBehavior.ClearSelection(_window.InkSurface);
+        ClearSelections();
         _window.Hide();
     }
 
@@ -98,25 +100,47 @@ public sealed class OverlayPane : IOverlayCanvas, IDisposable
         if (clickThrough)
         {
             // Pasar a Puntero (Esc) quita la selección de la mano (SPEC 11).
-            MoveToolBehavior.ClearSelection(_window.InkSurface);
+            ClearSelections();
         }
     }
 
-    public void Clear() => _viewModel.ClearCommand.Execute(null);
+    public void ShowWhiteboard(WhiteboardMode mode)
+    {
+        if (mode == _sheets.Mode)
+        {
+            return;
+        }
 
-    public void Undo() => _viewModel.UndoCommand.Execute(null);
+        // La hoja que se esconde no se queda con un texto a medio escribir ni con una selección.
+        _ = TextAnnotationBehavior.TryCommit(VisibleCanvas);
+        MoveToolBehavior.ClearSelection(VisibleCanvas);
+        _sheets.Mode = mode;
+    }
+
+    // Las acciones del usuario actúan solo sobre la hoja que se ve (HU-35).
+    public void Clear() => _sheets.Visible.ClearCommand.Execute(null);
+
+    public void Undo() => _sheets.Visible.UndoCommand.Execute(null);
 
     public void DeleteSelection()
     {
-        var selection = MoveToolBehavior.TakeSelection(_window.InkSurface);
-        _viewModel.DeleteSelection(_window.InkSurface, selection.Strokes, selection.Elements);
+        var selection = MoveToolBehavior.TakeSelection(VisibleCanvas);
+        _sheets.Visible.DeleteSelection(VisibleCanvas, selection.Strokes, selection.Elements);
     }
 
-    public bool TryCommitText() => TextAnnotationBehavior.TryCommit(_window.InkSurface);
+    public bool TryCommitText() => TextAnnotationBehavior.TryCommit(VisibleCanvas);
 
     public void Dispose()
     {
-        _viewModel.Dispose();
+        _sheets.Dispose();
         _window.Close();
+    }
+
+    private InkCanvas VisibleCanvas => _sheets.Mode == WhiteboardMode.Off ? _window.InkSurface : _window.BoardSurface;
+
+    private void ClearSelections()
+    {
+        MoveToolBehavior.ClearSelection(_window.InkSurface);
+        MoveToolBehavior.ClearSelection(_window.BoardSurface);
     }
 }
