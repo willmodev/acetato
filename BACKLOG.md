@@ -1086,6 +1086,62 @@ Escenario: Reporte
 ```
 **Notas técnicas:** Spec en [`specs/13-base-para-produccion.md`](./specs/13-base-para-produccion.md). Versión `0.9.0` en `Directory.Build.props`; la completa (con el commit) va al registro y al reporte. Fuera de alcance: «Acerca de» en la bandeja o en la barra, buscar actualizaciones.
 
+#### HU-34 — Resaltador
+- **Épica:** EP-02 · **Prioridad:** Should · **Estimación:** 3
+- **Narrativa:**
+  Como presentador, quiero marcar una frase con un marcador translúcido, para señalarla sin taparla.
+
+**Criterios de aceptación**
+```
+Escenario: Resaltar
+  Dado que elijo Resaltador
+  Cuando paso el mouse sobre un texto con el botón apretado
+  Entonces el texto sigue leyéndose a través de la marca
+  Y la marca usa la tinta elegida con el grosor multiplicado por 3.
+
+Escenario: Debajo de lo demás
+  Dado que dibujé con el Lápiz sobre una zona
+  Cuando después resalto esa zona
+  Entonces el trazo del Lápiz queda por encima de la marca.
+
+Escenario: Repasar
+  Dado que resalté una frase
+  Cuando paso otra vez por encima con la misma tinta
+  Entonces la marca no se oscurece.
+```
+**Notas técnicas:** Spec en [`specs/14-resaltador-y-pizarra.md`](./specs/14-resaltador-y-pizarra.md). Herramienta nueva `ToolKind.Highlighter` con el resaltador de WPF (`DrawingAttributes.IsHighlighter`, 50 % fijo). Atajo `Ctrl+U`. Con el Degradado usa la última tinta sólida. Fuera de alcance: presión del lápiz, resaltador recto o con degradado, transparencia configurable.
+
+#### HU-35 — Pizarra
+- **Épica:** EP-02 · **Prioridad:** Should · **Estimación:** 5
+- **Narrativa:**
+  Como presentador, quiero una pizarra blanca o negra con su propia hoja, para explicar algo aparte sin la pantalla detrás y volver a ella intacta.
+
+**Criterios de aceptación**
+```
+Escenario: Prender la pizarra
+  Dado que estoy en modo dibujo
+  Cuando pulso el botón Pizarra
+  Entonces el monitor del cursor se cubre con una pizarra blanca vacía
+  Y lo dibujado sobre la pantalla de ese monitor queda escondido.
+
+Escenario: Ciclo de colores
+  Dado que la pizarra está blanca
+  Cuando pulso el botón Pizarra
+  Entonces pasa a negra sin perder lo dibujado
+  Y al pulsar otra vez se apaga y vuelve la pantalla con sus dibujos.
+
+Escenario: Tinta contraria
+  Dado que la tinta es blanca
+  Cuando la pizarra pasa a blanca
+  Entonces la tinta cambia a negra.
+
+Escenario: Salir del modo dibujo
+  Dado que la pizarra está prendida
+  Cuando pulso Esc
+  Entonces la pizarra se apaga y su hoja queda guardada.
+```
+**Notas técnicas:** Spec en [`specs/14-resaltador-y-pizarra.md`](./specs/14-resaltador-y-pizarra.md). Dos láminas por monitor, cada una con su historial. `WhiteboardController` aparte de `OverlayBroadcaster`. Colores propios `Board.*`. Atajo `Ctrl+W`. Fuera de alcance: pizarra en todos los monitores, más colores, varias páginas y recordarla entre sesiones.
+
 ---
 
 ## Definition of Done (global)
