@@ -27,6 +27,9 @@
     <!-- pencil (Lápiz) -->
     <StreamGeometry x:Key="Icon.Pencil">M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z M15 5 l4 4</StreamGeometry>
 
+    <!-- highlighter (Resaltador, HU-34) -->
+    <StreamGeometry x:Key="Icon.Highlighter">M9 11 l-6 6 v3 h9 l3-3 M22 12 l-4.6 4.6 a2 2 0 0 1-2.8 0 l-5.2-5.2 a2 2 0 0 1 0-2.8 L14 4</StreamGeometry>
+
     <!-- locate (Láser) — diana: cruz + círculo, derivado del set Lucide -->
     <StreamGeometry x:Key="Icon.Laser">M2 12h3 M19 12h3 M12 2v3 M12 19v3 M5 12 A7 7 0 1 0 19 12 A7 7 0 1 0 5 12 Z</StreamGeometry>
 

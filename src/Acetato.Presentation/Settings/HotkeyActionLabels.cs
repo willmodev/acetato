@@ -25,6 +25,7 @@ internal static class HotkeyActionLabels
         [HotkeyAction.CycleTool] = "Siguiente herramienta",
         [HotkeyAction.SelectMoveTool] = "Mover",
         [HotkeyAction.SelectPencilTool] = "Lápiz",
+        [HotkeyAction.SelectHighlighterTool] = "Resaltador",
         [HotkeyAction.SelectLaserTool] = "Láser",
         [HotkeyAction.SelectEraserTool] = "Borrador",
         [HotkeyAction.SelectLineTool] = "Línea",

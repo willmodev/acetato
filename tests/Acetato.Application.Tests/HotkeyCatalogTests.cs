@@ -48,7 +48,7 @@ public sealed class HotkeyCatalogTests
     }
 
     [Fact]
-    public void Defaults_are_the_short_tables_of_HU_21_HU_22_and_HU_25()
+    public void Defaults_are_the_short_tables_of_HU_21_HU_22_HU_25_and_HU_34()
     {
         HotkeyCatalog.All.Select(definition => (definition.Action, definition.Default.ToString()))
             .Should().Equal(
@@ -67,6 +67,7 @@ public sealed class HotkeyCatalogTests
                 (HotkeyAction.CycleTool, "Ctrl+Space"),
                 (HotkeyAction.SelectMoveTool, "Ctrl+M"),
                 (HotkeyAction.SelectPencilTool, "Ctrl+P"),
+                (HotkeyAction.SelectHighlighterTool, "Ctrl+U"),
                 (HotkeyAction.SelectLaserTool, "Ctrl+L"),
                 (HotkeyAction.SelectEraserTool, "Ctrl+B"),
                 (HotkeyAction.SelectLineTool, "Ctrl+I"),
@@ -82,6 +83,7 @@ public sealed class HotkeyCatalogTests
     [Theory]
     [InlineData(HotkeyAction.SelectMoveTool)]
     [InlineData(HotkeyAction.SelectPencilTool)]
+    [InlineData(HotkeyAction.SelectHighlighterTool)]
     [InlineData(HotkeyAction.SelectEraserTool)]
     [InlineData(HotkeyAction.SelectLineTool)]
     [InlineData(HotkeyAction.SelectArrowTool)]

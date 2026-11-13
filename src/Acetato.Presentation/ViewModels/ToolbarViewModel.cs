@@ -247,6 +247,7 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
     [
         new(ToolKind.Move, shortcuts.Hint("Mover", HotkeyAction.SelectMoveTool), Glyph("Icon.Move"), true),
         new(ToolKind.Pencil, shortcuts.Hint("Lápiz", HotkeyAction.SelectPencilTool), Glyph("Icon.Pencil"), true),
+        new(ToolKind.Highlighter, shortcuts.Hint("Resaltador", HotkeyAction.SelectHighlighterTool), Glyph("Icon.Highlighter"), true),
         new(ToolKind.Laser, shortcuts.Hint("Láser", HotkeyAction.SelectLaserTool), Glyph("Icon.Laser"), true),
         new(ToolKind.Eraser, shortcuts.Hint("Borrador", HotkeyAction.SelectEraserTool), Glyph("Icon.Eraser"), true),
         new(ToolKind.Line, shortcuts.Hint("Línea", HotkeyAction.SelectLineTool), Glyph("Icon.Line"), true),

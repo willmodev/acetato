@@ -30,6 +30,31 @@ public sealed class HotkeyActionRouterTests
     }
 
     [Fact]
+    public void The_highlighter_shortcut_selects_the_highlighter_tool()
+    {
+        var settings = Substitute.For<IDrawingSettings>();
+        var controller = Substitute.For<IOverlayController>();
+
+        WpfTestHost.Run(() =>
+        {
+            var broadcaster = new OverlayBroadcaster(
+                Substitute.For<IOverlayCanvasProvider>(),
+                Substitute.For<ICursorPositionProvider>(),
+                settings,
+                new ScreenClipServices(Substitute.For<IScreenClipLauncher>(), NullLogger<OverlayBroadcaster>.Instance),
+                controller);
+            var dispatcher = Dispatcher.CurrentDispatcher;
+            var router = new HotkeyActionRouter(controller, broadcaster, Substitute.For<IToolbarLayout>(), dispatcher);
+
+            router.Handle(null, new HotkeyActionEventArgs(HotkeyAction.SelectHighlighterTool));
+            dispatcher.Invoke(static () => { }, DispatcherPriority.ContextIdle);
+            return true;
+        });
+
+        settings.Received(1).SelectTool(Domain.ToolKind.Highlighter);
+    }
+
+    [Fact]
     public void Esc_leaves_drawing_mode()
     {
         var controller = Substitute.For<IOverlayController>();

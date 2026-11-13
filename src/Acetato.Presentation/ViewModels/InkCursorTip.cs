@@ -11,4 +11,4 @@ namespace Acetato.Presentation.ViewModels;
 /// <param name="Solid">Última tinta sólida elegida.</param>
 /// <param name="Gradient">Par del próximo trazo; <c>null</c> = tinta sólida.</param>
 /// <param name="Thickness">Grosor activo, en DIP.</param>
-public sealed record InkCursorTip(Color Solid, GradientPair? Gradient, double Thickness);
+public sealed record InkCursorTip(Color Solid, GradientPair? Gradient, double Thickness, bool Highlighter = false);

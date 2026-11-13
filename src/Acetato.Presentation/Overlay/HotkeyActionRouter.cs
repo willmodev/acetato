@@ -56,6 +56,7 @@ internal sealed class HotkeyActionRouter
         [HotkeyAction.SelectLaserTool] = () => broadcaster.SelectTool(ToolKind.Laser),
         [HotkeyAction.SelectMoveTool] = () => broadcaster.SelectTool(ToolKind.Move),
         [HotkeyAction.SelectPencilTool] = () => broadcaster.SelectTool(ToolKind.Pencil),
+        [HotkeyAction.SelectHighlighterTool] = () => broadcaster.SelectTool(ToolKind.Highlighter),
         [HotkeyAction.SelectEraserTool] = () => broadcaster.SelectTool(ToolKind.Eraser),
         [HotkeyAction.SelectLineTool] = () => broadcaster.SelectTool(ToolKind.Line),
         [HotkeyAction.SelectArrowTool] = () => broadcaster.SelectTool(ToolKind.Arrow),

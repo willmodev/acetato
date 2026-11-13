@@ -28,7 +28,9 @@ internal sealed class FreehandSession
     {
         Tool = tool;
         _attributes = attributes.Clone();
-        _gradient = gradient;
+        // El resaltador (HU-34) pinta siempre la tinta sólida translúcida: sin degradado.
+        _attributes.IsHighlighter = tool == ToolKind.Highlighter;
+        _gradient = tool == ToolKind.Highlighter ? null : gradient;
         _filter = tool == ToolKind.Arrow ? new JitterFilter(ArrowSmoothing, ArrowMinDistance) : null;
     }
 

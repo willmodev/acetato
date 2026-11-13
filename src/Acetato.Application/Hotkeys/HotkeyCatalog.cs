@@ -34,6 +34,7 @@ public static class HotkeyCatalog
         Drawing(HotkeyAction.CycleTool, HotkeyKey.Space),
         Drawing(HotkeyAction.SelectMoveTool, HotkeyKey.M),
         Drawing(HotkeyAction.SelectPencilTool, HotkeyKey.P),
+        Drawing(HotkeyAction.SelectHighlighterTool, HotkeyKey.U),
         Drawing(HotkeyAction.SelectLaserTool, HotkeyKey.L),
         Drawing(HotkeyAction.SelectEraserTool, HotkeyKey.B),
         Drawing(HotkeyAction.SelectLineTool, HotkeyKey.I),

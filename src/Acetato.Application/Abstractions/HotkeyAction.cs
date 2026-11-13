@@ -62,6 +62,9 @@ public enum HotkeyAction
     /// <summary>Seleccionar la herramienta Lápiz (HU-22).</summary>
     SelectPencilTool,
 
+    /// <summary>Seleccionar la herramienta Resaltador (HU-34).</summary>
+    SelectHighlighterTool,
+
     /// <summary>Seleccionar la herramienta Borrador (HU-22).</summary>
     SelectEraserTool,
 
