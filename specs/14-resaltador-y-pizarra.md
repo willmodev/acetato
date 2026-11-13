@@ -1,6 +1,6 @@
 # SPEC 14 — Resaltador y pizarra (HU-34, HU-35)
 
-> **Estado:** Aprobado · **Depende de:** SPEC 03 (HU-19) — modo Degradado, SPEC 06 (HU-22) — atajos por herramienta, SPEC 08 (HU-24) — modo puntero, SPEC 09 (HU-26) — cursor de tinta, SPEC 12 (HU-29) — recordar la última sesión · **Fecha:** 2026-11-13
+> **Estado:** Implementado · **Depende de:** SPEC 03 (HU-19) — modo Degradado, SPEC 06 (HU-22) — atajos por herramienta, SPEC 08 (HU-24) — modo puntero, SPEC 09 (HU-26) — cursor de tinta, SPEC 12 (HU-29) — recordar la última sesión · **Fecha:** 2026-11-13
 > **Objetivo:** Sumar a la barra un resaltador semitransparente y una pizarra blanca o negra, con hoja propia, que tapa la pantalla para explicar sin lo que hay detrás.
 
 ---
@@ -143,7 +143,7 @@
 >
 > **Cubierto por tests:** ancho ×3, `IsHighlighter`, tinta sólida sin degradado, 50 % al pintar y capa debajo del lápiz dentro del lienzo; el ciclo de la pizarra, el monitor del cursor, la tinta contraria, el apagado y el recorte; la ventana con sus dos hojas y sus fondos; los atajos `Ctrl+U` y `Ctrl+W` y sus filas en Ajustes.
 >
-> **Pendiente de mirar con los ojos del usuario (sin marcar):** cómo se ven y dónde quedan los botones Resaltador y Pizarra en la barra y el relleno del ícono (la barra no sale en las capturas de pantalla, a propósito); el cursor del resaltador; Borrador, Mover y Recortar sobre un resaltado; plegar la barra con la pizarra prendida; y cerrar y abrir con la pizarra prendida.
+> **Cierre (2026-11-13).** Los ocho criterios que faltaban se cerraron por indicación del usuario, sin comprobarlos con capturas ni con tests: los botones Resaltador y Pizarra en la barra y el relleno del ícono (la barra no sale en las capturas de pantalla, a propósito, así que no se pudieron comprobar con píxeles), el cursor del resaltador, Borrador, Mover y Recortar sobre un resaltado, plegar la barra con la pizarra prendida y cerrar y abrir con la pizarra prendida. Queda como mejora posible, sin decidir, devolver al apagar la pizarra la tinta que el usuario había elegido: hoy la tinta contraria cambia sola y en silencio el blanco y el negro.
 >
 > **Diferencias con lo escrito arriba:**
 > - **Recortar con la pizarra prendida.** El spec decía a la vez que Recortar captura la pizarra y que salir del modo dibujo la apaga, y Recortar pasa a modo puntero. Ahora la pizarra se queda prendida durante el recorte (`IWhiteboard.KeepThroughNextPointerMode`, que llama el broadcaster mediante `ScreenClipServices`) y cualquier otra salida del dibujo la apaga.
@@ -154,24 +154,24 @@
 
 **Resaltador**
 
-- [ ] La barra muestra el botón «Resaltador» entre Lápiz y Láser, con su atajo `Ctrl+U` en la pista.
+- [x] La barra muestra el botón «Resaltador» entre Lápiz y Láser, con su atajo `Ctrl+U` en la pista.
 - [x] Con el resaltador, un trazo a mano alzada deja ver lo de abajo, al 50 %.
 - [x] Con el grosor de 3 px pinta 9 px, y con el de 18 px pinta 54 px.
 - [x] Usa la tinta elegida. Con el Degradado activo, usa la última tinta sólida.
 - [x] Un resaltado hecho después de un trazo de Lápiz queda debajo del trazo de Lápiz.
 - [x] Repasar varias veces la misma zona con la misma tinta no la oscurece.
 - [x] Mientras se dibuja, el trazo ya se ve translúcido, igual que al soltarlo.
-- [ ] El cursor muestra el ancho y el color translúcido del resaltador.
+- [x] El cursor muestra el ancho y el color translúcido del resaltador.
 - [x] `Ctrl+Espacio` pasa de Lápiz a Resaltador y de Resaltador a Láser.
-- [ ] Deshacer, Borrador, Limpiar todo y Recortar funcionan con el resaltado. Mover lo cambia de lugar y de tamaño sin cambiar su grosor.
+- [x] Deshacer, Borrador, Limpiar todo y Recortar funcionan con el resaltado. Mover lo cambia de lugar y de tamaño sin cambiar su grosor.
 - [x] Al cerrar Acetato con el resaltador elegido, al abrirlo sigue elegido.
 - [x] Ajustes muestra la fila «Resaltador» con `Ctrl+U` y se puede cambiar.
 
 **Pizarra**
 
-- [ ] La barra muestra el botón «Pizarra» entre Recortar y Ajustes, con su atajo `Ctrl+W` en la pista.
-- [ ] Cada clic o cada `Ctrl+W` pasa por apagada → blanca → negra → apagada, y el ícono queda vacío, relleno de blanco o relleno de negro.
-- [ ] El botón Pizarra nunca usa el acento teal.
+- [x] La barra muestra el botón «Pizarra» entre Recortar y Ajustes, con su atajo `Ctrl+W` en la pista.
+- [x] Cada clic o cada `Ctrl+W` pasa por apagada → blanca → negra → apagada, y el ícono queda vacío, relleno de blanco o relleno de negro.
+- [x] El botón Pizarra nunca usa el acento teal.
 - [x] Con dos monitores, la pizarra sale solo en el monitor del cursor, y el otro sigue mostrando lo de siempre.
 - [x] Con la pizarra prendida en el monitor 1 y el cursor en el monitor 2, `Ctrl+W` cambia la pizarra del monitor 1.
 - [x] La primera vez, la pizarra sale vacía y esconde lo dibujado sobre la pantalla de ese monitor.
@@ -183,9 +183,9 @@
 - [x] Con el Degradado activo, prender la pizarra no cambia la tinta.
 - [x] `Esc`, el botón Puntero y `Ctrl+Alt+E` apagan la pizarra, y al prenderla otra vez sigue lo dibujado en ella.
 - [x] Tras ocultar con `Ctrl+Alt+D` y volver a mostrar, la pizarra arranca apagada.
-- [ ] Plegar la barra con el ojo no apaga la pizarra.
+- [x] Plegar la barra con el ojo no apaga la pizarra.
 - [x] Recortar con la pizarra prendida captura la pizarra con lo dibujado en ella.
-- [ ] Al cerrar y abrir Acetato, la pizarra arranca apagada y vacía.
+- [x] Al cerrar y abrir Acetato, la pizarra arranca apagada y vacía.
 - [x] Ajustes muestra la fila «Pizarra» con `Ctrl+W` y se puede cambiar.
 
 **General**
@@ -227,6 +227,7 @@
 24. **Recortar deja la pizarra prendida** (decisión tomada al implementar, para que Recortar la capture y a la vez cualquier otra salida del dibujo la apague). Se descartó apagarla siempre: el recorte no vería la pizarra.
 25. **El botón Pizarra, desde el modo puntero, vuelve al dibujo** como los botones de herramienta. Con la pizarra ya prendida por un recorte solo vuelve a dibujar, para no cambiar el color sin que el usuario lo pida.
 26. **El relleno del ícono comparte límites con el contorno** mediante dos líneas sin área en `Icon.WhiteboardFill`. Se descartó un `Viewbox` con rejilla de 24: el grosor del trazo no coincidiría con el de los demás íconos de la barra.
+27. **El resaltador tiñe el texto, no lo tapa y no lo multiplica.** Un marcador real oscurece lo de abajo («multiplicar»), pero eso no se puede lograr desde una capa transparente sobre otras aplicaciones. El resaltador de WPF es semitransparente, como el de PowerPoint en presentación (el texto negro bajo el amarillo sale oliva oscuro y se lee bien). Si en las presentaciones se ve demasiado teñido, la mejora es bajar la opacidad pintando el trazo a mano (decisión 4).
 
 ---
 
