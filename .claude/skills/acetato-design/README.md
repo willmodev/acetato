@@ -299,7 +299,9 @@ saves at once; there is no Save button.
   the background it flips (white on white board → black; black on black board → white);
   Gradient mode is left alone. Light inks such as yellow read poorly on the white board:
   it is the chosen ink and is not corrected. It turns off on leaving drawing mode
-  (`Esc`, Puntero) and when hiding with `Ctrl+Alt+D`; it always starts off.
+  (`Esc`, Puntero) and when hiding with `Ctrl+Alt+D`; it always starts off. **Recortar**
+  goes to pointer mode but leaves the whiteboard on so the clip captures it. From pointer
+  mode the Pizarra button returns to drawing (and turns the board on if it was off).
 - **Eraser** removes whole strokes. **Clear** (`Ctrl+Retroceso`) too, and it
   cannot be undone.
 - **Move (HU-14):** first tool of the bar, hand icon (`hand`), `Ctrl+M`. Press
@@ -370,7 +372,9 @@ saves at once; there is no Save button.
 
 - `Icon.Whiteboard` (outline): `M2 3h20 M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3 M7 21l5-5 5 5`.
   `Icon.WhiteboardFill` (the sheet, painted `Board.White` or `Board.Black` by state,
-  under the outline): `M3 3h18v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z`.
+  under the outline): `M3 3h18v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z M2 3H22 M7 21H17`. The last two
+  lines have no area and paint nothing: they give this geometry the same bounds as the outline,
+  and the `Path` carries the same (transparent) stroke thickness, so both scale alike and line up.
 - **Reserved** (SVGs ready, no feature yet — keep them off the bar): `palette`,
   `pin`, `pipette`. `highlighter` became Resaltador (HU-34). `circle` became Elipse (HU-16); `redo-2` was
   removed, Redo was dropped (HU-17).
