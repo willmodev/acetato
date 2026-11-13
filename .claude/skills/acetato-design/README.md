@@ -253,7 +253,7 @@ saves at once; there is no Save button.
   which have no hue, fade to gray. The pair is always the same for each ink (no
   randomness), with the same axis and tools as Gradient mode. The ink swatches
   and the Color button show the pair (135°, start top-left), and so does the ink
-  cursor. Text and Láser keep the flat ink. Gradient mode (the round swatch,
+  cursor. Text takes the pair too (see Text below); Láser keeps the flat ink. Gradient mode (the round swatch,
   `Ctrl+7`) still picks random neon pairs and ignores the switch; while it is
   on, it wins. Strokes already drawn keep their colors when the switch changes.
   No shortcut. Saved in the `drawing` section of `settings.json`.
@@ -275,8 +275,10 @@ saves at once; there is no Save button.
   One stroke, with ink, thickness, gradient (diagonal, like the rectangle) and
   the ink cursor. `Ctrl+O`.
 - **Text:** click to place; multiline (Enter = new line), Esc or click outside
-  confirms. Size from `--annot-*`, weight 600, last solid ink; empty placeholder
-  *Texto* in `--fg-3`, no border.
+  confirms. Size from `--annot-*`, weight 600, in the chosen ink. With Gradient mode or
+  *Tintas degradadas* it takes the next stroke's pair, diagonally over its box (top-left to
+  bottom-right, like the rectangle); the pair is fixed when typing starts and the text keeps
+  it. Empty placeholder *Texto* in `--fg-3`, no border.
 - **Resaltador (HU-34):** tool right after Lápiz, `Ctrl+U`. Smoothed freehand like
   the pencil, in the chosen ink at **50 %** (`--highlighter-opacity`, fixed) and
   **3 x the thickness** (`--highlighter-factor`: 3px paints 9px, 18px paints 54px).
