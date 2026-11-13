@@ -40,8 +40,8 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
     private ToolKind _activeTool = ToolKind.Pencil;
 
     /// <summary>
-    /// Última tinta sólida elegida. La leen el texto (HU-13) y el láser (HU-15), que no
-    /// admiten degradado (HU-19). Coincide con el color de <see cref="ActiveAttributes"/>:
+    /// Última tinta sólida elegida. La lee el láser (HU-15), que no admite degradado (HU-19), y el
+    /// texto (HU-13) cuando no hay degradado: con él toma el par (spec 15). Coincide con el color de <see cref="ActiveAttributes"/>:
     /// el degradado del trazo libre ya se pinta en vivo (HU-20).
     /// </summary>
     public Color SolidInkColor => TintaColorMap.Resolve(_settings.Color);
