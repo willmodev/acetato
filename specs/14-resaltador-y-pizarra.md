@@ -137,50 +137,65 @@
 
 ## Criterios de aceptación
 
+> **Prueba del 2026-11-13.** Pasos 1 a 7 hechos en la rama `spec-14-resaltador-y-pizarra`. `dotnet build -warnaserror` en verde y 678 tests en verde. Prueba en vivo con la app real en dos monitores, con el mouse y el teclado simulados sobre un fondo de prueba, mirando el color de los píxeles de la pantalla.
+>
+> **Comprobado en vivo:** el resaltador pinta al 50 % y 54 px con el grosor máximo, deja leer el texto, queda debajo del lápiz y repasar con la misma tinta no lo oscurece; la pizarra sale blanca (`244,241,234`) y negra (`27,29,31`), esconde la pantalla y la devuelve intacta, conserva su hoja al apagar y prender, Deshacer y Limpiar solo tocan la hoja visible, la tinta pasa a la contraria, `Esc` y `Ctrl+Alt+E` la apagan, ocultar con `Ctrl+Alt+D` y mostrar la deja apagada, el recorte de Windows la ve prendida, y con dos monitores sale solo en el del cursor y `Ctrl+W` sigue la del monitor donde se prendió. La herramienta Resaltador queda guardada en `settings.json`. El registro no anotó errores ni advertencias.
+>
+> **Cubierto por tests:** ancho ×3, `IsHighlighter`, tinta sólida sin degradado, 50 % al pintar y capa debajo del lápiz dentro del lienzo; el ciclo de la pizarra, el monitor del cursor, la tinta contraria, el apagado y el recorte; la ventana con sus dos hojas y sus fondos; los atajos `Ctrl+U` y `Ctrl+W` y sus filas en Ajustes.
+>
+> **Pendiente de mirar con los ojos del usuario (sin marcar):** cómo se ven y dónde quedan los botones Resaltador y Pizarra en la barra y el relleno del ícono (la barra no sale en las capturas de pantalla, a propósito); el cursor del resaltador; Borrador, Mover y Recortar sobre un resaltado; plegar la barra con la pizarra prendida; y cerrar y abrir con la pizarra prendida.
+>
+> **Diferencias con lo escrito arriba:**
+> - **Recortar con la pizarra prendida.** El spec decía a la vez que Recortar captura la pizarra y que salir del modo dibujo la apaga, y Recortar pasa a modo puntero. Ahora la pizarra se queda prendida durante el recorte (`IWhiteboard.KeepThroughNextPointerMode`, que llama el broadcaster mediante `ScreenClipServices`) y cualquier otra salida del dibujo la apaga.
+> - **Botón Pizarra desde el modo puntero.** Vuelve primero al modo dibujo, como los botones de herramienta; si la pizarra ya estaba prendida por un recorte, solo vuelve a dibujar y no cambia el color.
+> - **Relleno del ícono.** `Icon.WhiteboardFill` lleva dos líneas sin área para compartir límites con el contorno y que los dos `Path` queden alineados. Está en el artefacto y en la skill local.
+> - **Ventana del overlay.** `OverlayWindow` usa un contexto `OverlaySheets` (las dos hojas y el modo) en vez del ViewModel suelto. `ResizeEnabled` va directo en cada hoja porque no es una propiedad de dependencia y no puede ir en el estilo compartido.
+> - **Código compartido.** `CanvasLocator` (buscar el lienzo bajo el cursor) sale de `OverlayBroadcaster` para que lo use también la pizarra.
+
 **Resaltador**
 
 - [ ] La barra muestra el botón «Resaltador» entre Lápiz y Láser, con su atajo `Ctrl+U` en la pista.
-- [ ] Con el resaltador, un trazo a mano alzada deja ver lo de abajo, al 50 %.
-- [ ] Con el grosor de 3 px pinta 9 px, y con el de 18 px pinta 54 px.
-- [ ] Usa la tinta elegida. Con el Degradado activo, usa la última tinta sólida.
-- [ ] Un resaltado hecho después de un trazo de Lápiz queda debajo del trazo de Lápiz.
-- [ ] Repasar varias veces la misma zona con la misma tinta no la oscurece.
-- [ ] Mientras se dibuja, el trazo ya se ve translúcido, igual que al soltarlo.
+- [x] Con el resaltador, un trazo a mano alzada deja ver lo de abajo, al 50 %.
+- [x] Con el grosor de 3 px pinta 9 px, y con el de 18 px pinta 54 px.
+- [x] Usa la tinta elegida. Con el Degradado activo, usa la última tinta sólida.
+- [x] Un resaltado hecho después de un trazo de Lápiz queda debajo del trazo de Lápiz.
+- [x] Repasar varias veces la misma zona con la misma tinta no la oscurece.
+- [x] Mientras se dibuja, el trazo ya se ve translúcido, igual que al soltarlo.
 - [ ] El cursor muestra el ancho y el color translúcido del resaltador.
-- [ ] `Ctrl+Espacio` pasa de Lápiz a Resaltador y de Resaltador a Láser.
+- [x] `Ctrl+Espacio` pasa de Lápiz a Resaltador y de Resaltador a Láser.
 - [ ] Deshacer, Borrador, Limpiar todo y Recortar funcionan con el resaltado. Mover lo cambia de lugar y de tamaño sin cambiar su grosor.
-- [ ] Al cerrar Acetato con el resaltador elegido, al abrirlo sigue elegido.
-- [ ] Ajustes muestra la fila «Resaltador» con `Ctrl+U` y se puede cambiar.
+- [x] Al cerrar Acetato con el resaltador elegido, al abrirlo sigue elegido.
+- [x] Ajustes muestra la fila «Resaltador» con `Ctrl+U` y se puede cambiar.
 
 **Pizarra**
 
 - [ ] La barra muestra el botón «Pizarra» entre Recortar y Ajustes, con su atajo `Ctrl+W` en la pista.
 - [ ] Cada clic o cada `Ctrl+W` pasa por apagada → blanca → negra → apagada, y el ícono queda vacío, relleno de blanco o relleno de negro.
 - [ ] El botón Pizarra nunca usa el acento teal.
-- [ ] Con dos monitores, la pizarra sale solo en el monitor del cursor, y el otro sigue mostrando lo de siempre.
-- [ ] Con la pizarra prendida en el monitor 1 y el cursor en el monitor 2, `Ctrl+W` cambia la pizarra del monitor 1.
-- [ ] La primera vez, la pizarra sale vacía y esconde lo dibujado sobre la pantalla de ese monitor.
-- [ ] Al apagarla, lo dibujado sobre la pantalla vuelve intacto. Al prenderla de nuevo, lo dibujado en la pizarra sigue ahí.
-- [ ] Al pasar de blanca a negra, lo dibujado en la pizarra no cambia.
-- [ ] Con la pizarra prendida, `Ctrl+Z` quita el último trazo de la pizarra y no toca la lámina de pantalla.
-- [ ] Con la pizarra prendida en el monitor 1, «Limpiar todo» vacía la pizarra y lo dibujado en los demás monitores, y al apagarla vuelve intacto lo que había en la pantalla del monitor 1.
-- [ ] Con tinta blanca, al prender la pizarra blanca la tinta pasa a negra. Con tinta negra, al pasar a la negra la tinta pasa a blanca.
-- [ ] Con el Degradado activo, prender la pizarra no cambia la tinta.
-- [ ] `Esc`, el botón Puntero y `Ctrl+Alt+E` apagan la pizarra, y al prenderla otra vez sigue lo dibujado en ella.
-- [ ] Tras ocultar con `Ctrl+Alt+D` y volver a mostrar, la pizarra arranca apagada.
+- [x] Con dos monitores, la pizarra sale solo en el monitor del cursor, y el otro sigue mostrando lo de siempre.
+- [x] Con la pizarra prendida en el monitor 1 y el cursor en el monitor 2, `Ctrl+W` cambia la pizarra del monitor 1.
+- [x] La primera vez, la pizarra sale vacía y esconde lo dibujado sobre la pantalla de ese monitor.
+- [x] Al apagarla, lo dibujado sobre la pantalla vuelve intacto. Al prenderla de nuevo, lo dibujado en la pizarra sigue ahí.
+- [x] Al pasar de blanca a negra, lo dibujado en la pizarra no cambia.
+- [x] Con la pizarra prendida, `Ctrl+Z` quita el último trazo de la pizarra y no toca la lámina de pantalla.
+- [x] Con la pizarra prendida en el monitor 1, «Limpiar todo» vacía la pizarra y lo dibujado en los demás monitores, y al apagarla vuelve intacto lo que había en la pantalla del monitor 1.
+- [x] Con tinta blanca, al prender la pizarra blanca la tinta pasa a negra. Con tinta negra, al pasar a la negra la tinta pasa a blanca.
+- [x] Con el Degradado activo, prender la pizarra no cambia la tinta.
+- [x] `Esc`, el botón Puntero y `Ctrl+Alt+E` apagan la pizarra, y al prenderla otra vez sigue lo dibujado en ella.
+- [x] Tras ocultar con `Ctrl+Alt+D` y volver a mostrar, la pizarra arranca apagada.
 - [ ] Plegar la barra con el ojo no apaga la pizarra.
-- [ ] Recortar con la pizarra prendida captura la pizarra con lo dibujado en ella.
+- [x] Recortar con la pizarra prendida captura la pizarra con lo dibujado en ella.
 - [ ] Al cerrar y abrir Acetato, la pizarra arranca apagada y vacía.
-- [ ] Ajustes muestra la fila «Pizarra» con `Ctrl+W` y se puede cambiar.
+- [x] Ajustes muestra la fila «Pizarra» con `Ctrl+W` y se puede cambiar.
 
 **General**
 
-- [ ] Un `settings.json` de antes de este spec carga sin errores y recibe `Ctrl+U` y `Ctrl+W`.
-- [ ] `dotnet build -warnaserror` y `dotnet test` en verde, sin reglas suprimidas nuevas.
-- [ ] Ningún método, archivo ni clase supera los límites de Sonar (40 líneas, 400 líneas, complejidad 10, 5 parámetros, anidamiento 3).
-- [ ] No hay P/Invoke nuevo. El code-behind solo llama a `InitializeComponent()`.
-- [ ] Los colores de la pizarra salen de `Board.*` y no se mezclan con `Chrome.*` ni con `Ink.*`.
-- [ ] Las dos copias del design system describen el Resaltador, la Pizarra con sus tres estados y la familia `Board.*`, y se actualizaron antes del código.
+- [x] Un `settings.json` de antes de este spec carga sin errores y recibe `Ctrl+U` y `Ctrl+W`.
+- [x] `dotnet build -warnaserror` y `dotnet test` en verde, sin reglas suprimidas nuevas.
+- [x] Ningún método, archivo ni clase supera los límites de Sonar (40 líneas, 400 líneas, complejidad 10, 5 parámetros, anidamiento 3).
+- [x] No hay P/Invoke nuevo. El code-behind solo llama a `InitializeComponent()`.
+- [x] Los colores de la pizarra salen de `Board.*` y no se mezclan con `Chrome.*` ni con `Ink.*`.
+- [x] Las dos copias del design system describen el Resaltador, la Pizarra con sus tres estados y la familia `Board.*`, y se actualizaron antes del código.
 
 ---
 
@@ -209,6 +224,9 @@
 21. **La pizarra vive en su propio caso de uso (`WhiteboardController`)**, no en `OverlayBroadcaster`. Mantiene cada clase con una responsabilidad y lejos del límite de 400 líneas.
 22. **Atajos `Ctrl+U` y `Ctrl+W`.** Están libres y se recuerdan fácil: «subrayar» en Word y *whiteboard*. Solo valen en modo dibujo, como los demás atajos de herramienta, y se pueden cambiar en Ajustes.
 23. **El design system se ajusta antes de programar** (decisión del usuario): primero el artefacto, luego la skill local. En los SPEC 12 y 13 se hacía al cierre, y el código terminaba decidiendo el diseño.
+24. **Recortar deja la pizarra prendida** (decisión tomada al implementar, para que Recortar la capture y a la vez cualquier otra salida del dibujo la apague). Se descartó apagarla siempre: el recorte no vería la pizarra.
+25. **El botón Pizarra, desde el modo puntero, vuelve al dibujo** como los botones de herramienta. Con la pizarra ya prendida por un recorte solo vuelve a dibujar, para no cambiar el color sin que el usuario lo pida.
+26. **El relleno del ícono comparte límites con el contorno** mediante dos líneas sin área en `Icon.WhiteboardFill`. Se descartó un `Viewbox` con rejilla de 24: el grosor del trazo no coincidiría con el de los demás íconos de la barra.
 
 ---
 
