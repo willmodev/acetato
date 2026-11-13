@@ -1142,6 +1142,27 @@ Escenario: Salir del modo dibujo
 ```
 **Notas técnicas:** Spec en [`specs/14-resaltador-y-pizarra.md`](./specs/14-resaltador-y-pizarra.md). Dos láminas por monitor, cada una con su historial. `WhiteboardController` aparte de `OverlayBroadcaster`. Colores propios `Board.*`. Atajo `Ctrl+W`. Fuera de alcance: pizarra en todos los monitores, más colores, varias páginas y recordarla entre sesiones.
 
+#### HU-36 — Degradado en el texto
+- **Épica:** EP-02 · **Prioridad:** Could · **Estimación:** 2
+- **Narrativa:**
+  Como presentador, quiero que el texto tome el degradado que tengo elegido, para que combine con mis trazos.
+
+**Criterios de aceptación**
+```
+Escenario: Texto con degradado
+  Dado que el modo Degradado o las Tintas degradadas están activos
+  Cuando escribo un texto y lo fijo
+  Entonces el texto se ve con el par de colores, en diagonal sobre su recuadro
+  Y conserva ese par aunque luego cambie el modo.
+
+Escenario: Texto vacío
+  Dado que el modo Degradado está activo
+  Cuando abro un texto y lo dejo vacío
+  Entonces no queda nada
+  Y el par del siguiente trazo no cambia.
+```
+**Notas técnicas:** Spec en [`specs/15-degradado-en-texto.md`](./specs/15-degradado-en-texto.md). `DiagonalGradientBrush` (compartido con el cursor de tinta) y `TextAnnotationBehavior`. Fuera de alcance: degradado en el láser, por letra y elegir el par aparte.
+
 ---
 
 ## Definition of Done (global)

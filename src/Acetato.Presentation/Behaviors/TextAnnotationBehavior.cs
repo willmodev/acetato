@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Acetato.Domain;
+using Acetato.Presentation.Resources;
 using Acetato.Presentation.ViewModels;
 
 namespace Acetato.Presentation.Behaviors;
@@ -13,8 +14,11 @@ namespace Acetato.Presentation.Behaviors;
 /// I-beam y al hacer clic crea un <see cref="TextBox"/> multilínea en el punto
 /// (con un placeholder "Texto" mientras está vacío) y le da foco; al confirmar
 /// (clic fuera o Esc) lo reemplaza por un <see cref="TextBlock"/> fijo y lo
-/// registra en el historial unificado, salvo que esté vacío (se descarta). Color
-/// (última tinta sólida) y tamaño (derivado del grosor) salen del ViewModel.
+/// registra en el historial unificado, salvo que esté vacío (se descarta). Color y
+/// tamaño (derivado del grosor) salen del ViewModel. Con el modo Degradado o con Tintas
+/// degradadas el texto toma el par del próximo trazo (spec 15): en diagonal sobre su recuadro,
+/// fijo al empezar a escribir y conservado para siempre; al fijar un texto con degradado se
+/// sortea el par siguiente, como con un trazo.
 /// El Esc global del Puntero (HU-24) no llega al TextBox: confirma vía
 /// <see cref="TryCommit"/>.
 /// </summary>
@@ -93,7 +97,7 @@ public static class TextAnnotationBehavior
 
     private static void StartEditing(InkCanvas canvas, OverlayViewModel viewModel, Point point)
     {
-        var editor = CreateEditor(viewModel);
+        var editor = CreateEditor(viewModel, InkGradient.GetPair(canvas));
         var placeholder = CreatePlaceholder(editor);
         AddChild(canvas, placeholder, point);
         AddChild(canvas, editor, point);
@@ -106,7 +110,7 @@ public static class TextAnnotationBehavior
         _ = editor.Focus();
     }
 
-    private static TextBox CreateEditor(OverlayViewModel viewModel) => new()
+    private static TextBox CreateEditor(OverlayViewModel viewModel, GradientPair? pair) => new()
     {
         AcceptsReturn = true, // Enter = salto de línea (multilínea)
         TextWrapping = TextWrapping.NoWrap,
@@ -114,7 +118,9 @@ public static class TextAnnotationBehavior
         BorderThickness = new Thickness(0),
         Padding = new Thickness(0),
         MinWidth = 4d,
-        Foreground = new SolidColorBrush(viewModel.SolidInkColor),
+        Foreground = pair is { } gradient
+            ? DiagonalGradientBrush.Create(gradient)
+            : new SolidColorBrush(viewModel.SolidInkColor),
         FontSize = viewModel.ActiveFontSize,
         FontFamily = BrandFont(),
         FontWeight = BrandWeight(),
@@ -176,6 +182,10 @@ public static class TextAnnotationBehavior
         InkCanvas.SetTop(label, InkCanvas.GetTop(editor));
         canvas.Children.Add(label);
         (canvas.DataContext as OverlayViewModel)?.RecordText(canvas, label);
+        if (editor.Foreground is LinearGradientBrush)
+        {
+            InkGradient.NotifyUsed(canvas); // sortea el par del siguiente trazo o texto
+        }
     }
 
     private sealed record TextEdit(TextBox Editor, UIElement Placeholder);

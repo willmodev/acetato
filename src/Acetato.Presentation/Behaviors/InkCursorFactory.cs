@@ -56,8 +56,7 @@ internal static class InkCursorFactory
             return new SolidColorBrush(tip.Highlighter ? Color.FromArgb(HighlighterAlpha, tip.Solid.R, tip.Solid.G, tip.Solid.B) : tip.Solid);
         }
 
-        var (start, end) = GradientPairMap.Resolve(pair);
-        return new LinearGradientBrush(start, end, new Point(0d, 0d), new Point(1d, 1d));
+        return DiagonalGradientBrush.Create(pair);
     }
 
     private static Color Token(string key) => (Color)System.Windows.Application.Current.Resources[key];
