@@ -21,6 +21,7 @@ public sealed partial class OverlayBroadcaster
     private readonly ICursorPositionProvider _cursor;
     private readonly IDrawingSettings _settings;
     private readonly IScreenClipLauncher _screenClip;
+    private readonly IWhiteboard _whiteboard;
     private readonly IOverlayController _overlay;
     private readonly ILogger _logger;
 
@@ -37,6 +38,7 @@ public sealed partial class OverlayBroadcaster
         _settings = settings;
         _screenClip = screenClip.Launcher;
         _logger = screenClip.Logger;
+        _whiteboard = screenClip.Whiteboard;
         _overlay = overlay;
     }
 
@@ -98,6 +100,8 @@ public sealed partial class OverlayBroadcaster
     {
         if (_overlay.IsDrawingMode)
         {
+            // La pizarra se queda prendida para que el recorte la capture (HU-35).
+            _whiteboard.KeepThroughNextPointerMode();
             _overlay.SetDrawingMode(false);
         }
 
@@ -113,23 +117,7 @@ public sealed partial class OverlayBroadcaster
     }
 
     // Lienzo del monitor que contiene el cursor; null si no hay lienzos.
-    private IOverlayCanvas? ActiveCanvas()
-    {
-        var canvases = _canvases.Canvases;
-        if (canvases.Count == 0)
-        {
-            return null;
-        }
-
-        var (x, y) = _cursor.GetCursorPosition();
-        var monitors = new List<MonitorInfo>(canvases.Count);
-        foreach (var canvas in canvases)
-        {
-            monitors.Add(canvas.Monitor);
-        }
-
-        return canvases[MonitorPicker.IndexAt(monitors, x, y)];
-    }
+    private IOverlayCanvas? ActiveCanvas() => CanvasLocator.AtCursor(_canvases.Canvases, _cursor);
 
     [LoggerMessage(Level = LogLevel.Warning, Message = "Windows no pudo abrir el recorte de pantalla")]
     private partial void LogScreenClipFailed(Exception exception);

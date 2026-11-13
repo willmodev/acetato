@@ -41,10 +41,10 @@ public sealed class HotkeyActionRouterTests
                 Substitute.For<IOverlayCanvasProvider>(),
                 Substitute.For<ICursorPositionProvider>(),
                 settings,
-                new ScreenClipServices(Substitute.For<IScreenClipLauncher>(), NullLogger<OverlayBroadcaster>.Instance),
+                new ScreenClipServices(Substitute.For<IScreenClipLauncher>(), NullLogger<OverlayBroadcaster>.Instance, Substitute.For<IWhiteboard>()),
                 controller);
             var dispatcher = Dispatcher.CurrentDispatcher;
-            var router = new HotkeyActionRouter(controller, broadcaster, Substitute.For<IToolbarLayout>(), dispatcher);
+            var router = new HotkeyActionRouter(controller, broadcaster, Substitute.For<IToolbarLayout>(), Substitute.For<IWhiteboard>(), dispatcher);
 
             router.Handle(null, new HotkeyActionEventArgs(HotkeyAction.SelectHighlighterTool));
             dispatcher.Invoke(static () => { }, DispatcherPriority.ContextIdle);
@@ -52,6 +52,31 @@ public sealed class HotkeyActionRouterTests
         });
 
         settings.Received(1).SelectTool(Domain.ToolKind.Highlighter);
+    }
+
+    [Fact]
+    public void The_whiteboard_shortcut_cycles_the_whiteboard()
+    {
+        var whiteboard = Substitute.For<IWhiteboard>();
+        var controller = Substitute.For<IOverlayController>();
+
+        WpfTestHost.Run(() =>
+        {
+            var broadcaster = new OverlayBroadcaster(
+                Substitute.For<IOverlayCanvasProvider>(),
+                Substitute.For<ICursorPositionProvider>(),
+                Substitute.For<IDrawingSettings>(),
+                new ScreenClipServices(Substitute.For<IScreenClipLauncher>(), NullLogger<OverlayBroadcaster>.Instance, whiteboard),
+                controller);
+            var dispatcher = Dispatcher.CurrentDispatcher;
+            var router = new HotkeyActionRouter(controller, broadcaster, Substitute.For<IToolbarLayout>(), whiteboard, dispatcher);
+
+            router.Handle(null, new HotkeyActionEventArgs(HotkeyAction.CycleWhiteboard));
+            dispatcher.Invoke(static () => { }, DispatcherPriority.ContextIdle);
+            return true;
+        });
+
+        whiteboard.Received(1).Cycle();
     }
 
     [Fact]
@@ -123,10 +148,10 @@ public sealed class HotkeyActionRouterTests
             canvases ?? Substitute.For<IOverlayCanvasProvider>(),
             Substitute.For<ICursorPositionProvider>(),
             Substitute.For<IDrawingSettings>(),
-            new ScreenClipServices(screenClip, NullLogger<OverlayBroadcaster>.Instance),
+            new ScreenClipServices(screenClip, NullLogger<OverlayBroadcaster>.Instance, Substitute.For<IWhiteboard>()),
             controller);
         var dispatcher = Dispatcher.CurrentDispatcher;
-        var router = new HotkeyActionRouter(controller, broadcaster, layout ?? Substitute.For<IToolbarLayout>(), dispatcher);
+        var router = new HotkeyActionRouter(controller, broadcaster, layout ?? Substitute.For<IToolbarLayout>(), Substitute.For<IWhiteboard>(), dispatcher);
 
         router.Handle(null, new HotkeyActionEventArgs(action));
         dispatcher.Invoke(static () => { }, DispatcherPriority.ContextIdle);

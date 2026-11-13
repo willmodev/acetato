@@ -155,9 +155,19 @@
 
                 <Rectangle Style="{StaticResource ToolDivider}" />
 
-                <!-- Recortar (HU-23) / Ajustes (HU-21) -->
+                <!-- Recortar (HU-23), Pizarra (HU-35) y Ajustes (HU-21) -->
                 <Button Style="{StaticResource ToolButton}" Command="{Binding CaptureCommand}" ToolTip="{Binding CaptureHint}">
                     <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Capture}" />
+                </Button>
+                <!-- Pizarra (HU-35): no es una herramienta y nunca lleva el acento. El estado se lee en
+                     el icono: vacío, hoja blanca o hoja negra. La hoja y el contorno comparten límites
+                     (ver Icon.WhiteboardFill) y el mismo grosor de trazo, para que queden alineados. -->
+                <Button Style="{StaticResource ToolButton}" Command="{Binding ToggleWhiteboardCommand}" ToolTip="{Binding WhiteboardHint}">
+                    <Grid>
+                        <Path Style="{StaticResource ToolGlyph}" Stroke="Transparent"
+                              Fill="{Binding WhiteboardFill}" Data="{StaticResource Icon.WhiteboardFill}" />
+                        <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Whiteboard}" />
+                    </Grid>
                 </Button>
                 <Button Style="{StaticResource ToolButton}" Command="{Binding OpenSettingsCommand}" ToolTip="{Binding SettingsHint}">
                     <Path Style="{StaticResource ToolGlyph}" Data="{StaticResource Icon.Settings}" />

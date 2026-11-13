@@ -17,10 +17,11 @@ public sealed class OverlayBroadcasterTests
     private readonly IScreenClipLauncher _screenClip = Substitute.For<IScreenClipLauncher>();
     private readonly IOverlayCanvasProvider _provider = Substitute.For<IOverlayCanvasProvider>();
     private readonly IOverlayController _overlay = Substitute.For<IOverlayController>();
+    private readonly IWhiteboard _whiteboard = Substitute.For<IWhiteboard>();
     private readonly RecordingLogger<OverlayBroadcaster> _log = new();
 
     private OverlayBroadcaster CreateBroadcaster() =>
-        new(_provider, _cursor, _settings, new ScreenClipServices(_screenClip, _log), _overlay);
+        new(_provider, _cursor, _settings, new ScreenClipServices(_screenClip, _log, _whiteboard), _overlay);
 
     private static IOverlayCanvas Canvas(MonitorInfo monitor)
     {
@@ -175,6 +176,20 @@ public sealed class OverlayBroadcasterTests
     }
 
     [Fact]
+    public void LaunchScreenClip_keeps_the_whiteboard_on_while_it_leaves_drawing_mode()
+    {
+        _overlay.IsDrawingMode.Returns(true);
+
+        CreateBroadcaster().LaunchScreenClip();
+
+        Received.InOrder(() =>
+        {
+            _whiteboard.KeepThroughNextPointerMode();
+            _overlay.SetDrawingMode(false);
+        });
+    }
+
+    [Fact]
     public void LaunchScreenClip_in_pointer_mode_does_not_touch_the_mode()
     {
         _overlay.IsDrawingMode.Returns(false);
@@ -182,6 +197,7 @@ public sealed class OverlayBroadcasterTests
         CreateBroadcaster().LaunchScreenClip();
 
         _overlay.DidNotReceive().SetDrawingMode(Arg.Any<bool>());
+        _whiteboard.DidNotReceive().KeepThroughNextPointerMode();
         _screenClip.Received(1).Launch();
     }
 

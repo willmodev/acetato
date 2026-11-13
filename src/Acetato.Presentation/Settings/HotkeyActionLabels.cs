@@ -36,6 +36,7 @@ internal static class HotkeyActionLabels
         [HotkeyAction.ThicknessUp] = "Más grueso",
         [HotkeyAction.ThicknessDown] = "Más fino",
         [HotkeyAction.Capture] = "Recortar",
+        [HotkeyAction.CycleWhiteboard] = "Pizarra",
         [HotkeyAction.EnterPointerMode] = "Puntero",
         [HotkeyAction.DeleteSelection] = "Borrar selección",
     };

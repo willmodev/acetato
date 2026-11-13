@@ -136,7 +136,8 @@ public partial class App : System.Windows.Application
         var controller = services.GetRequiredService<IOverlayController>();
         var broadcaster = services.GetRequiredService<OverlayBroadcaster>();
         var toolbarLayout = services.GetRequiredService<IToolbarLayout>();
-        _router = new HotkeyActionRouter(controller, broadcaster, toolbarLayout, Dispatcher);
+        var whiteboard = services.GetRequiredService<IWhiteboard>();
+        _router = new HotkeyActionRouter(controller, broadcaster, toolbarLayout, whiteboard, Dispatcher);
 
         _hotkeys = services.GetRequiredService<IGlobalHotkeyService>();
         _hotkeys.ActionRequested += _router.Handle;
@@ -262,6 +263,9 @@ public partial class App : System.Windows.Application
         services.AddSingleton<IOverlaySurface>(sp => sp.GetRequiredService<MultiMonitorOverlaySurface>());
         services.AddSingleton<IOverlayCanvasProvider>(sp => sp.GetRequiredService<MultiMonitorOverlaySurface>());
         services.AddSingleton<OverlayBroadcaster>();
+        // La pizarra (HU-35): el mismo objeto como caso de uso y como puerto.
+        services.AddSingleton<WhiteboardController>();
+        services.AddSingleton<IWhiteboard>(sp => sp.GetRequiredService<WhiteboardController>());
         services.AddSingleton<IOverlayController, OverlayController>();
         services.AddSingleton<HotkeyCoordinator>();
         services.AddSingleton<IClipboardWriter, ClipboardWriter>();

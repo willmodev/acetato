@@ -54,16 +54,17 @@ public sealed class ToolbarWindowSmokeTests
         var settings = new DrawingSettings();
         var controller = Substitute.For<IOverlayController>();
         var dragHandler = Substitute.For<IWindowDragHandler>();
+        var whiteboard = Substitute.For<IWhiteboard>();
         var broadcaster = new OverlayBroadcaster(
             Substitute.For<IOverlayCanvasProvider>(),
             Substitute.For<ICursorPositionProvider>(),
             settings,
-            new ScreenClipServices(Substitute.For<IScreenClipLauncher>(), NullLogger<OverlayBroadcaster>.Instance),
+            new ScreenClipServices(Substitute.For<IScreenClipLauncher>(), NullLogger<OverlayBroadcaster>.Instance, whiteboard),
             controller);
         var chrome = new ToolbarChrome(dragHandler, new SettingsWindowLauncher(
             controller,
             new SettingsViewModelFactory(
-                coordinator, dragHandler, settings, Substitute.For<IDrawingPreferencesStore>(), TestAbout.Services())), shortcuts, new ToolbarLayout());
+                coordinator, dragHandler, settings, Substitute.For<IDrawingPreferencesStore>(), TestAbout.Services())), shortcuts, new ToolbarLayout(), whiteboard);
         using var viewModel = new ToolbarViewModel(broadcaster, settings, controller, chrome);
         var window = new ToolbarWindow();
         var content = (FrameworkElement)window.Content;

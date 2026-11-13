@@ -29,6 +29,7 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
     private readonly OverlayBroadcaster _broadcaster;
     private readonly SettingsWindowLauncher _settingsLauncher;
     private readonly IToolbarLayout _layout;
+    private readonly IWhiteboard _whiteboard;
 
     /// <summary>Pincel de la tinta activa, o el degradado de muestra (para el botón de color de la barra).</summary>
     [ObservableProperty]
@@ -46,6 +47,13 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private bool _isPointerMode;
 
+    /// <summary>
+    /// Relleno de la hoja en el icono de la pizarra (HU-35): transparente si está apagada,
+    /// <c>Board.White</c> si es blanca y <c>Board.Black</c> si es negra.
+    /// </summary>
+    [ObservableProperty]
+    private Brush _whiteboardFill = Brushes.Transparent;
+
     /// <summary>Indica si la barra está plegada a asa, separador y ojo (HU-25).</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CollapseHint), nameof(EyeGlyph))]
@@ -61,6 +69,7 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
         _broadcaster = broadcaster;
         _settingsLauncher = chrome.SettingsLauncher;
         _layout = chrome.Layout;
+        _whiteboard = chrome.Whiteboard;
         _settings = settings;
         _controller = controller;
         DragHandler = chrome.DragHandler;
@@ -77,13 +86,16 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
         UndoHint = shortcuts.Hint("Deshacer", HotkeyAction.Undo);
         ClearHint = shortcuts.Hint("Limpiar todo", HotkeyAction.Clear);
         CaptureHint = shortcuts.Hint("Recortar", HotkeyAction.Capture);
+        WhiteboardHint = shortcuts.Hint("Pizarra", HotkeyAction.CycleWhiteboard);
         SettingsHint = shortcuts.Hint("Ajustes");
         CloseHint = shortcuts.Hint("Cerrar", HotkeyAction.Toggle);
         _settings.Changed += OnSettingsChanged;
         _controller.StateChanged += OnOverlayStateChanged;
         _layout.Changed += OnLayoutChanged;
+        _whiteboard.Changed += OnWhiteboardChanged;
         SyncMode();
         SyncCollapsed();
+        SyncWhiteboard();
     }
 
     /// <summary>Inicia el arrastre nativo de la ventana desde el grip.</summary>
@@ -121,6 +133,9 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
 
     /// <summary>Tooltip de Recortar, con su atajo.</summary>
     public ShortcutHint CaptureHint { get; }
+
+    /// <summary>Tooltip de la Pizarra, con su atajo (HU-35).</summary>
+    public ShortcutHint WhiteboardHint { get; }
 
     /// <summary>Tooltip de Ajustes.</summary>
     public ShortcutHint SettingsHint { get; }
@@ -222,6 +237,26 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void Capture() => _broadcaster.LaunchScreenClip();
 
+    /// <summary>
+    /// Recorre la pizarra: apagada, blanca, negra (HU-35). Desde el modo puntero vuelve además al
+    /// modo dibujo, como las herramientas; si la pizarra ya estaba prendida (el recorte la deja así),
+    /// solo se vuelve a dibujar sobre ella sin cambiar su color.
+    /// </summary>
+    [RelayCommand]
+    private void ToggleWhiteboard()
+    {
+        if (!_controller.IsDrawingMode)
+        {
+            _controller.SetDrawingMode(true);
+            if (_whiteboard.Mode != WhiteboardMode.Off)
+            {
+                return;
+            }
+        }
+
+        _whiteboard.Cycle();
+    }
+
     /// <summary>Abre la ventana Ajustes (HU-21).</summary>
     [RelayCommand]
     private void OpenSettings() => _settingsLauncher.Open();
@@ -258,14 +293,25 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
     ];
 
     // Resuelve la geometría del icono desde los recursos (igual que las tintas).
-    private static Geometry Glyph(string key) =>
-        (Geometry)System.Windows.Application.Current.Resources[key];
+    private static Geometry Glyph(string key) => Resource<Geometry>(key);
+
+    private static T Resource<T>(string key) => (T)System.Windows.Application.Current.Resources[key];
 
     private void OnSettingsChanged(object? sender, EventArgs e) => SyncActiveState();
 
     private void OnOverlayStateChanged(object? sender, EventArgs e) => SyncMode();
 
     private void OnLayoutChanged(object? sender, EventArgs e) => SyncCollapsed();
+
+    private void OnWhiteboardChanged(object? sender, EventArgs e) => SyncWhiteboard();
+
+    // El icono de la pizarra enseña su hoja: sin relleno si está apagada, blanca o negra (HU-35).
+    private void SyncWhiteboard() => WhiteboardFill = _whiteboard.Mode switch
+    {
+        WhiteboardMode.White => Resource<Brush>("Board.White"),
+        WhiteboardMode.Black => Resource<Brush>("Board.Black"),
+        _ => Brushes.Transparent,
+    };
 
     // Refleja el modo de la capa; al pasar a puntero se cierran los popovers.
     private void SyncMode()
@@ -331,5 +377,6 @@ public sealed partial class ToolbarViewModel : ObservableObject, IDisposable
         _settings.Changed -= OnSettingsChanged;
         _controller.StateChanged -= OnOverlayStateChanged;
         _layout.Changed -= OnLayoutChanged;
+        _whiteboard.Changed -= OnWhiteboardChanged;
     }
 }

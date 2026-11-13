@@ -20,7 +20,7 @@
     <!--
       Dos hojas (HU-35): InkSurface es la hoja de la pantalla (fondo casi transparente) y
       BoardSurface la de la pizarra. Cada una tiene su propio OverlayViewModel (trazos e
-      historial) y comparten el estilo «Sheet», que lleva los enlaces y behaviors (ResizeEnabled no es
+      historial) y parten del estilo «Sheet», que lleva los enlaces y behaviors (ResizeEnabled no es
       una propiedad de dependencia: va directo en cada hoja):
       herramienta, color y grosor (HU-05/06/11), rueda del mouse, cursor de tinta (HU-26),
       degradado (HU-19), texto, mover y redimensionar (SPEC 11, HU-28) y láser (HU-15).
@@ -51,6 +51,36 @@
             <Setter Property="behaviors:SelectionResizeBehavior.Free" Value="{Binding FreeResize}" />
             <Setter Property="behaviors:LaserPointerBehavior.Tool" Value="{Binding ActiveTool}" />
         </Style>
+
+        <!--
+          Qué hoja se ve (HU-35): con la pizarra apagada, la de la pantalla; con la blanca o la negra,
+          la de la pizarra con su fondo Board.*. La hoja escondida queda Collapsed: no recibe el mouse
+          y conserva sus trazos. El modo lo lleva OverlaySheets, el contexto de la rejilla raíz.
+        -->
+        <Style x:Key="ScreenSheet" TargetType="InkCanvas" BasedOn="{StaticResource Sheet}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DataContext.Mode, RelativeSource={RelativeSource AncestorType=Grid}}" Value="White">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding DataContext.Mode, RelativeSource={RelativeSource AncestorType=Grid}}" Value="Black">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="BoardSheet" TargetType="InkCanvas" BasedOn="{StaticResource Sheet}">
+            <Setter Property="Visibility" Value="Collapsed" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DataContext.Mode, RelativeSource={RelativeSource AncestorType=Grid}}" Value="White">
+                    <Setter Property="Visibility" Value="Visible" />
+                    <Setter Property="Background" Value="{StaticResource Board.White}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding DataContext.Mode, RelativeSource={RelativeSource AncestorType=Grid}}" Value="Black">
+                    <Setter Property="Visibility" Value="Visible" />
+                    <Setter Property="Background" Value="{StaticResource Board.Black}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
 
     <!--
@@ -60,17 +90,16 @@
     -->
     <Grid>
         <InkCanvas x:Name="InkSurface"
-                   Style="{StaticResource Sheet}"
+                   Style="{StaticResource ScreenSheet}"
                    ResizeEnabled="True"
                    DataContext="{Binding Screen}"
                    Background="#01000000"
                    behaviors:FreehandStrokeBehavior.Layer="{Binding ElementName=LiveLayer}"
                    behaviors:LaserPointerBehavior.Layer="{Binding ElementName=LaserLayer}" />
         <InkCanvas x:Name="BoardSurface"
-                   Style="{StaticResource Sheet}"
+                   Style="{StaticResource BoardSheet}"
                    ResizeEnabled="True"
                    DataContext="{Binding Board}"
-                   Visibility="Collapsed"
                    behaviors:FreehandStrokeBehavior.Layer="{Binding ElementName=LiveLayer}"
                    behaviors:LaserPointerBehavior.Layer="{Binding ElementName=LaserLayer}" />
         <overlay:LiveStrokeLayer x:Name="LiveLayer" IsHitTestVisible="False" />

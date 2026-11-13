@@ -21,10 +21,12 @@ internal sealed class HotkeyActionRouter
         IOverlayController controller,
         OverlayBroadcaster broadcaster,
         IToolbarLayout toolbarLayout,
+        IWhiteboard whiteboard,
         Dispatcher dispatcher)
     {
         _dispatcher = dispatcher;
         _handlers = BuildHandlers(controller, broadcaster);
+        _handlers[HotkeyAction.CycleWhiteboard] = whiteboard.Cycle;
         _handlers[HotkeyAction.ToggleToolbarCollapsed] = () => ToggleToolbar(controller, toolbarLayout);
     }
 

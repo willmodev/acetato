@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Markup;
+using System.Windows.Media;
 using Acetato.Application.Drawing;
 using Acetato.Domain;
 using Acetato.Presentation.Behaviors;
@@ -60,6 +61,28 @@ public sealed class OverlayWindowSmokeTests
         });
 
         visibility.Should().Be((Visibility.Visible, Visibility.Collapsed));
+    }
+
+    [Fact]
+    public void The_whiteboard_mode_swaps_the_visible_sheet_and_paints_the_board_background()
+    {
+        var steps = WpfTestHost.Run(() =>
+        {
+            using var loaded = new Loaded();
+            return new[] { WhiteboardMode.White, WhiteboardMode.Black, WhiteboardMode.Off }
+                .Select(mode =>
+                {
+                    loaded.Sheets.Mode = mode;
+                    var background = (loaded.Window.BoardSurface.Background as SolidColorBrush)?.Color;
+                    return (mode, Screen: loaded.Window.InkSurface.Visibility, Board: loaded.Window.BoardSurface.Visibility, background);
+                })
+                .ToList();
+        });
+
+        steps[0].Should().Be((WhiteboardMode.White, Visibility.Collapsed, Visibility.Visible, Color.FromRgb(0xF4, 0xF1, 0xEA)));
+        steps[1].Should().Be((WhiteboardMode.Black, Visibility.Collapsed, Visibility.Visible, Color.FromRgb(0x1B, 0x1D, 0x1F)));
+        steps[2].Screen.Should().Be(Visibility.Visible);
+        steps[2].Board.Should().Be(Visibility.Collapsed);
     }
 
     [Fact]

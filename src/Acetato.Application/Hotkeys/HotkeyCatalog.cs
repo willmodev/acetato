@@ -45,6 +45,7 @@ public static class HotkeyCatalog
         Drawing(HotkeyAction.ThicknessUp, HotkeyKey.PageUp),
         Drawing(HotkeyAction.ThicknessDown, HotkeyKey.PageDown),
         Drawing(HotkeyAction.Capture, HotkeyKey.S),
+        Drawing(HotkeyAction.CycleWhiteboard, HotkeyKey.W),
     ];
 
     private static readonly Dictionary<HotkeyAction, HotkeyDefinition> ByAction =
