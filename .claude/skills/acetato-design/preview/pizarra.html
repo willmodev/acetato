@@ -1,0 +1,40 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="preview.css">
+<style>
+  .stage { justify-content: center; gap: var(--s-6); flex-wrap: wrap; }
+  .case { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .case-label { font-size: 11px; font-weight: 500; color: var(--fg-2); letter-spacing: .02em; white-space: nowrap; }
+  .sheet { position: relative; width: 300px; max-width: 100%; aspect-ratio: 16 / 10; border: 1px solid var(--stroke-1); border-radius: var(--r-swatch); overflow: hidden; }
+  .sheet--white { background: var(--board-white); }
+  .sheet--black { background: var(--board-black); }
+  .sheet svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="case">
+    <div class="sheet sheet--white"><svg viewBox="0 0 300 188" aria-label="Pizarra blanca con trazos de ejemplo">
+      <path d="M30 120 C 60 60, 110 50, 150 80 S 210 130, 240 70" fill="none" style="stroke:var(--ink-black)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M60 150 L 230 150" fill="none" style="stroke:var(--ink-blue)" stroke-width="4" stroke-linecap="round"/>
+      <path d="M214 140 L230 150 L214 160" fill="none" style="stroke:var(--ink-blue)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="40" y="45" font-size="22" font-weight="600" style="font-family:var(--font-ui);fill:var(--ink-red)">x = 3</text>
+    </svg></div>
+    <span class="case-label">Pizarra blanca · tinta negra</span>
+  </div>
+  <div class="case">
+    <div class="sheet sheet--black"><svg viewBox="0 0 300 188" aria-label="Pizarra negra con trazos de ejemplo">
+      <path d="M30 120 C 60 60, 110 50, 150 80 S 210 130, 240 70" fill="none" style="stroke:var(--ink-white)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M60 150 L 230 150" fill="none" style="stroke:var(--ink-green)" stroke-width="4" stroke-linecap="round"/>
+      <path d="M214 140 L230 150 L214 160" fill="none" style="stroke:var(--ink-green)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="40" y="45" font-size="22" font-weight="600" style="font-family:var(--font-ui);fill:var(--ink-yellow)">x = 3</text>
+    </svg></div>
+    <span class="case-label">Pizarra negra · tinta blanca</span>
+  </div>
+</div>
+</body>
+</html>

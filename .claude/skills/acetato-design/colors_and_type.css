@@ -87,6 +87,15 @@
   --ink-halo-light: rgba(255, 255, 255, 0.45);
 
   /* ----------------------------------------------------------------------
+     PIZARRA (HU-35) — third palette: the sheet behind the user's drawing.
+     Only ever the background of the whiteboard; never UI, never a stroke.
+     Bone white and near-black, not pure: pure white dazzles on projectors.
+     Defined in Tokens.xaml as Board.White / Board.Black.
+     ---------------------------------------------------------------------- */
+  --board-white: #F4F1EA;
+  --board-black: #1B1D1F;
+
+  /* ----------------------------------------------------------------------
      SHAPE — radii, elevation, spacing
      ---------------------------------------------------------------------- */
   --r-toolbar: 16px;   /* the floating bar           */
@@ -127,6 +136,8 @@
   /* Drawing scales (Domain: ThicknessScale, FontScale, LaserSession) */
   --thick-1: 3px; --thick-2: 5px; --thick-3: 8px; --thick-4: 12px; --thick-5: 18px;
   --annot-1: 16px; --annot-2: 22px; --annot-3: 30px; --annot-4: 42px; --annot-5: 60px; /* text size per thickness step, weight 600 */
+  --highlighter-factor: 3;    /* Resaltador (HU-34) paints 3 x the chosen thickness: 3px -> 9px, 18px -> 54px */
+  --highlighter-opacity: 50%; /* fixed, WPF's own highlighter; same ink twice does not darken */
   --laser-halo: 22px;      /* halo diameter following the pointer */
   --laser-life: 2000ms;    /* trail fades out linearly */
 
