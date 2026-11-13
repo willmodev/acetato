@@ -19,10 +19,17 @@ public interface IOverlayCanvas
     /// </summary>
     public nint Handle { get; }
 
-    /// <summary>Borra todos los trazos de este lienzo (HU-04).</summary>
+    /// <summary>
+    /// Muestra u oculta la pizarra de este monitor (HU-35). Con <see cref="WhiteboardMode.Off"/>
+    /// vuelve la hoja de la pantalla; con blanca o negra se ve la hoja de la pizarra, que
+    /// conserva lo dibujado entre una y otra vez.
+    /// </summary>
+    public void ShowWhiteboard(WhiteboardMode mode);
+
+    /// <summary>Borra todos los trazos de la hoja visible de este lienzo (HU-04).</summary>
     public void Clear();
 
-    /// <summary>Deshace la última acción de este lienzo (HU-07, SPEC 11).</summary>
+    /// <summary>Deshace la última acción de la hoja visible de este lienzo (HU-07, SPEC 11).</summary>
     public void Undo();
 
     /// <summary>Borra lo seleccionado con la herramienta Mover; sin selección no hace nada (SPEC 11).</summary>

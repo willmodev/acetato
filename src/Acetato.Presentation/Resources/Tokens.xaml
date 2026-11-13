@@ -99,6 +99,16 @@
     <SolidColorBrush x:Key="Ink.Halo.Dark" Color="#59000000" />
     <SolidColorBrush x:Key="Ink.Halo.Light" Color="#73FFFFFF" />
 
+    <!--
+      PIZARRA (HU-35): tercera paleta, el fondo de la hoja de la pizarra. Solo se pinta como
+      fondo de la hoja: nunca en la UI (Chrome.*) ni en un trazo (Ink.*). Blanco hueso y gris
+      casi negro, sin llegar a los puros: el blanco puro encandila en proyectores.
+    -->
+    <Color x:Key="Board.White.Color">#FFF4F1EA</Color>
+    <Color x:Key="Board.Black.Color">#FF1B1D1F</Color>
+    <SolidColorBrush x:Key="Board.White" Color="{StaticResource Board.White.Color}" />
+    <SolidColorBrush x:Key="Board.Black" Color="{StaticResource Board.Black.Color}" />
+
     <!-- ===================== FORMA — radios ============================== -->
     <CornerRadius x:Key="Radius.Toolbar">16</CornerRadius>
     <CornerRadius x:Key="Radius.Button">10</CornerRadius>

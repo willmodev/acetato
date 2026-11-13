@@ -179,7 +179,7 @@ public sealed class DrawingSettingsTests
 
         settings.CycleTool();
 
-        settings.SelectedTool.Should().Be(ToolKind.Laser);
+        settings.SelectedTool.Should().Be(ToolKind.Highlighter);
     }
 
     [Fact]

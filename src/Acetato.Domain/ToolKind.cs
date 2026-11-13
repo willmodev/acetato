@@ -8,6 +8,7 @@ public enum ToolKind
 {
     Move,
     Pencil,
+    Highlighter,
     Laser,
     Eraser,
     Arrow,

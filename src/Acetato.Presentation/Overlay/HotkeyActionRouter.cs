@@ -21,10 +21,12 @@ internal sealed class HotkeyActionRouter
         IOverlayController controller,
         OverlayBroadcaster broadcaster,
         IToolbarLayout toolbarLayout,
+        IWhiteboard whiteboard,
         Dispatcher dispatcher)
     {
         _dispatcher = dispatcher;
         _handlers = BuildHandlers(controller, broadcaster);
+        _handlers[HotkeyAction.CycleWhiteboard] = whiteboard.Cycle;
         _handlers[HotkeyAction.ToggleToolbarCollapsed] = () => ToggleToolbar(controller, toolbarLayout);
     }
 
@@ -56,6 +58,7 @@ internal sealed class HotkeyActionRouter
         [HotkeyAction.SelectLaserTool] = () => broadcaster.SelectTool(ToolKind.Laser),
         [HotkeyAction.SelectMoveTool] = () => broadcaster.SelectTool(ToolKind.Move),
         [HotkeyAction.SelectPencilTool] = () => broadcaster.SelectTool(ToolKind.Pencil),
+        [HotkeyAction.SelectHighlighterTool] = () => broadcaster.SelectTool(ToolKind.Highlighter),
         [HotkeyAction.SelectEraserTool] = () => broadcaster.SelectTool(ToolKind.Eraser),
         [HotkeyAction.SelectLineTool] = () => broadcaster.SelectTool(ToolKind.Line),
         [HotkeyAction.SelectArrowTool] = () => broadcaster.SelectTool(ToolKind.Arrow),

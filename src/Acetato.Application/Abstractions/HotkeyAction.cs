@@ -50,6 +50,9 @@ public enum HotkeyAction
     /// </summary>
     Capture,
 
+    /// <summary>Recorrer la pizarra: apagada, blanca, negra (HU-35).</summary>
+    CycleWhiteboard,
+
     /// <summary>Seleccionar la herramienta Texto (HU-13).</summary>
     SelectTextTool,
 
@@ -61,6 +64,9 @@ public enum HotkeyAction
 
     /// <summary>Seleccionar la herramienta Lápiz (HU-22).</summary>
     SelectPencilTool,
+
+    /// <summary>Seleccionar la herramienta Resaltador (HU-34).</summary>
+    SelectHighlighterTool,
 
     /// <summary>Seleccionar la herramienta Borrador (HU-22).</summary>
     SelectEraserTool,

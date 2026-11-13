@@ -36,9 +36,9 @@ system is published as the private Claude artifact *Acetato Design System*.
 
 ---
 
-## The two palettes
-Acetato deliberately keeps **two separate color worlds** so the UI never gets
-confused with the user's drawing:
+## The three palettes
+Acetato deliberately keeps **three separate color worlds** so the UI, the
+user's drawing and the whiteboard sheet never get confused:
 
 1. **Chrome** — the tool's own UI. Dark translucent neutrals **+ one accent**
    (teal). The accent marks *only* what is selected.
@@ -46,6 +46,10 @@ confused with the user's drawing:
    black**), six **neon gradient pairs** for Gradient mode and one fixed
    **neighbor per solid** (`--ink-*-end`) for *Tintas degradadas*.
    Saturated and legible over any backdrop, light or dark.
+3. **Pizarra (HU-35)** — two sheet backgrounds, `--board-white` (bone white) and
+   `--board-black` (near-black). Painted only as the whiteboard's background:
+   never in the UI, never in a stroke. The Pizarra button never takes the accent
+   (its state shows in the icon).
 
 Full token values live in [`colors_and_type.css`](./colors_and_type.css), each
 with its XAML key.
@@ -58,8 +62,8 @@ There is almost no copy in Acetato — that is the point. Text appears only in
 **tooltips and the Settings window.** Rules:
 
 - **Language: Spanish (es-ES).** Toolbar labels, in bar order: *Mover barra,
-  Ocultar barra (Mostrar barra when collapsed), Puntero, Mover, Lápiz, Láser, Borrador, Línea, Flecha, Rectángulo, Elipse,
-  Texto, Color, Grosor, Deshacer, Limpiar todo, Recortar, Ajustes, Cerrar.*
+  Ocultar barra (Mostrar barra when collapsed), Puntero, Mover, Lápiz, Resaltador, Láser, Borrador, Línea, Flecha, Rectángulo, Elipse,
+  Texto, Color, Grosor, Deshacer, Limpiar todo, Recortar, Pizarra, Ajustes, Cerrar.*
 - **Voice: none.** The product does not "speak". No first or second person, no
   marketing voice, no encouragement. Labels *name* a thing; they never narrate.
 - **One or two words, max.** A tooltip is a noun (*Lápiz*) or a short verb
@@ -258,7 +262,8 @@ saves at once; there is no Save button.
   *Estira según el tirador. Apagada, crece parejo*. Off by default; decides how
   Mover's handles resize (see Move below). Saved next to *Tintas degradadas*.
 - **Remembered between sessions (HU-29):** last ink, Gradient mode, thickness,
-  tool (whichever it was), collapsed bar and the bar's dragged spot. Saved in
+  tool (whichever it was, Resaltador included), collapsed bar and the bar's dragged spot. The
+  whiteboard always starts off, and neither it nor its drawings are remembered. Saved in
   the `session` section of `settings.json`; *Restaurar todo* leaves it alone.
   Drawings are not remembered.
 - **Thickness** steps `--thick-1…5` (3, 5, 8, 12, 18px), starting at 3.
@@ -272,8 +277,31 @@ saves at once; there is no Save button.
 - **Text:** click to place; multiline (Enter = new line), Esc or click outside
   confirms. Size from `--annot-*`, weight 600, last solid ink; empty placeholder
   *Texto* in `--fg-3`, no border.
+- **Resaltador (HU-34):** tool right after Lápiz, `Ctrl+U`. Smoothed freehand like
+  the pencil, in the chosen ink at **50 %** (`--highlighter-opacity`, fixed) and
+  **3 x the thickness** (`--highlighter-factor`: 3px paints 9px, 18px paints 54px).
+  It always sits **under** everything drawn with the other tools, and going over
+  it again with the same ink does not darken it; two different inks mix where
+  they cross. In Gradient mode it uses the last solid ink. Its ink cursor shows
+  the width and the translucent color.
 - **Laser:** dot with a 22px halo and a trail that fades in 2 s; last solid ink;
   leaves nothing behind.
+- **Pizarra (HU-35):** a white or black sheet that covers one monitor so you can
+  explain something apart, with the screen hidden underneath. The button sits
+  between Recortar and Ajustes; `Ctrl+W` does the same. Each click goes
+  off → white → black → off. **It is not a tool and never takes the accent:** its state
+  reads in the icon (empty, filled with `--board-white`, filled with `--board-black`).
+  It shows only on the cursor's monitor when turned on and stays there. It has its
+  **own sheet**: what is drawn on the screen hides and comes back intact when it
+  turns off; what is drawn on the board is still there when it turns on again.
+  Each monitor has its own sheet; white and black share it. Undo, Eraser, Mover and
+  Limpiar todo act only on the visible sheet. **Ink contrast:** if the active ink matches
+  the background it flips (white on white board → black; black on black board → white);
+  Gradient mode is left alone. Light inks such as yellow read poorly on the white board:
+  it is the chosen ink and is not corrected. It turns off on leaving drawing mode
+  (`Esc`, Puntero) and when hiding with `Ctrl+Alt+D`; it always starts off. **Recortar**
+  goes to pointer mode but leaves the whiteboard on so the clip captures it. From pointer
+  mode the Pizarra button returns to drawing (and turns the board on if it was off).
 - **Eraser** removes whole strokes. **Clear** (`Ctrl+Retroceso`) too, and it
   cannot be undone.
 - **Move (HU-14):** first tool of the bar, hand icon (`hand`), `Ctrl+M`. Press
@@ -295,7 +323,7 @@ saves at once; there is no Save button.
   (the stroke returns to its layer), moving, resizing, or deleting with `Supr`. **No
   Redo**: it was dropped (HU-17).
 - `--ink-halo-*` are defined but the app does not paint halos yet.
-- **Ink cursor (HU-26).** With Lápiz, Línea, Flecha or Rectángulo the pointer is
+- **Ink cursor (HU-26).** With Lápiz, Resaltador, Línea, Flecha or Rectángulo the pointer is
   a filled circle: the active ink (in gradient mode, the pair of the next stroke;
   with *Tintas degradadas*, the ink and its neighbor; diagonal start → end), as wide as the thickness with a 6 DIP minimum, and the
   stroke starts at its center. Two 1px rings keep it visible on any background:
@@ -326,6 +354,7 @@ saves at once; there is no Save button.
   | Mover | `Icon.Move` | `hand` |
   | Mover, cursor while dragging | `Icon.Grab` | `grab` |
   | Lápiz | `Icon.Pencil` | `pencil` |
+  | Resaltador | `Icon.Highlighter` | `highlighter` |
   | Láser | `Icon.Laser` | `locate` |
   | Borrador | `Icon.Eraser` | `eraser` |
   | Línea | `Icon.Line` | `minus` |
@@ -336,12 +365,18 @@ saves at once; there is no Save button.
   | Deshacer | `Icon.Undo` | `undo-2` |
   | Limpiar todo | `Icon.Clear` | `trash-2` |
   | Recortar | `Icon.Capture` | `camera` |
+  | Pizarra | `Icon.Whiteboard` (+ `Icon.WhiteboardFill`) | `presentation` |
   | Ajustes | `Icon.Settings` | `settings-2` |
   | Cerrar, Quitar | `Icon.Close` | `x` |
   | Restaurar | `Icon.Reset` | `rotate-ccw` |
 
-- **Reserved** (SVGs ready, no feature yet — keep them off the bar): `highlighter`,
-  `palette`, `pin`, `pipette`. `circle` became Elipse (HU-16); `redo-2` was
+- `Icon.Whiteboard` (outline): `M2 3h20 M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3 M7 21l5-5 5 5`.
+  `Icon.WhiteboardFill` (the sheet, painted `Board.White` or `Board.Black` by state,
+  under the outline): `M3 3h18v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z M2 3H22 M7 21H17`. The last two
+  lines have no area and paint nothing: they give this geometry the same bounds as the outline,
+  and the `Path` carries the same (transparent) stroke thickness, so both scale alike and line up.
+- **Reserved** (SVGs ready, no feature yet — keep them off the bar): `palette`,
+  `pin`, `pipette`. `highlighter` became Resaltador (HU-34). `circle` became Elipse (HU-16); `redo-2` was
   removed, Redo was dropped (HU-17).
 - **Color** and **Grosor** are not icons: Color shows the active ink (its pair
   with *Tintas degradadas*, or the gradient sample) as an 18px circle with a `--highlight` ring; Grosor is a
@@ -354,7 +389,7 @@ saves at once; there is no Save button.
 
 Root files:
 - [`README.md`](./README.md) — this file.
-- [`colors_and_type.css`](./colors_and_type.css) — all design tokens (Chrome + Tintas, type, spacing, shape, elevation, drawing scales), mirrored from `Tokens.xaml`.
+- [`colors_and_type.css`](./colors_and_type.css) — all design tokens (Chrome + Tintas + Pizarra, type, spacing, shape, elevation, drawing scales), mirrored from `Tokens.xaml`.
 - [`SKILL.md`](./SKILL.md) — entry point when used as an Agent Skill.
 - `preview/` — the Design System cards (colors, type, spacing, components, brand) + shared `preview.css` / `toolbar.css`.
 - `assets/` — logo, isotype and the Lucide SVGs.

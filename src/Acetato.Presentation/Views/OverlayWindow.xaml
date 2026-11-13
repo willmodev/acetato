@@ -15,55 +15,92 @@
     <!--
       Capa de dibujo a pantalla completa (HU-03). El InkCanvas captura y renderiza
       los trazos a mano alzada cuando la ventana NO es click-through (modo dibujo,
-      HU-02). Fondo transparente para superponerse a cualquier app. La tinta usa
-      el token Ink.Red (paleta de Tintas); el toolbar flotante llega en HU-10.
+      HU-02). Fondo transparente para superponerse a cualquier app.
     -->
     <!--
-      Fondo con alfa MÍNIMO no cero (#01 ≈ 0.4 %, imperceptible). En una ventana
-      layered (AllowsTransparency), Windows deja pasar los clics por los píxeles
-      con alfa 0; un alfa > 0 hace que el InkCanvas reciba el mouse y pueda
+      Dos hojas (HU-35): InkSurface es la hoja de la pantalla (fondo casi transparente) y
+      BoardSurface la de la pizarra. Cada una tiene su propio OverlayViewModel (trazos e
+      historial) y parten del estilo «Sheet», que lleva los enlaces y behaviors (ResizeEnabled no es
+      una propiedad de dependencia: va directo en cada hoja):
+      herramienta, color y grosor (HU-05/06/11), rueda del mouse, cursor de tinta (HU-26),
+      degradado (HU-19), texto, mover y redimensionar (SPEC 11, HU-28) y láser (HU-15).
+      El DataContext de la ventana es OverlaySheets; cada hoja toma el suyo.
+    -->
+    <!--
+      Fondo de la hoja de la pantalla con alfa MÍNIMO no cero (#01 ≈ 0.4 %, imperceptible).
+      En una ventana layered (AllowsTransparency), Windows deja pasar los clics por los
+      píxeles con alfa 0; un alfa > 0 hace que el InkCanvas reciba el mouse y pueda
       dibujar. El click-through del modo normal lo gobierna WS_EX_TRANSPARENT.
     -->
+    <Window.Resources>
+        <Style x:Key="Sheet" TargetType="InkCanvas">
+            <Setter Property="EditingMode" Value="{Binding EditingMode}" />
+            <Setter Property="Strokes" Value="{Binding Strokes}" />
+            <Setter Property="DefaultDrawingAttributes" Value="{Binding ActiveAttributes}" />
+            <Setter Property="behaviors:ThicknessWheelBehavior.IncreaseCommand" Value="{Binding IncreaseThicknessCommand}" />
+            <Setter Property="behaviors:ThicknessWheelBehavior.DecreaseCommand" Value="{Binding DecreaseThicknessCommand}" />
+            <Setter Property="behaviors:ShapeDrawingBehavior.Tool" Value="{Binding ActiveTool}" />
+            <Setter Property="behaviors:FreehandStrokeBehavior.Tool" Value="{Binding ActiveTool}" />
+            <Setter Property="behaviors:ToolCursorBehavior.Tool" Value="{Binding ActiveTool}" />
+            <Setter Property="behaviors:ToolCursorBehavior.Tip" Value="{Binding CursorTip}" />
+            <Setter Property="behaviors:InkGradient.Pair" Value="{Binding ActiveGradient}" />
+            <Setter Property="behaviors:InkGradient.UsedCommand" Value="{Binding GradientUsedCommand}" />
+            <Setter Property="behaviors:TextAnnotationBehavior.Tool" Value="{Binding ActiveTool}" />
+            <Setter Property="behaviors:MoveToolBehavior.Tool" Value="{Binding ActiveTool}" />
+            <Setter Property="behaviors:MoveToolBehavior.KeyState" Value="{Binding KeyState}" />
+            <Setter Property="behaviors:SelectionResizeBehavior.Free" Value="{Binding FreeResize}" />
+            <Setter Property="behaviors:LaserPointerBehavior.Tool" Value="{Binding ActiveTool}" />
+        </Style>
+
+        <!--
+          Qué hoja se ve (HU-35): con la pizarra apagada, la de la pantalla; con la blanca o la negra,
+          la de la pizarra con su fondo Board.*. La hoja escondida queda Collapsed: no recibe el mouse
+          y conserva sus trazos. El modo lo lleva OverlaySheets, el contexto de la rejilla raíz.
+        -->
+        <Style x:Key="ScreenSheet" TargetType="InkCanvas" BasedOn="{StaticResource Sheet}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DataContext.Mode, RelativeSource={RelativeSource AncestorType=Grid}}" Value="White">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding DataContext.Mode, RelativeSource={RelativeSource AncestorType=Grid}}" Value="Black">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="BoardSheet" TargetType="InkCanvas" BasedOn="{StaticResource Sheet}">
+            <Setter Property="Visibility" Value="Collapsed" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DataContext.Mode, RelativeSource={RelativeSource AncestorType=Grid}}" Value="White">
+                    <Setter Property="Visibility" Value="Visible" />
+                    <Setter Property="Background" Value="{StaticResource Board.White}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding DataContext.Mode, RelativeSource={RelativeSource AncestorType=Grid}}" Value="Black">
+                    <Setter Property="Visibility" Value="Visible" />
+                    <Setter Property="Background" Value="{StaticResource Board.Black}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
     <!--
-      Color y grosor del próximo trazo vienen del ViewModel (HU-05/06). La rueda
-      del mouse ajusta el grosor vía un comportamiento adjunto (sin code-behind).
-    -->
-    <!--
-      EditingMode según la herramienta (HU-11): lápiz = tinta libre, borrador =
-      borrar trazos, formas = ninguno (las dibuja ShapeDrawingBehavior creando un
-      Stroke por forma, así reutilizan undo/limpiar/color/grosor).
-    -->
-    <!--
-      Grid de dos capas: el InkCanvas dibuja/captura los trazos; encima, LaserLayer
-      es una capa propia para el puntero láser (HU-15), efímera y fuera del historial.
-      La capa es IsHitTestVisible=False: el mouse llega al InkCanvas, donde el
-      LaserPointerBehavior lo escucha y dibuja el punto/estela en la capa.
-    -->
-    <!--
-      LiveLayer (HU-20) pinta el trazo libre en curso (lápiz y flecha, con punta y
-      degradado en vivo). Tampoco recibe el mouse; el trazo entra al InkCanvas al soltar.
+      Las capas del trazo en vivo (LiveLayer, HU-20) y del láser (LaserLayer, HU-15) quedan
+      encima de las dos hojas y sirven a la que se ve; no reciben el mouse. Sus enlaces por
+      nombre van directo en cada InkCanvas: ElementName dentro de un estilo no es fiable.
     -->
     <Grid>
         <InkCanvas x:Name="InkSurface"
-                   Background="#01000000"
-                   EditingMode="{Binding EditingMode}"
+                   Style="{StaticResource ScreenSheet}"
                    ResizeEnabled="True"
-                   Strokes="{Binding Strokes}"
-                   DefaultDrawingAttributes="{Binding ActiveAttributes}"
-                   behaviors:ThicknessWheelBehavior.IncreaseCommand="{Binding IncreaseThicknessCommand}"
-                   behaviors:ThicknessWheelBehavior.DecreaseCommand="{Binding DecreaseThicknessCommand}"
-                   behaviors:ShapeDrawingBehavior.Tool="{Binding ActiveTool}"
-                   behaviors:FreehandStrokeBehavior.Tool="{Binding ActiveTool}"
+                   DataContext="{Binding Screen}"
+                   Background="#01000000"
                    behaviors:FreehandStrokeBehavior.Layer="{Binding ElementName=LiveLayer}"
-                   behaviors:ToolCursorBehavior.Tool="{Binding ActiveTool}"
-                   behaviors:ToolCursorBehavior.Tip="{Binding CursorTip}"
-                   behaviors:InkGradient.Pair="{Binding ActiveGradient}"
-                   behaviors:InkGradient.UsedCommand="{Binding GradientUsedCommand}"
-                   behaviors:TextAnnotationBehavior.Tool="{Binding ActiveTool}"
-                   behaviors:MoveToolBehavior.Tool="{Binding ActiveTool}"
-                   behaviors:MoveToolBehavior.KeyState="{Binding KeyState}"
-                   behaviors:SelectionResizeBehavior.Free="{Binding FreeResize}"
-                   behaviors:LaserPointerBehavior.Tool="{Binding ActiveTool}"
+                   behaviors:LaserPointerBehavior.Layer="{Binding ElementName=LaserLayer}" />
+        <InkCanvas x:Name="BoardSurface"
+                   Style="{StaticResource BoardSheet}"
+                   ResizeEnabled="True"
+                   DataContext="{Binding Board}"
+                   behaviors:FreehandStrokeBehavior.Layer="{Binding ElementName=LiveLayer}"
                    behaviors:LaserPointerBehavior.Layer="{Binding ElementName=LaserLayer}" />
         <overlay:LiveStrokeLayer x:Name="LiveLayer" IsHitTestVisible="False" />
         <Canvas x:Name="LaserLayer" IsHitTestVisible="False" />

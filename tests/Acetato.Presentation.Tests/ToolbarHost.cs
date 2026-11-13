@@ -1,6 +1,7 @@
 using Acetato.Application.Abstractions;
 using Acetato.Application.Drawing;
 using Acetato.Application.Overlay;
+using Acetato.Domain;
 using Acetato.Presentation.Settings;
 using Acetato.Presentation.ViewModels;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -28,19 +29,26 @@ internal static class ToolbarHost
         controller.Toggle(); // oculta → visible y en modo dibujo
         surface.IsVisible.Returns(true);
         var dragHandler = Substitute.For<IWindowDragHandler>();
+        var canvas = Substitute.For<IOverlayCanvas>();
+        canvas.Monitor.Returns(new MonitorInfo(0, 0, 1920, 1080, IsPrimary: true));
+        var canvases = Substitute.For<IOverlayCanvasProvider>();
+        canvases.Canvases.Returns([canvas]);
+        var cursor = Substitute.For<ICursorPositionProvider>();
+        cursor.GetCursorPosition().Returns((10, 10));
+        using var whiteboard = new WhiteboardController(canvases, cursor, settings, controller);
         var broadcaster = new OverlayBroadcaster(
-            Substitute.For<IOverlayCanvasProvider>(),
-            Substitute.For<ICursorPositionProvider>(),
+            canvases,
+            cursor,
             settings,
-            new ScreenClipServices(Substitute.For<IScreenClipLauncher>(), NullLogger<OverlayBroadcaster>.Instance),
+            new ScreenClipServices(Substitute.For<IScreenClipLauncher>(), NullLogger<OverlayBroadcaster>.Instance, whiteboard),
             controller);
         var layout = new ToolbarLayout();
         var launcher = new SettingsWindowLauncher(
             controller,
             new SettingsViewModelFactory(
                 coordinator, dragHandler, settings, Substitute.For<IDrawingPreferencesStore>(), TestAbout.Services()));
-        var chrome = new ToolbarChrome(dragHandler, launcher, shortcuts, layout);
+        var chrome = new ToolbarChrome(dragHandler, launcher, shortcuts, layout, whiteboard);
         using var viewModel = new ToolbarViewModel(broadcaster, settings, controller, chrome);
-        return work(new ToolbarContext(settings, controller, layout, viewModel));
+        return work(new ToolbarContext(settings, controller, layout, viewModel, whiteboard, canvas));
     }
 }

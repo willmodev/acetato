@@ -2,7 +2,7 @@ namespace Acetato.Domain;
 
 /// <summary>
 /// Anillo de herramientas dibujables (HU-11) para ciclar con un solo atajo
-/// (Ctrl+Espacio por defecto): lápiz → láser → línea → flecha → rectángulo → elipse → texto →
+/// (Ctrl+Espacio por defecto): lápiz → resaltador → láser → línea → flecha → rectángulo → elipse → texto →
 /// borrador → lápiz. Tipo puro (sin WPF), testeable.
 /// </summary>
 public static class ToolRing
@@ -10,7 +10,7 @@ public static class ToolRing
     /// <summary>Orden del ciclo de herramientas.</summary>
     public static IReadOnlyList<ToolKind> Order { get; } =
     [
-        ToolKind.Pencil, ToolKind.Laser, ToolKind.Line, ToolKind.Arrow,
+        ToolKind.Pencil, ToolKind.Highlighter, ToolKind.Laser, ToolKind.Line, ToolKind.Arrow,
         ToolKind.Rectangle, ToolKind.Ellipse, ToolKind.Text, ToolKind.Eraser,
     ];
 

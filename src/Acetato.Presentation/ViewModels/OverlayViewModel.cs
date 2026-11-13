@@ -57,7 +57,9 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
     /// Tinta, par del próximo trazo y grosor que pinta el cursor de tinta (HU-26).
     /// Enlazado a <c>ToolCursorBehavior.Tip</c>.
     /// </summary>
-    public InkCursorTip CursorTip => new(SolidInkColor, ActiveGradient, _settings.Thickness);
+    public InkCursorTip CursorTip => IsHighlighter
+        ? new(SolidInkColor, Gradient: null, HighlighterWidth.From(_settings.Thickness), Highlighter: true)
+        : new(SolidInkColor, ActiveGradient, _settings.Thickness);
 
     /// <summary>
     /// Estado de Ctrl para mover con Ctrl desde cualquier herramienta (SPEC 11). Enlazado a
@@ -140,12 +142,17 @@ public sealed partial class OverlayViewModel : ObservableObject, IDisposable
         SyncTool();
     }
 
+    private bool IsHighlighter => _settings.SelectedTool == ToolKind.Highlighter;
+
     private void SyncAttributes()
     {
         // Siempre la tinta sólida: el degradado lo pinta StyledStroke con su par (HU-20).
         ActiveAttributes.Color = SolidInkColor;
-        ActiveAttributes.Width = _settings.Thickness;
-        ActiveAttributes.Height = _settings.Thickness;
+        // El resaltador (HU-34) es translúcido y tres veces más ancho que el grosor elegido.
+        ActiveAttributes.IsHighlighter = IsHighlighter;
+        double width = IsHighlighter ? HighlighterWidth.From(_settings.Thickness) : _settings.Thickness;
+        ActiveAttributes.Width = width;
+        ActiveAttributes.Height = width;
     }
 
     private void SyncTool()

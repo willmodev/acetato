@@ -25,6 +25,7 @@ internal static class HotkeyActionLabels
         [HotkeyAction.CycleTool] = "Siguiente herramienta",
         [HotkeyAction.SelectMoveTool] = "Mover",
         [HotkeyAction.SelectPencilTool] = "Lápiz",
+        [HotkeyAction.SelectHighlighterTool] = "Resaltador",
         [HotkeyAction.SelectLaserTool] = "Láser",
         [HotkeyAction.SelectEraserTool] = "Borrador",
         [HotkeyAction.SelectLineTool] = "Línea",
@@ -35,6 +36,7 @@ internal static class HotkeyActionLabels
         [HotkeyAction.ThicknessUp] = "Más grueso",
         [HotkeyAction.ThicknessDown] = "Más fino",
         [HotkeyAction.Capture] = "Recortar",
+        [HotkeyAction.CycleWhiteboard] = "Pizarra",
         [HotkeyAction.EnterPointerMode] = "Puntero",
         [HotkeyAction.DeleteSelection] = "Borrar selección",
     };

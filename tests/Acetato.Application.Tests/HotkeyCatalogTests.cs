@@ -48,7 +48,7 @@ public sealed class HotkeyCatalogTests
     }
 
     [Fact]
-    public void Defaults_are_the_short_tables_of_HU_21_HU_22_and_HU_25()
+    public void Defaults_are_the_short_tables_of_HU_21_HU_22_HU_25_HU_34_and_HU_35()
     {
         HotkeyCatalog.All.Select(definition => (definition.Action, definition.Default.ToString()))
             .Should().Equal(
@@ -67,6 +67,7 @@ public sealed class HotkeyCatalogTests
                 (HotkeyAction.CycleTool, "Ctrl+Space"),
                 (HotkeyAction.SelectMoveTool, "Ctrl+M"),
                 (HotkeyAction.SelectPencilTool, "Ctrl+P"),
+                (HotkeyAction.SelectHighlighterTool, "Ctrl+U"),
                 (HotkeyAction.SelectLaserTool, "Ctrl+L"),
                 (HotkeyAction.SelectEraserTool, "Ctrl+B"),
                 (HotkeyAction.SelectLineTool, "Ctrl+I"),
@@ -76,12 +77,14 @@ public sealed class HotkeyCatalogTests
                 (HotkeyAction.SelectTextTool, "Ctrl+T"),
                 (HotkeyAction.ThicknessUp, "Ctrl+PageUp"),
                 (HotkeyAction.ThicknessDown, "Ctrl+PageDown"),
-                (HotkeyAction.Capture, "Ctrl+S"));
+                (HotkeyAction.Capture, "Ctrl+S"),
+                (HotkeyAction.CycleWhiteboard, "Ctrl+W"));
     }
 
     [Theory]
     [InlineData(HotkeyAction.SelectMoveTool)]
     [InlineData(HotkeyAction.SelectPencilTool)]
+    [InlineData(HotkeyAction.SelectHighlighterTool)]
     [InlineData(HotkeyAction.SelectEraserTool)]
     [InlineData(HotkeyAction.SelectLineTool)]
     [InlineData(HotkeyAction.SelectArrowTool)]
@@ -89,6 +92,7 @@ public sealed class HotkeyCatalogTests
     [InlineData(HotkeyAction.SelectEllipseTool)]
     [InlineData(HotkeyAction.ThicknessUp)]
     [InlineData(HotkeyAction.ThicknessDown)]
+    [InlineData(HotkeyAction.CycleWhiteboard)]
     public void The_actions_of_HU_22_are_only_active_while_drawing(HotkeyAction action)
     {
         HotkeyCatalog.Of(action).Scope.Should().Be(HotkeyScope.DrawingMode);

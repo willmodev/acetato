@@ -9,7 +9,7 @@ namespace Acetato.Presentation.Behaviors;
 
 /// <summary>
 /// Cursor del InkCanvas según la herramienta, en UN solo lugar (HU-20): círculo de
-/// tinta para las que dibujan (lápiz, flecha, línea, rectángulo; HU-26), I-beam para
+/// tinta para las que dibujan (lápiz, resaltador, flecha, línea, rectángulo; HU-26), I-beam para
 /// Texto (HU-13), oculto con Láser (solo se ve el halo, HU-15) y el del propio
 /// InkCanvas para el resto (borrador). Antes cada behavior fijaba su cursor y se
 /// pisaban entre sí según el orden de enlace. ForceCursor es necesario porque el
@@ -22,7 +22,7 @@ public static class ToolCursorBehavior
     // Herramientas que pintan tinta: su cursor es el círculo de tinta (HU-26).
     private static readonly HashSet<ToolKind> InkTools =
     [
-        ToolKind.Pencil, ToolKind.Arrow, ToolKind.Line, ToolKind.Rectangle, ToolKind.Ellipse,
+        ToolKind.Pencil, ToolKind.Highlighter, ToolKind.Arrow, ToolKind.Line, ToolKind.Rectangle, ToolKind.Ellipse,
     ];
 
     /// <summary>Herramienta activa (enlazada al ViewModel del overlay).</summary>

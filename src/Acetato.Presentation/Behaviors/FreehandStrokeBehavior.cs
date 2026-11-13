@@ -9,7 +9,7 @@ namespace Acetato.Presentation.Behaviors;
 
 /// <summary>
 /// Comportamiento adjunto del trazo a mano alzada (HU-19/HU-20) sin lógica en el
-/// code-behind. Lápiz y flecha no usan el trazado nativo del InkCanvas: este behavior
+/// code-behind. Lápiz, resaltador (HU-34) y flecha no usan el trazado nativo del InkCanvas: este behavior
 /// captura el mouse, acumula los puntos en una <see cref="FreehandSession"/> y pinta el
 /// trazo en curso en la <see cref="LiveStrokeLayer"/> con su aspecto final (degradado y
 /// punta de flecha incluidos). Al soltar —o si se pierde el mouse a mitad del trazo— el
@@ -97,7 +97,7 @@ public static class FreehandStrokeBehavior
     }
 
     // Herramientas que se trazan con captura propia y pintado en vivo.
-    private static bool IsLiveTool(ToolKind tool) => tool is ToolKind.Pencil or ToolKind.Arrow;
+    private static bool IsLiveTool(ToolKind tool) => tool is ToolKind.Pencil or ToolKind.Highlighter or ToolKind.Arrow;
 
     private static void OnMouseDown(object sender, MouseButtonEventArgs e)
     {

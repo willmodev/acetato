@@ -16,6 +16,8 @@ namespace Acetato.Presentation.Behaviors;
 /// </summary>
 internal static class InkCursorFactory
 {
+    private const byte HighlighterAlpha = 0x80; // 50 %: la transparencia fija del resaltador de WPF
+
     private static readonly Dictionary<(InkCursorTip Tip, int Pixels), Cursor> Cache = [];
 
     /// <summary>Cursor de <paramref name="tip"/> para la escala dada (1 = 100 %).</summary>
@@ -50,7 +52,8 @@ internal static class InkCursorFactory
     {
         if (tip.Gradient is not { } pair)
         {
-            return new SolidColorBrush(tip.Solid);
+            // El resaltador (HU-34) muestra su tinta al 50 %, como la pinta.
+            return new SolidColorBrush(tip.Highlighter ? Color.FromArgb(HighlighterAlpha, tip.Solid.R, tip.Solid.G, tip.Solid.B) : tip.Solid);
         }
 
         var (start, end) = GradientPairMap.Resolve(pair);

@@ -48,6 +48,16 @@ public sealed class JsonLastSessionStoreTests : IDisposable
     }
 
     [Fact]
+    public void The_highlighter_round_trips_as_the_last_tool()
+    {
+        var session = Full with { Tool = ToolKind.Highlighter };
+
+        CreateStore().Save(session);
+
+        CreateStore().Load().Tool.Should().Be(ToolKind.Highlighter);
+    }
+
+    [Fact]
     public void A_bar_never_moved_round_trips_without_placement()
     {
         var session = Full with { ToolbarPlacement = null };
