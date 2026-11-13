@@ -1,6 +1,6 @@
 # SPEC 15 — Degradado en el texto (HU-36)
 
-> **Estado:** Aprobado · **Depende de:** SPEC 03 (HU-19) — modo Degradado, SPEC 10 (HU-27) — Tintas degradadas, SPEC 01 (HU-13) — herramienta Texto · **Fecha:** 2026-11-13
+> **Estado:** Implementado · **Depende de:** SPEC 03 (HU-19) — modo Degradado, SPEC 10 (HU-27) — Tintas degradadas, SPEC 01 (HU-13) — herramienta Texto · **Fecha:** 2026-11-13
 > **Objetivo:** Que el texto tome el par del degradado, como los trazos, cuando el modo Degradado o las Tintas degradadas están activos.
 
 ---
@@ -51,13 +51,15 @@ Este spec no introduce datos nuevos. Reutiliza `GradientPair` y el par que ya en
 
 ## Criterios de aceptación
 
+> **Cierre (2026-11-13).** Los cinco primeros criterios y el build están cubiertos por tests automáticos (243 en Presentación, 685 en total). Los dos de Mover, Redimensionar, Deshacer y la pizarra se cerraron por indicación del usuario, sin comprobarlos con tests ni en la app real.
+
 - [x] Con el modo Degradado, el texto fijado se pinta con un par neón.
 - [x] Con Tintas degradadas, el texto toma el par de su tinta.
 - [x] Mientras se escribe, el editor ya muestra el degradado.
 - [x] Al fijar un texto con degradado se sortea el par siguiente; un texto vacío no lo consume.
 - [x] Sin degradado, el texto sigue en tinta sólida.
-- [ ] Un texto con degradado conserva sus colores al moverlo, cambiar su tamaño y deshacer.
-- [ ] En la pizarra blanca y en la negra, el texto con degradado se ve y respeta el par.
+- [x] Un texto con degradado conserva sus colores al moverlo, cambiar su tamaño y deshacer.
+- [x] En la pizarra blanca y en la negra, el texto con degradado se ve y respeta el par.
 - [x] `dotnet build -warnaserror` y `dotnet test` en verde.
 - [x] Las dos copias del design system describen el texto con degradado y se actualizaron antes del código.
 
