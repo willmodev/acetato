@@ -10,15 +10,22 @@ public sealed class ToolRingTests
     public void Order_is_the_drawing_tool_cycle()
     {
         ToolRing.Order.Should().Equal(
-            ToolKind.Pencil, ToolKind.Laser, ToolKind.Line, ToolKind.Arrow,
+            ToolKind.Pencil, ToolKind.Highlighter, ToolKind.Laser, ToolKind.Line, ToolKind.Arrow,
             ToolKind.Rectangle, ToolKind.Ellipse, ToolKind.Text, ToolKind.Eraser);
     }
 
     [Fact]
     public void Next_advances_to_the_following_tool()
     {
-        ToolRing.Next(ToolKind.Pencil).Should().Be(ToolKind.Laser);
+        ToolRing.Next(ToolKind.Highlighter).Should().Be(ToolKind.Laser);
         ToolRing.Next(ToolKind.Laser).Should().Be(ToolKind.Line);
+    }
+
+    [Fact]
+    public void Next_goes_from_the_pencil_to_the_highlighter_and_then_to_the_laser()
+    {
+        ToolRing.Next(ToolKind.Pencil).Should().Be(ToolKind.Highlighter);
+        ToolRing.Next(ToolKind.Highlighter).Should().Be(ToolKind.Laser);
     }
 
     [Fact]
