@@ -65,6 +65,10 @@ internal static partial class NativeMethods
     internal const uint SwShowMaximized = 3;
     internal const uint SwShowNoActivate = 4;
 
+    // Monitor más cercano a un punto y sus DPI efectivos, para la escala de sistema.txt (HU-33).
+    internal const uint MonitorDefaultToNearest = 2;
+    internal const int MdtEffectiveDpi = 0;
+
     // Afinidad de presentación: la barra queda visible pero fuera de toda captura (HU-12).
     internal const uint WdaExcludeFromCapture = 0x00000011;
 
@@ -136,4 +140,12 @@ internal static partial class NativeMethods
     [LibraryImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     internal static partial bool GetWindowRect(nint hWnd, out Rect lpRect);
+
+    // Monitor que contiene un punto de pantalla (HU-33, escala en sistema.txt).
+    [LibraryImport("user32.dll")]
+    internal static partial nint MonitorFromPoint(NativePoint pt, uint dwFlags);
+
+    // DPI efectivos de un monitor; devuelve un HRESULT (0 = bien).
+    [LibraryImport("shcore.dll")]
+    internal static partial int GetDpiForMonitor(nint hmonitor, int dpiType, out uint dpiX, out uint dpiY);
 }

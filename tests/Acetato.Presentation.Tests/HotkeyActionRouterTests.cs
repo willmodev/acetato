@@ -6,6 +6,7 @@ using Acetato.Application.Overlay;
 using Acetato.Presentation.Behaviors;
 using Acetato.Presentation.Overlay;
 using FluentAssertions;
+using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using Xunit;
 
@@ -97,7 +98,7 @@ public sealed class HotkeyActionRouterTests
             canvases ?? Substitute.For<IOverlayCanvasProvider>(),
             Substitute.For<ICursorPositionProvider>(),
             Substitute.For<IDrawingSettings>(),
-            screenClip,
+            new ScreenClipServices(screenClip, NullLogger<OverlayBroadcaster>.Instance),
             controller);
         var dispatcher = Dispatcher.CurrentDispatcher;
         var router = new HotkeyActionRouter(controller, broadcaster, layout ?? Substitute.For<IToolbarLayout>(), dispatcher);

@@ -1,8 +1,8 @@
 <!--
   Ventana Ajustes (HU-21). Ventana normal (no overlay): aparece en la barra de
   tareas y queda encima del overlay. Sin barra de título de Windows: título
-  propio arrastrable con WindowDragBehavior y botón Cerrar. Bloque Dibujo (HU-27)
-  y la lista de atajos. Code-behind solo con InitializeComponent (MVVM estricto).
+  propio arrastrable con WindowDragBehavior y botón Cerrar. Bloque Dibujo (HU-27),
+  la lista de atajos y Acerca de (HU-33). Code-behind solo con InitializeComponent (MVVM estricto).
 -->
 <Window x:Class="Acetato.Presentation.Views.SettingsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -94,6 +94,24 @@
                 <TextBlock Style="{StaticResource SettingsCaption}" Text="Solo al dibujar" />
                 <ItemsControl ItemsSource="{Binding DrawingRows}" ItemTemplate="{StaticResource HotkeyRowTemplate}"
                               Focusable="False" />
+
+                <!-- Acerca de (HU-33): versión y reporte para soporte, al final de la lista. -->
+                <TextBlock Style="{StaticResource SettingsCaption}" Text="Acerca de" />
+                <Grid MinHeight="30">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Style="{StaticResource SettingsRowLabel}" Text="{Binding VersionText}" />
+                    <Button Grid.Column="1" Style="{StaticResource SettingsTextButton}"
+                            Content="Copiar versión" Command="{Binding CopyVersionCommand}" />
+                </Grid>
+                <!-- El margen negativo alinea el texto del botón con las etiquetas de las filas. -->
+                <Grid MinHeight="30">
+                    <Button HorizontalAlignment="Left" Margin="-8,0,0,0" Style="{StaticResource SettingsTextButton}"
+                            Content="Reportar problema" Command="{Binding ReportProblemCommand}" />
+                </Grid>
+                <TextBlock Style="{StaticResource SettingsHint}" Text="{Binding ReportStatus}" />
             </StackPanel>
         </ScrollViewer>
 

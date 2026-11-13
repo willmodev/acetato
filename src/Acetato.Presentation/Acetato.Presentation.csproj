@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <!-- net9.0-windows10: requerido por la API de toasts de Infrastructure (HU-12). -->
-    <TargetFramework>net9.0-windows10.0.19041.0</TargetFramework>
+    <!-- net10.0-windows10: requerido por la API de toasts de Infrastructure (HU-12). -->
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
     <RootNamespace>Acetato.Presentation</RootNamespace>
     <UseWPF>true</UseWPF>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -19,6 +19,8 @@
   <ItemGroup>
     <!-- Los tests de Ajustes (HU-21) prueban tipos internos (WpfKeyMap, KeyChordText…). -->
     <InternalsVisibleTo Include="Acetato.Presentation.Tests" />
+    <!-- NSubstitute crea los dobles de las interfaces internas (IFatalExit, IClipboardWriter). -->
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,6 +38,7 @@
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <PackageReference Include="Microsoft.Extensions.Logging" />
     <PackageReference Include="H.NotifyIcon.Wpf" />
   </ItemGroup>
 

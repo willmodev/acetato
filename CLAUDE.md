@@ -4,7 +4,7 @@ Contrato de trabajo para este repositorio. Estas reglas **anulan** comportamient
 defecto y deben seguirse al pie de la letra.
 
 ## Producto
-**Acetato** es una app de escritorio **nativa para Windows (C#/.NET 9, WPF)** que superpone
+**Acetato** es una app de escritorio **nativa para Windows (C#/.NET 10, WPF)** que superpone
 una capa transparente y *click-through* sobre cualquier aplicación para dibujar y anotar en
 vivo (presentaciones, tutoriales). El **único** elemento visible es una **barra de
 herramientas flotante**, minimalista y discreta.
@@ -17,8 +17,8 @@ herramientas flotante**, minimalista y discreta.
   (invocable como `/acetato-design`). Es la **referencia visual de marca**.
 
 ## Stack y tooling
-- **.NET 9**, **C# `latest`**, **WPF** (Presentation). Requiere el **.NET 9 SDK** instalado
-  (`winget install Microsoft.DotNet.SDK.9`).
+- **.NET 10** (LTS), **C# `latest`**, **WPF** (Presentation). Requiere el **.NET 10 SDK** instalado
+  (`winget install Microsoft.DotNet.SDK.10`).
 - `Nullable` enable, `ImplicitUsings`, **file-scoped namespaces**.
 - Versiones de paquetes centralizadas en `Directory.Packages.props` (Central Package Management).
 - Propiedades comunes en `Directory.Build.props`; estilo/naming/umbrales en `.editorconfig`

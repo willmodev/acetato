@@ -1,4 +1,6 @@
 using Acetato.Application.Abstractions;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Acetato.Infrastructure.Settings;
 
@@ -13,13 +15,20 @@ public sealed class JsonLastSessionStore : ILastSessionStore
     private readonly SettingsFile _file;
 
     /// <summary>Usa la carpeta de la app en %AppData%.</summary>
-    public JsonLastSessionStore()
-        : this(SettingsFile.DefaultDirectory)
+    public JsonLastSessionStore(ILogger<JsonLastSessionStore> logger)
+        : this(SettingsFile.DefaultDirectory, logger)
+    {
+    }
+
+    /// <summary>Usa <paramref name="directory"/> sin registro (tests).</summary>
+    public JsonLastSessionStore(string directory)
+        : this(directory, NullLogger<JsonLastSessionStore>.Instance)
     {
     }
 
     /// <summary>Usa <paramref name="directory"/> (los tests pasan una carpeta temporal).</summary>
-    public JsonLastSessionStore(string directory) => _file = new SettingsFile(directory);
+    public JsonLastSessionStore(string directory, ILogger<JsonLastSessionStore> logger) =>
+        _file = new SettingsFile(directory, logger);
 
     public LastSession Load() =>
         _file.ReadRoot() is { } root ? LastSessionJson.Read(root) : LastSession.Defaults;

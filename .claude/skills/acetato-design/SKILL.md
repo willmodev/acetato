@@ -9,7 +9,7 @@ If creating visual artifacts (slides, mocks, throwaway prototypes, etc), copy as
 If the user invokes this skill without any other guidance, ask them what they want to build or design, ask some questions, and act as an expert designer who outputs HTML artifacts _or_ production code, depending on the need.
 
 Key facts to load first:
-- Acetato is a transparent, click-through annotation overlay for **Windows (C#/.NET 9, WPF)**. Designs here are visual reference for the WPF app — not web production code.
+- Acetato is a transparent, click-through annotation overlay for **Windows (C#/.NET 10, WPF)**. Designs here are visual reference for the WPF app — not web production code.
 - **The code is the source of truth:** `src/Acetato.Presentation/Resources/Tokens.xaml` (tokens) and `Icons.xaml` (icons). `colors_and_type.css` mirrors them; if they disagree, the XAML wins and this skill gets updated.
 - Guiding principle: **ZERO distraction.** The only visible chrome over the screen is one minimal, translucent floating toolbar (no blur; real Acrylic was tested and dropped, HU-18). Settings is the only other window.
 - Two separate palettes: **Chrome** (dark glass neutrals + one teal accent, `--chrome-*`, `--accent`, `--fg-*`) and **Tintas** (the saturated drawing inks `--ink-red/blue/yellow/green/white/black` plus the neon `--ink-grad-*` pairs of Gradient mode and the `--ink-*-end` neighbors of *Tintas degradadas*). Never mix them. The accent marks only what is selected — no glow.

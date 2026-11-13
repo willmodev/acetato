@@ -1,6 +1,6 @@
 # Acetato
 
-App de escritorio **nativa para Windows (C#/.NET 9, WPF)** que superpone una capa
+App de escritorio **nativa para Windows (C#/.NET 10, WPF)** que superpone una capa
 transparente y *click-through* sobre cualquier aplicación para **dibujar y anotar en vivo**
 durante presentaciones y tutoriales. El único elemento visible es una **barra de
 herramientas flotante**, minimalista y discreta.
@@ -9,7 +9,7 @@ herramientas flotante**, minimalista y discreta.
 
 ## Requisitos
 - **Windows 11** (compatible Windows 10).
-- **.NET 9 SDK** — instalar con: `winget install Microsoft.DotNet.SDK.9`
+- **.NET 10 SDK** — instalar con: `winget install Microsoft.DotNet.SDK.10`
 
 ## Construir y ejecutar
 ```pwsh
@@ -20,7 +20,7 @@ dotnet run --project src/Acetato.Presentation
 ```
 
 > **Nota:** el andamiaje se creó sin un SDK instalado en la máquina. El primer
-> `dotnet restore`/`build` puede requerir: (1) instalar el .NET 9 SDK, (2) ajustar alguna
+> `dotnet restore`/`build` puede requerir: (1) instalar el .NET 10 SDK, (2) ajustar alguna
 > versión de paquete en `Directory.Packages.props` si NuGet reporta una versión inexistente,
 > y (3) una pasada corta para resolver hallazgos de los analizadores estrictos.
 

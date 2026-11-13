@@ -1,6 +1,6 @@
 # Arquitectura — Acetato
 
-App de escritorio **Windows (C#/.NET 9, WPF)**: overlay transparente y *click-through* para
+App de escritorio **Windows (C#/.NET 10, WPF)**: overlay transparente y *click-through* para
 anotar sobre cualquier aplicación. Arquitectura **por capas** (estilo Clean/Hexagonal
 pragmático), con dependencias apuntando **hacia adentro**.
 
